@@ -32,3 +32,7 @@ using System.Runtime.InteropServices;
 //      Revision
 //
 [assembly: AssemblyVersion("1.0.0.0")]
+
+// Blessed Assemblies
+[assembly: InternalsVisibleTo("Amphibian.Tests")]
+//[assembly: InternalsVisibleTo("Amphibian.Tests, PublicKey=123124.....")]
