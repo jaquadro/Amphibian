@@ -1,2 +1,2 @@
-Vendor/TiledLib = ../TiledLib
-Vendor/DotNetZip = ../DotNetZip
+Vendor/TiledLib = ../tiledlib
+Vendor/DotNetZip = ../dotnetzip

@@ -1,4 +1,3 @@
-
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual C# Express 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amphibian", "Source\Amphibian.csproj", "{E0C66FEA-3843-458D-AAF7-779EBBE6BBBB}"
@@ -8,6 +7,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TiledLib [Windows]", "Vendor\TiledLib\GS4\TiledLib\TiledLib [Windows].csproj", "{5C081229-C1AA-4D40-A307-9264F7509158}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amphibian.Tests", "Tests\Amphibian.Tests.csproj", "{51C04546-B9E1-416D-A1AD-8671A9E38707}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TiledPipelineExtensions", "Vendor\TiledLib\GS4\TiledPipelineExtensions\TiledPipelineExtensions.csproj", "{3AC723BC-8AE2-4ED8-ABE2-DA3532E87118}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -59,6 +60,18 @@ Global
 		{51C04546-B9E1-416D-A1AD-8671A9E38707}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{51C04546-B9E1-416D-A1AD-8671A9E38707}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{51C04546-B9E1-416D-A1AD-8671A9E38707}.Release|x86.ActiveCfg = Release|Any CPU
+		{3AC723BC-8AE2-4ED8-ABE2-DA3532E87118}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{3AC723BC-8AE2-4ED8-ABE2-DA3532E87118}.Debug|Any CPU.Build.0 = Debug|x86
+		{3AC723BC-8AE2-4ED8-ABE2-DA3532E87118}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{3AC723BC-8AE2-4ED8-ABE2-DA3532E87118}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{3AC723BC-8AE2-4ED8-ABE2-DA3532E87118}.Debug|x86.ActiveCfg = Debug|x86
+		{3AC723BC-8AE2-4ED8-ABE2-DA3532E87118}.Debug|x86.Build.0 = Debug|x86
+		{3AC723BC-8AE2-4ED8-ABE2-DA3532E87118}.Release|Any CPU.ActiveCfg = Release|x86
+		{3AC723BC-8AE2-4ED8-ABE2-DA3532E87118}.Release|Any CPU.Build.0 = Release|x86
+		{3AC723BC-8AE2-4ED8-ABE2-DA3532E87118}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{3AC723BC-8AE2-4ED8-ABE2-DA3532E87118}.Release|Mixed Platforms.Build.0 = Release|x86
+		{3AC723BC-8AE2-4ED8-ABE2-DA3532E87118}.Release|x86.ActiveCfg = Release|x86
+		{3AC723BC-8AE2-4ED8-ABE2-DA3532E87118}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
