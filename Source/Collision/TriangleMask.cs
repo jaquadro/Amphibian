@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Amphibian.Drawing;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Amphibian.Collision
 {
@@ -10,6 +12,7 @@ namespace Amphibian.Collision
         internal Vector2 _p1;
         internal Vector2 _p2;
         internal float _det;
+        internal BoundingRectangle _bound;
 
         public TriangleMask (Vector2 p0, Vector2 p1, Vector2 p2)
         {
@@ -24,6 +27,33 @@ namespace Amphibian.Collision
 
             _det = (b.Y - c.Y) * (a.X - c.X) + (c.X - b.X) * (a.Y - c.Y);
             _det = 1f / _det;
+            
+            float minx = Math.Min(_p0.X, Math.Min(_p1.X, _p2.X));
+            float maxx = Math.Max(_p0.X, Math.Max(_p1.X, _p2.X));
+            float miny = Math.Min(_p0.Y, Math.Min(_p1.Y, _p2.Y));
+            float maxy = Math.Max(_p0.Y, Math.Max(_p1.Y, _p2.Y));
+
+            _bound = new BoundingRectangle(minx, miny, maxx - minx, maxy - miny);
+        }
+
+        public override object Clone ()
+        {
+            TriangleMask mask = new TriangleMask(_p0, _p1, _p2);
+            mask._pos = _pos;
+
+            return mask;
+        }
+
+        public override BoundingRectangle Bounds
+        {
+            get { return _bound; }
+        }
+
+        public override void Draw (SpriteBatch spriteBatch)
+        {
+            Primitives2D.DrawLine(spriteBatch, _pos + _p0, _pos + _p1, Color.White);
+            Primitives2D.DrawLine(spriteBatch, _pos + _p1, _pos + _p2, Color.White);
+            Primitives2D.DrawLine(spriteBatch, _pos + _p0, _pos + _p2, Color.White);
         }
 
         public override bool TestOverlap (Mask mask)
@@ -43,6 +73,8 @@ namespace Amphibian.Collision
                     return Collision.TestOverlap(mask as AABBMask, this);
                 case MaskType.Triangle:
                     return Collision.TestOverlap(this, mask as TriangleMask);
+                case MaskType.Composite:
+                    return Collision.TestOverlap(this, mask as CompositeMask);
             }
 
             return false;

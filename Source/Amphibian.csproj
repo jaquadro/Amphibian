@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ProjectGuid>{E0C66FEA-3843-458D-AAF7-779EBBE6BBBB}</ProjectGuid>
@@ -110,14 +110,19 @@
     <Compile Include="Collision\AABBMask.cs" />
     <Compile Include="Collision\AXLineMask.cs" />
     <Compile Include="Collision\AYLineMask.cs" />
+    <Compile Include="Collision\BoundingRectangle.cs" />
     <Compile Include="Collision\CircleMask.cs" />
     <Compile Include="Collision\Collision.cs" />
+    <Compile Include="Collision\CollisionManager.cs" />
+    <Compile Include="Collision\CollisionTileMapper.cs" />
     <Compile Include="Collision\CollisionTR.cs" />
+    <Compile Include="Collision\CompositeMask.cs" />
     <Compile Include="Collision\LineMask.cs" />
     <Compile Include="Collision\Mask.cs" />
     <Compile Include="Collision\PointMask.cs" />
     <Compile Include="Collision\TriangleMask.cs" />
     <Compile Include="Component.cs" />
+    <Compile Include="Drawing\Primitives2D.cs" />
     <Compile Include="Engine.cs" />
     <Compile Include="Frame.cs" />
     <Compile Include="Input\ButtonController.cs" />
@@ -129,6 +134,7 @@
     <Compile Include="Sprite.cs" />
     <Compile Include="SpriteObject.cs" />
     <Compile Include="StaticSprite.cs" />
+    <Compile Include="Tileset.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Vendor\TiledLib\GS4\TiledLib\TiledLib [Windows].csproj">

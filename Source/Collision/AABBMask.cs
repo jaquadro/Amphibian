@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Amphibian.Drawing;
 
 namespace Amphibian.Collision
 {
@@ -32,6 +34,26 @@ namespace Amphibian.Collision
             _h = Math.Abs(p1.Y - p0.Y);
         }
 
+        public override object Clone ()
+        {
+            AABBMask mask = new AABBMask(_point, _w, _h);
+            mask._pos = _pos;
+
+            return mask;
+        }
+
+        public override BoundingRectangle Bounds
+        {
+            get { return new BoundingRectangle(_pos.X + _point.X, _pos.Y + _point.Y, _w, _h); }
+        }
+
+        public override void Draw (SpriteBatch spriteBatch)
+        {
+            int x = (int)(_pos.X + _point.X);
+            int y = (int)(_pos.Y + _point.Y);
+            Primitives2D.DrawRectangle(spriteBatch, new Rectangle(x, y, (int)_w, (int)_h), Color.White);
+        }
+
         public override bool TestOverlap (Mask mask)
         {
             switch (mask._type) {
@@ -49,6 +71,8 @@ namespace Amphibian.Collision
                     return Collision.TestOverlap(this, mask as AABBMask);
                 case MaskType.Triangle:
                     return Collision.TestOverlap(this, mask as TriangleMask);
+                case MaskType.Composite:
+                    return Collision.TestOverlap(this, mask as CompositeMask);
             }
 
             return false;

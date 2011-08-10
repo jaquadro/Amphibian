@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Amphibian.Collision;
+using TiledLib;
+using Amphibian.Drawing;
 
 // What does a frame encompass?
 // - General frame data (dimensions, etc)
@@ -33,10 +36,25 @@ namespace Amphibian
         private List<Component> _components;
         private List<Component> _updating;
 
+        private SamplerState _samplerState;
+
+        private Dictionary<string, List<Component>> _comDict;
+
+        // For now, just one collision layer -- could add more later
+        private TileCollisionManager _tileColManager;
+        private Map _map;
+        private List<TileLayer> _layers;
+
         public Frame ()
         {
             _components = new List<Component>();
             _updating = new List<Component>();
+            _comDict = new Dictionary<string, List<Component>>();
+
+            _samplerState = new SamplerState()
+            {
+                Filter = TextureFilter.Point
+            };
         }
 
         public Frame (Engine engine)
@@ -160,7 +178,37 @@ namespace Amphibian
 
         protected virtual void Load ()
         {
+            // Load map
+            _map = _engine.Content.Load<Map>("testlevel");
+            _layers = new List<TileLayer>();
+            _tileColManager = new TileCollisionManager(_map.Width, _map.Height, _map.TileWidth * 2, _map.TileHeight * 2);
 
+            foreach (Layer layer in _map.Layers) {
+                if (layer is TileLayer) {
+                    Property prop;
+                    if (layer.Properties.TryGetValue("type", out prop) && prop.RawValue == "collision") {
+                        initColMap(layer as TileLayer);
+                    }
+                    //else {
+                        TileLayer tileLayer = layer as TileLayer;
+                        tileLayer.ScaleX = 2f;
+                        tileLayer.ScaleY = 2f;
+
+                        _layers.Add(tileLayer);
+                    //}
+                }
+            }
+        }
+
+        private void initColMap (TileLayer layer)
+        {
+            for (int x = 0; x < layer.Width; x++) {
+                for (int y = 0; y < layer.Height; y++) {
+                    if (layer.Tiles[x, y] != null) {
+                        _tileColManager.AddObject(layer.Tiles[x, y].Id - 97, x, y);
+                    }
+                }
+            }
         }
 
         public void LoadFrame ()
@@ -188,12 +236,24 @@ namespace Amphibian
         public virtual void Draw ()
         {
             _engine.SpriteBatch.Begin(SpriteSortMode.Immediate, null, null, null, null, null, _camera.GetTranslationMatrix());
+            _engine.GraphicsDevice.SamplerStates[0] = _samplerState;
+
+            foreach (TileLayer tl in _layers) {
+                _map.Draw(_engine.SpriteBatch, _camera.Bounds, tl);
+            }
 
             foreach (Component c in _components) {
                 c.Draw();
             }
 
+            _tileColManager.Draw(_engine.SpriteBatch, _camera.Bounds);
+
             _engine.SpriteBatch.End();
+        }
+
+        public bool OverlapsBackdrop (Mask mask)
+        {
+            return _tileColManager.OverlapsAny(mask);
         }
     }
 }

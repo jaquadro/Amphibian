@@ -6,6 +6,8 @@ namespace Amphibian
 {
     public class Component
     {
+        private static string _className;
+
         private string _name;
         private Frame _parent;
 
@@ -13,6 +15,11 @@ namespace Amphibian
         private bool _loaded;
 
         #region Properties
+
+        public string ClassName
+        {
+            get { return _className ?? this.GetType().Name; }
+        }
 
         public string Name
         {

@@ -1,5 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Amphibian.Drawing;
 
 namespace Amphibian.Collision
 {
@@ -25,6 +27,29 @@ namespace Amphibian.Collision
             _h = dh;
         }
 
+        public override object Clone ()
+        {
+            LineMask mask = new LineMask(_p0, _w, _h);
+            mask._pos = _pos;
+
+            return mask;
+        }
+
+        public override void Draw (SpriteBatch spriteBatch)
+        {
+            Primitives2D.DrawLine(spriteBatch, _pos + _p0, _pos + new Vector2(_p0.X + _w, _p0.Y + _h), Color.White);
+        }
+
+        public override BoundingRectangle Bounds
+        {
+            get 
+            {
+                float minx = (_w >= 0) ? _p0.X : _p0.X + _w;
+                float miny = (_h >= 0) ? _p0.Y : _p0.Y + _h;
+                return new BoundingRectangle(_pos.X + minx, _pos.Y + miny, Math.Abs(_w), Math.Abs(_h)); 
+            }
+        }
+
         public override bool TestOverlap (Mask mask)
         {
             switch (mask._type) {
@@ -42,6 +67,8 @@ namespace Amphibian.Collision
                     return Collision.TestOverlap(this, mask as AABBMask);
                 case MaskType.Triangle:
                     return Collision.TestOverlap(this, mask as TriangleMask);
+                case MaskType.Composite:
+                    return Collision.TestOverlap(this, mask as CompositeMask);
             }
 
             return false;

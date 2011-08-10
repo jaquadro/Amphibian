@@ -1,5 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Amphibian.Drawing;
 
 namespace Amphibian.Collision
 {
@@ -22,6 +24,19 @@ namespace Amphibian.Collision
             }
         }
 
+        public override object Clone ()
+        {
+            AYLineMask mask = new AYLineMask(_p, _h);
+            mask._pos = _pos;
+
+            return mask;
+        }
+
+        public override void Draw (SpriteBatch spriteBatch)
+        {
+            Primitives2D.DrawLine(spriteBatch, _pos + _p, _pos + new Vector2(_p.X, _p.Y + _h), Color.White);
+        }
+
         public override bool TestOverlap (Mask mask)
         {
             switch (mask._type) {
@@ -39,9 +54,16 @@ namespace Amphibian.Collision
                     return Collision.TestOverlap(this, mask as AABBMask);
                 case MaskType.Triangle:
                     return Collision.TestOverlap(this, mask as TriangleMask);
+                case MaskType.Composite:
+                    return Collision.TestOverlap(this, mask as CompositeMask);
             }
 
             return false;
+        }
+
+        public override BoundingRectangle Bounds
+        {
+            get { return new BoundingRectangle(_pos.X + _p.X, _pos.Y + _p.Y, 0, _h); }
         }
 
         /*public bool TestOverlap (PointMask mask)

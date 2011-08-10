@@ -424,5 +424,48 @@ namespace Amphibian.Collision
             q = triMask1.Barycentric(a);
             return (q.X >= 0 && q.Y >= 0 && (q.X + q.Y) <= 1f);
         }
+
+        // Composite -- [____] Collision Tests
+
+        public static bool TestOverlap (Mask mask, CompositeMask comMask)
+        {
+            if (!mask.Bounds.Overlaps(comMask.Bounds)) {
+                return false;
+            }
+
+            foreach (Mask m in comMask._components) {
+                if (mask.TestOverlap(m)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public static bool TestOverlap (CompositeMask comMask, Mask mask)
+        {
+            return TestOverlap(mask, comMask);
+        }
+
+        public static bool TestOverlap (CompositeMask comMask1, CompositeMask comMask2)
+        {
+            if (!comMask1.Bounds.Overlaps(comMask2.Bounds)) {
+                return false;
+            }
+
+            foreach (Mask m1 in comMask1._components) {
+                if (!m1.Bounds.Overlaps(comMask2.Bounds)) {
+                    return false;
+                }
+
+                foreach (Mask m2 in comMask2._components) {
+                    if (m1.TestOverlap(m2)) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
     }
 }
