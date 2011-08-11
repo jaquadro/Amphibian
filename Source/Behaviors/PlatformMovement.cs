@@ -156,5 +156,10 @@ namespace Amphibian.Behaviors
                 mask.Position = new Vector2(mask.Position.X, _object.Y);
             }
         }
+
+        private void StepMovement ()
+        {
+
+        }
     }
 }
