@@ -138,6 +138,11 @@ namespace Amphibian.Geometry
             return new FPInt() { _raw = (v1 << ShiftBy) % v2._raw };
         }
 
+        public static FPInt operator - (FPInt value)
+        {
+            return new FPInt() { _raw = -value._raw };
+        }
+
         #endregion
 
         #region Comparison Operators

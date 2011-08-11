@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Amphibian.Geometry;
 
 namespace Amphibian.Collision
 {
     public sealed class CompositeMask : Mask
     {
         internal List<Mask> _components;
-        internal BoundingRectangle _bounds;
+        internal RectangleFP _bounds;
 
         public CompositeMask (Mask mask)
         {
@@ -27,28 +28,28 @@ namespace Amphibian.Collision
 
         public void Add (Mask mask)
         {
-            BoundingRectangle rect = mask.Bounds;
+            RectangleFP rect = mask.Bounds;
 
-            float minx = Math.Min(_bounds.Left, rect.Left);
-            float maxx = Math.Max(_bounds.Right, rect.Right);
-            float miny = Math.Min(_bounds.Top, rect.Top);
-            float maxy = Math.Min(_bounds.Bottom, rect.Bottom);
+            FPInt minx = FPMath.Min(_bounds.Left, rect.Left);
+            FPInt maxx = FPMath.Max(_bounds.Right, rect.Right);
+            FPInt miny = FPMath.Min(_bounds.Top, rect.Top);
+            FPInt maxy = FPMath.Min(_bounds.Bottom, rect.Bottom);
 
-            _bounds = new BoundingRectangle(minx, miny, maxx - minx, maxy - miny);
+            _bounds = new RectangleFP(minx, miny, maxx - minx, maxy - miny);
 
             _components.Add(mask);
         }
 
         public void Merge (CompositeMask mask)
         {
-            BoundingRectangle rect = mask.Bounds;
+            RectangleFP rect = mask.Bounds;
 
-            float minx = Math.Min(_bounds.Left, rect.Left);
-            float maxx = Math.Max(_bounds.Right, rect.Right);
-            float miny = Math.Min(_bounds.Top, rect.Top);
-            float maxy = Math.Min(_bounds.Bottom, rect.Bottom);
+            FPInt minx = FPMath.Min(_bounds.Left, rect.Left);
+            FPInt maxx = FPMath.Max(_bounds.Right, rect.Right);
+            FPInt miny = FPMath.Min(_bounds.Top, rect.Top);
+            FPInt maxy = FPMath.Min(_bounds.Bottom, rect.Bottom);
 
-            _bounds = new BoundingRectangle(minx, miny, maxx - minx, maxy - miny);
+            _bounds = new RectangleFP(minx, miny, maxx - minx, maxy - miny);
 
             foreach (Mask m in mask._components) {
                 _components.Add(mask);
@@ -70,7 +71,7 @@ namespace Amphibian.Collision
             }
         }
 
-        public override BoundingRectangle Bounds
+        public override RectangleFP Bounds
         {
             get { return _bounds; }
         }
@@ -99,47 +100,9 @@ namespace Amphibian.Collision
             return false;
         }
 
-        public override TestResult TestOverlapExt (Mask mask)
+        /*public override TestResult TestOverlapExt (Mask mask)
         {
-            /*switch (mask._type) {
-                case MaskType.Point:
-                    return CollisionTR.TestOverlap(this, mask as PointMask);
-                case MaskType.Line:
-                    return CollisionTR.TestOverlap(this, mask as LineMask);
-                case MaskType.Circle:
-                    return CollisionTR.TestOverlap(this, mask as CircleMask);
-                case MaskType.AABB:
-                    return CollisionTR.TestOverlap(this, mask as AABBMask);
-                case MaskType.Triangle:
-                    return CollisionTR.TestOverlap(this, mask as TriangleMask);
-            }*/
-
             return TestResult.None;
-        }
-
-        /*public TestResult TestOverlapExt (PointMask mask)
-        {
-            return CollisionTR.TestOverlap(this, mask);
-        }
-
-        public TestResult TestOverlapExt (LineMask mask)
-        {
-            return CollisionTR.TestOverlap(this, mask);
-        }
-
-        public TestResult TestOverlapExt (CircleMask mask)
-        {
-            return CollisionTR.TestOverlap(this, mask);
-        }
-
-        public TestResult TestOverlapExt (AABBMask mask)
-        {
-            return CollisionTR.TestOverlap(this, mask);
-        }
-
-        public TestResult TestOverlapExt (TriangleMask mask)
-        {
-            return CollisionTR.TestOverlap(this, mask);
         }*/
     }
 }

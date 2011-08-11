@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
+using Amphibian.Geometry;
 
 namespace Amphibian
 {
@@ -73,9 +74,10 @@ namespace Amphibian
             _origin = new Vector2(_texture.Width >> 1, _texture.Height >> 1);
         }
 
-        public override void Draw (SpriteBatch spriteBatch, Vector2 position)
+        public override void Draw (SpriteBatch spriteBatch, PointFP position)
         {
-            spriteBatch.Draw(_texture, position, _source,
+            Vector2 p = new Vector2(position.X.Round, position.Y.Round);
+            spriteBatch.Draw(_texture, p, _source,
                 new Color(1f, 1f, 1f, Opacity), Rotation, _origin, Scale, Effects, 0);
         }
     }

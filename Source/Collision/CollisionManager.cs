@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Amphibian.Drawing;
+using Amphibian.Geometry;
 
 namespace Amphibian.Collision
 {
@@ -44,12 +45,12 @@ namespace Amphibian.Collision
             _tileHeight = tileHeight;
 
             _grid = new Mask[tilesWide, tilesHigh];
-            _trans = new CollisionTileMapper(tileWidth, tileHeight);
+            _trans = new CollisionTileMapper((FPInt)tileWidth, (FPInt)tileHeight);
         }
 
         public void AddObject (int id, int x, int y)
         {
-            Vector2 position = new Vector2(x * _tileWidth, y * _tileHeight);
+            PointFP position = new PointFP(x * _tileWidth, y * _tileHeight);
 
             Mask mask = _trans.Lookup(id, position);
             if (mask == null) {
@@ -61,7 +62,7 @@ namespace Amphibian.Collision
 
         public void AddObject (ICollidable collidable)
         {
-            BoundingRectangle rect = collidable.CollisionMask.Bounds;
+            RectangleFP rect = collidable.CollisionMask.Bounds;
 
             if (rect.Width > _tileWidth || rect.Height > _tileHeight) {
                 throw new Exception("Collidable incompatible with this Collision Manager");
@@ -88,12 +89,12 @@ namespace Amphibian.Collision
 
         public bool OverlapsAny (Mask mask)
         {
-            BoundingRectangle rect = mask.Bounds;
+            RectangleFP rect = mask.Bounds;
 
             int minXId = (int)(rect.Left / _tileWidth);
-            int maxXId = (int)((rect.Right - 0.005) / _tileWidth);
+            int maxXId = (int)(rect.Right / _tileWidth);
             int minYId = (int)(rect.Top / _tileHeight);
-            int maxYId = (int)((rect.Bottom - 0.005) / _tileHeight);
+            int maxYId = (int)(rect.Bottom / _tileHeight);
 
             for (int x = minXId; x <= maxXId; x++) {
                 if (x >= _width)

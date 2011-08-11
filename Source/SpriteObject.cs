@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Amphibian.Geometry;
 
 // Frame Objects have...
 // - Sprite
@@ -12,7 +13,7 @@ namespace Amphibian
 {
     public class GameObject : Component
     {
-        protected Vector2 _position;
+        protected PointFP _position;
         protected List<Behavior> _behaviors;
 
         public GameObject ()
@@ -23,13 +24,13 @@ namespace Amphibian
 
         #region Properties
 
-        public float X
+        public FPInt X
         {
             get { return _position.X; }
             set { _position.X = value; }
         }
 
-        public float Y
+        public FPInt Y
         {
             get { return _position.Y; }
             set { _position.Y = value; }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Amphibian.Collision;
+using Amphibian.Geometry;
 
 namespace Amphibian.Behaviors
 {
@@ -11,14 +12,14 @@ namespace Amphibian.Behaviors
     {
         private GameObject _object;
 
-        private float _xAccel;
-        private float _yAccel;
-        private float _xVelocity;
-        private float _yVelocity;
-        private float _xMinVel;
-        private float _yMinVel;
-        private float _xMaxVel;
-        private float _yMaxVel;
+        private FPInt _xAccel;
+        private FPInt _yAccel;
+        private FPInt _xVelocity;
+        private FPInt _yVelocity;
+        private FPInt _xMinVel;
+        private FPInt _yMinVel;
+        private FPInt _xMaxVel;
+        private FPInt _yMaxVel;
 
         private AXLineMask _floorDet;
         private AXLineMask _subFloorDet;
@@ -29,58 +30,58 @@ namespace Amphibian.Behaviors
             _object = obj;
 
             ICollidable c = _object as ICollidable;
-            _floorDet = new AXLineMask(new Vector2(obj.X - c.CollisionMask.Bounds.Left, c.CollisionMask.Bounds.Bottom - obj.Y), c.CollisionMask.Bounds.Width);
-            _floorDet.Position = new Vector2(obj.X, obj.Y);
+            _floorDet = new AXLineMask(new PointFP(obj.X - c.CollisionMask.Bounds.Left, c.CollisionMask.Bounds.Bottom - obj.Y), c.CollisionMask.Bounds.Width);
+            _floorDet.Position = new PointFP(obj.X, obj.Y);
 
             _subFloorDet = _floorDet.Clone() as AXLineMask;
-            _subFloorDet.Position = new Vector2(_subFloorDet.Position.X, _subFloorDet.Position.Y + 1);
+            _subFloorDet.Position = new PointFP(_subFloorDet.Position.X, _subFloorDet.Position.Y + 1);
         }
 
         #region Properties
 
-        public float AccelX
+        public FPInt AccelX
         {
             get { return _xAccel; }
             set { _xAccel = value; }
         }
 
-        public float AccelY
+        public FPInt AccelY
         {
             get { return _yAccel; }
             set { _yAccel = value; }
         }
 
-        public float MaxVelocityX
+        public FPInt MaxVelocityX
         {
             get { return _xMaxVel; }
             set { _xMaxVel = value; }
         }
 
-        public float MaxVelocityY
+        public FPInt MaxVelocityY
         {
             get { return _yMaxVel; }
             set { _yMaxVel = value; }
         }
 
-        public float MinVelocityX
+        public FPInt MinVelocityX
         {
             get { return _xMinVel; }
             set { _xMinVel = value; }
         }
 
-        public float MinVelocityY
+        public FPInt MinVelocityY
         {
             get { return _yMinVel; }
             set { _yMinVel = value; }
         }
 
-        public float VelocityX
+        public FPInt VelocityX
         {
             get { return _xVelocity; }
             set { _xVelocity = value; }
         }
 
-        public float VelocityY
+        public FPInt VelocityY
         {
             get { return _yVelocity; }
             set { _yVelocity = value; }
@@ -92,10 +93,16 @@ namespace Amphibian.Behaviors
         {
             float time = (float)_object.Parent.Engine.GameTime.ElapsedGameTime.TotalSeconds;
 
-            _xVelocity = MathHelper.Clamp(_xVelocity + _xAccel * time, _xMinVel, _xMaxVel);
-            _yVelocity = MathHelper.Clamp(_yVelocity + _yAccel * time, _yMinVel, _yMaxVel);
+            FPInt txAccel = (FPInt)((float)_xAccel * time);
+            FPInt tyAccel = (FPInt)((float)_yAccel * time);
 
-            _object.X += _xVelocity * time;
+            _xVelocity = FPMath.Clamp(_xVelocity + txAccel, _xMinVel, _xMaxVel);
+            _yVelocity = FPMath.Clamp(_yVelocity + tyAccel, _yMinVel, _yMaxVel);
+
+            FPInt txVelocity = (FPInt)((float)_xVelocity * time);
+            FPInt tyVelocity = (FPInt)((float)_yVelocity * time);
+
+            _object.X += txVelocity;
             //_object.Y -= _yVelocity * time;
 
             
@@ -107,16 +114,16 @@ namespace Amphibian.Behaviors
                 _yVelocity = 0;
             }*/
 
-            Fall(_yVelocity * time);
+            Fall(tyVelocity);
 
             ICollidable c = _object as ICollidable;
-            c.CollisionMask.Position = new Vector2(_object.X, c.CollisionMask.Position.Y);
+            c.CollisionMask.Position = new PointFP(_object.X, c.CollisionMask.Position.Y);
 
-            _floorDet.Position = new Vector2(_object.X, _object.Y);
-            _subFloorDet.Position = new Vector2(_object.X, _object.Y + 1);
+            _floorDet.Position = new PointFP(_object.X, _object.Y);
+            _subFloorDet.Position = new PointFP(_object.X, _object.Y + 1);
         }
 
-        private void Fall (float dist)
+        private void Fall (FPInt dist)
         {
             if (_object.Parent.OverlapsBackdrop(_subFloorDet)) {
                 if (!_object.Parent.OverlapsBackdrop(_floorDet)) {
@@ -127,33 +134,33 @@ namespace Amphibian.Behaviors
                 _yVelocity = 0;
 
                 while (_object.Parent.OverlapsBackdrop(_floorDet)) {
-                    _floorDet.Position = new Vector2(_floorDet.Position.X, _floorDet.Position.Y - 1);
+                    _floorDet.Position = new PointFP(_floorDet.Position.X, _floorDet.Position.Y - 1);
                 }
 
                 _object.Y = _floorDet.Position.Y;
-                _subFloorDet.Position = new Vector2(_subFloorDet.Position.X, _floorDet.Position.Y + 1);
+                _subFloorDet.Position = new PointFP(_subFloorDet.Position.X, _floorDet.Position.Y + 1);
 
                 ICollidable c = _object as ICollidable;
                 Mask mask = c.CollisionMask;
-                mask.Position = new Vector2(mask.Position.X, _object.Y);
+                mask.Position = new PointFP(mask.Position.X, _object.Y);
             }
             else {
-                AABBMask rmask = new AABBMask(new Vector2(_floorDet.Bounds.Left, _floorDet.Bounds.Bottom), _floorDet.Bounds.Width, -dist);
+                AABBMask rmask = new AABBMask(new PointFP(_floorDet.Bounds.Left, _floorDet.Bounds.Bottom), _floorDet.Bounds.Width, -dist);
                 if (_object.Parent.OverlapsBackdrop(rmask)) {
                     _yVelocity = 0;
 
                     while (_object.Parent.OverlapsBackdrop(rmask)) {
-                        rmask = new AABBMask(new Vector2(rmask.Bounds.Left, rmask.Bounds.Top), rmask.Bounds.Width, rmask.Bounds.Height - 1);
+                        rmask = new AABBMask(new PointFP(rmask.Bounds.Left, rmask.Bounds.Top), rmask.Bounds.Width, rmask.Bounds.Height - 1);
                     }
                 }
 
                 _object.Y += rmask.Bounds.Height;
-                _floorDet.Position = new Vector2(_floorDet.Position.X, _object.Y);
-                _subFloorDet.Position = new Vector2(_floorDet.Position.X, _object.Y + 1);
+                _floorDet.Position = new PointFP(_floorDet.Position.X, _object.Y);
+                _subFloorDet.Position = new PointFP(_floorDet.Position.X, _object.Y + 1);
 
                 ICollidable c = _object as ICollidable;
                 Mask mask = c.CollisionMask;
-                mask.Position = new Vector2(mask.Position.X, _object.Y);
+                mask.Position = new PointFP(mask.Position.X, _object.Y);
             }
         }
 

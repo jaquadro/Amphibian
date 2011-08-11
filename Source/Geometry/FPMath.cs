@@ -6,6 +6,16 @@ namespace Amphibian.Geometry
     {
         #region Min / Max
 
+        public static FPInt Clamp (FPInt value, FPInt min, FPInt max)
+        {
+            return (value > min) ? ((value < max) ? value : max) : min;
+        }
+
+        public static FPLong Clamp (FPLong value, FPLong min, FPLong max)
+        {
+            return (value > min) ? ((value < max) ? value : max) : min;
+        }
+
         public static FPInt Max (FPInt v1, FPInt v2)
         {
             return (v1._raw > v2._raw) ? v1 : v2;

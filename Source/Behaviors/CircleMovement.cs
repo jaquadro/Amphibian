@@ -1,20 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Amphibian.Geometry;
 
 namespace Amphibian.Behaviors
 {
     public class CircleMovement : Behavior
     {
-        private Vector2 _center;
-        private float _radius;
+        private PointFP _center;
+        private FPInt _radius;
         private float _speed;
 
         private float _time;
 
         private GameObject _object;
 
-        public CircleMovement (GameObject obj, Vector2 center, float radius, float radPerSecond)
+        public CircleMovement (GameObject obj, PointFP center, FPInt radius, float radPerSecond)
             : base()
         {
             _object = obj;
@@ -31,8 +32,11 @@ namespace Amphibian.Behaviors
             float sin = (float)Math.Sin(_time);
             float cos = (float)Math.Cos(_time);
 
-            _object.X = (float)Math.Floor(_center.X + (_radius * cos));
-            _object.Y = (float)Math.Floor(_center.Y + (_radius * sin));
+            FPInt nx = (FPInt)((float)_radius * cos);
+            FPInt ny = (FPInt)((float)_radius * sin);
+
+            _object.X = _center.X + nx;
+            _object.Y = _center.Y + ny;
         }
     }
 }

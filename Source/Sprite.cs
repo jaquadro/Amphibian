@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
+using Amphibian.Geometry;
 
 // Properties of a sprite
 // - Image
@@ -93,7 +94,7 @@ namespace Amphibian
         {
         }
 
-        public abstract void Draw (SpriteBatch spriteBatch, Vector2 position);
+        public abstract void Draw (SpriteBatch spriteBatch, PointFP position);
 
         public void FlipHorizontally ()
         {

@@ -138,6 +138,11 @@ namespace Amphibian.Geometry
             return new FPLong() { _raw = (v1 << ShiftBy) % v2._raw };
         }
 
+        public static FPLong operator - (FPLong value)
+        {
+            return new FPLong() { _raw = -value._raw };
+        }
+
         #endregion
 
         #region Comparison Operators

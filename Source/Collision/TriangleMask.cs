@@ -3,37 +3,38 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Amphibian.Drawing;
 using Microsoft.Xna.Framework.Graphics;
+using Amphibian.Geometry;
 
 namespace Amphibian.Collision
 {
     public class TriangleMask : Mask
     {
-        internal Vector2 _p0;
-        internal Vector2 _p1;
-        internal Vector2 _p2;
-        internal float _det;
-        internal BoundingRectangle _bound;
+        internal PointFP _p0;
+        internal PointFP _p1;
+        internal PointFP _p2;
+        internal FPInt _det;
+        internal RectangleFP _bound;
 
-        public TriangleMask (Vector2 p0, Vector2 p1, Vector2 p2)
+        public TriangleMask (PointFP p0, PointFP p1, PointFP p2)
         {
             _type = MaskType.Triangle;
             _p0 = p0;
             _p1 = p1;
             _p2 = p2;
 
-            Vector2 a = _pos + _p0;
-            Vector2 b = _pos + _p1;
-            Vector2 c = _pos + _p2;
+            VectorFP a = (VectorFP)_pos + _p0;
+            VectorFP b = (VectorFP)_pos + _p1;
+            VectorFP c = (VectorFP)_pos + _p2;
 
             _det = (b.Y - c.Y) * (a.X - c.X) + (c.X - b.X) * (a.Y - c.Y);
-            _det = 1f / _det;
-            
-            float minx = Math.Min(_p0.X, Math.Min(_p1.X, _p2.X));
-            float maxx = Math.Max(_p0.X, Math.Max(_p1.X, _p2.X));
-            float miny = Math.Min(_p0.Y, Math.Min(_p1.Y, _p2.Y));
-            float maxy = Math.Max(_p0.Y, Math.Max(_p1.Y, _p2.Y));
+            _det = 1 / _det;
 
-            _bound = new BoundingRectangle(minx, miny, maxx - minx, maxy - miny);
+            FPInt minx = FPMath.Min(_p0.X, FPMath.Min(_p1.X, _p2.X));
+            FPInt maxx = FPMath.Max(_p0.X, FPMath.Max(_p1.X, _p2.X));
+            FPInt miny = FPMath.Min(_p0.Y, FPMath.Min(_p1.Y, _p2.Y));
+            FPInt maxy = FPMath.Max(_p0.Y, FPMath.Max(_p1.Y, _p2.Y));
+
+            _bound = new RectangleFP(minx, miny, maxx - minx, maxy - miny);
         }
 
         public override object Clone ()
@@ -44,16 +45,20 @@ namespace Amphibian.Collision
             return mask;
         }
 
-        public override BoundingRectangle Bounds
+        public override RectangleFP Bounds
         {
             get { return _bound; }
         }
 
         public override void Draw (SpriteBatch spriteBatch)
         {
-            Primitives2D.DrawLine(spriteBatch, _pos + _p0, _pos + _p1, Color.White);
-            Primitives2D.DrawLine(spriteBatch, _pos + _p1, _pos + _p2, Color.White);
-            Primitives2D.DrawLine(spriteBatch, _pos + _p0, _pos + _p2, Color.White);
+            VectorFP a = (VectorFP)_pos + _p0;
+            VectorFP b = (VectorFP)_pos + _p1;
+            VectorFP c = (VectorFP)_pos + _p2;
+
+            Primitives2D.DrawLine(spriteBatch, (float)a.X, (float)a.Y, (float)b.X, (float)b.Y, Color.White);
+            Primitives2D.DrawLine(spriteBatch, (float)a.X, (float)a.Y, (float)c.X, (float)c.Y, Color.White);
+            Primitives2D.DrawLine(spriteBatch, (float)b.X, (float)b.Y, (float)c.X, (float)c.Y, Color.White);
         }
 
         public override bool TestOverlap (Mask mask)
@@ -80,7 +85,7 @@ namespace Amphibian.Collision
             return false;
         }
 
-        public override TestResult TestOverlapExt (Mask mask)
+        /*public override TestResult TestOverlapExt (Mask mask)
         {
             switch (mask._type) {
                 case MaskType.Point:
@@ -121,75 +126,75 @@ namespace Amphibian.Collision
         public TestResult TestOverlapExt (TriangleMask mask)
         {
             return CollisionTR.TestOverlap(this, mask);
-        }
+        }*/
 
-        internal Vector2 Barycentric (Vector2 p)
+        internal PointFP Barycentric (PointFP p)
         {
             //Vector2 a = _pos + _p0;
             //Vector2 b = _pos + _p1;
             //Vector2 c = _pos + _p2;
 
-            Vector2 a = _p0;
-            Vector2 b = _p1;
-            Vector2 c = _p2;
-            p = p - _pos;
+            PointFP a = _p0;
+            PointFP b = _p1;
+            PointFP c = _p2;
+            p = (VectorFP)p - _pos;
 
-            float v = (b.Y - c.Y) * (p.X - c.X) + (c.X - b.X) * (p.Y - c.Y);
-            float u = (c.Y - a.Y) * (p.X - c.X) + (a.X - c.X) * (p.Y - c.Y);
+            FPInt v = (b.Y - c.Y) * (p.X - c.X) + (c.X - b.X) * (p.Y - c.Y);
+            FPInt u = (c.Y - a.Y) * (p.X - c.X) + (a.X - c.X) * (p.Y - c.Y);
 
-            return new Vector2(v * _det, u * _det);
+            return new PointFP(v * _det, u * _det);
         }
 
-        internal Vector2 ClosestPoint (Vector2 p)
+        internal PointFP ClosestPoint (PointFP p)
         {
-            Vector2 a = _pos + _p0;
-            Vector2 b = _pos + _p1;
-            Vector2 c = _pos + _p2;
+            VectorFP a = (VectorFP)_pos + _p0;
+            VectorFP b = (VectorFP)_pos + _p1;
+            VectorFP c = (VectorFP)_pos + _p2;
 
             // Check if P in region outside A
-            Vector2 ab = b - a;
-            Vector2 ac = c - a;
-            Vector2 ap = p - a;
-            float d1 = Vector2.Dot(ab, ap);
-            float d2 = Vector2.Dot(ac, ap);
-            if (d1 <= 0f && d2 <= 0f) {
+            VectorFP ab = b - a;
+            VectorFP ac = c - a;
+            VectorFP ap = p - a;
+            FPInt d1 = VectorFP.Dot(ab, ap);
+            FPInt d2 = VectorFP.Dot(ac, ap);
+            if (d1 <= 0 && d2 <= 0) {
                 return a;
             }
 
             // Check if P in region outside B
-            Vector2 bp = p - b;
-            float d3 = Vector2.Dot(ab, bp);
-            float d4 = Vector2.Dot(ac, bp);
-            if (d3 >= 0f && d4 <= d3) {
+            VectorFP bp = p - b;
+            FPInt d3 = VectorFP.Dot(ab, bp);
+            FPInt d4 = VectorFP.Dot(ac, bp);
+            if (d3 >= 0 && d4 <= d3) {
                 return b;
             }
 
             // Check if P in edge region of AB
-            float vc = d1 * d4 - d3 * d2;
-            if (vc <= 0f && d1 >= 0f && d3 <= 0f) {
-                float v = d1 / (d1 - d3);
+            FPInt vc = d1 * d4 - d3 * d2;
+            if (vc <= 0 && d1 >= 0 && d3 <= 0) {
+                FPInt v = d1 / (d1 - d3);
                 return a + v * ab;
             }
 
             // Check if P in region outside C
-            Vector2 cp = p - c;
-            float d5 = Vector2.Dot(ab, cp);
-            float d6 = Vector2.Dot(ac, cp);
-            if (d6 >= 0f && d5 <= d6) {
+            VectorFP cp = p - c;
+            FPInt d5 = VectorFP.Dot(ab, cp);
+            FPInt d6 = VectorFP.Dot(ac, cp);
+            if (d6 >= 0 && d5 <= d6) {
                 return c;
             }
 
             // Check if P in edge region of AC
-            float vb = d5 * d2 - d1 * d6;
-            if (vb <= 0f && d2 >= 0f && d6 <= 0f) {
-                float w = d2 / (d2 - d6);
+            FPInt vb = d5 * d2 - d1 * d6;
+            if (vb <= 0 && d2 >= 0 && d6 <= 0) {
+                FPInt w = d2 / (d2 - d6);
                 return a + w * ac;
             }
 
             // Check if P in edge region of BC
-            float va = d3 * d6 - d5 * d4;
-            if (va <= 0f && (d4 - d3) >= 0f && (d5 - d6) >= 0f) {
-                float w = (d4 - d3) / ((d4 - d3) + (d5 - d6));
+            FPInt va = d3 * d6 - d5 * d4;
+            if (va <= 0 && (d4 - d3) >= 0 && (d5 - d6) >= 0) {
+                FPInt w = (d4 - d3) / ((d4 - d3) + (d5 - d6));
                 return b + w * (c - b);
             }
 

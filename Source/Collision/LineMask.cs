@@ -2,16 +2,17 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Amphibian.Drawing;
+using Amphibian.Geometry;
 
 namespace Amphibian.Collision
 {
     public sealed class LineMask : Mask
     {
-        internal Vector2 _p0;
-        internal float _w;
-        internal float _h;
+        internal PointFP _p0;
+        internal FPInt _w;
+        internal FPInt _h;
 
-        public LineMask (Vector2 p0, Vector2 p1)
+        public LineMask (PointFP p0, PointFP p1)
         {
             _type = MaskType.Line;
             _p0 = p0;
@@ -19,7 +20,7 @@ namespace Amphibian.Collision
             _h = p1.Y - p0.Y;
         }
 
-        public LineMask (Vector2 p0, float dw, float dh)
+        public LineMask (PointFP p0, FPInt dw, FPInt dh)
         {
             _type = MaskType.Line;
             _p0 = p0;
@@ -37,16 +38,19 @@ namespace Amphibian.Collision
 
         public override void Draw (SpriteBatch spriteBatch)
         {
-            Primitives2D.DrawLine(spriteBatch, _pos + _p0, _pos + new Vector2(_p0.X + _w, _p0.Y + _h), Color.White);
+            VectorFP a = (VectorFP)_pos + _p0;
+            VectorFP b = (VectorFP)_pos + new VectorFP(_p0.X + _w, _p0.Y + _h);
+
+            Primitives2D.DrawLine(spriteBatch, (float)a.X, (float)a.Y, (float)b.X, (float)b.Y, Color.White);
         }
 
-        public override BoundingRectangle Bounds
+        public override RectangleFP Bounds
         {
             get 
             {
-                float minx = (_w >= 0) ? _p0.X : _p0.X + _w;
-                float miny = (_h >= 0) ? _p0.Y : _p0.Y + _h;
-                return new BoundingRectangle(_pos.X + minx, _pos.Y + miny, Math.Abs(_w), Math.Abs(_h)); 
+                FPInt minx = (_w >= 0) ? _p0.X : _p0.X + _w;
+                FPInt miny = (_h >= 0) ? _p0.Y : _p0.Y + _h;
+                return new RectangleFP(_pos.X + minx, _pos.Y + miny, FPMath.Abs(_w), FPMath.Abs(_h)); 
             }
         }
 
@@ -74,7 +78,7 @@ namespace Amphibian.Collision
             return false;
         }
 
-        public override TestResult TestOverlapExt (Mask mask)
+        /*public override TestResult TestOverlapExt (Mask mask)
         {
             switch (mask._type) {
                 case MaskType.Point:
@@ -117,24 +121,24 @@ namespace Amphibian.Collision
             return CollisionTR.TestOverlap(this, mask);
         }
 
-        internal static float Signed2DTriArea (Vector2 a, Vector2 b, Vector2 c)
+        internal static FPInt Signed2DTriArea (PointFP a, PointFP b, PointFP c)
         {
             return (a.X - c.X) * (b.Y - c.Y) - (a.Y - c.Y) * (b.X - c.X);
         }
 
-        internal TestResult LineIntersect (Vector2 a, Vector2 b)
+        internal TestResult LineIntersect (PointFP a, PointFP b)
         {
-            Vector2 c = _pos + _p0;
-            Vector2 d = c + new Vector2(_w, _h);
+            VectorFP c = (VectorFP)_pos + _p0;
+            VectorFP d = c + new VectorFP(_w, _h);
 
             return LineIntersect(a, b, c, d);
         }
 
-        internal static TestResult LineIntersect (Vector2 a, Vector2 b, Vector2 c, Vector2 d)
+        internal static TestResult LineIntersect (PointFP a, PointFP b, PointFP c, PointFP d)
         {
-            float a1 = Signed2DTriArea(a, b, d);
-            float a2 = Signed2DTriArea(a, b, c);
-            float t1 = a1 * a2;
+            FPInt a1 = Signed2DTriArea(a, b, d);
+            FPInt a2 = Signed2DTriArea(a, b, c);
+            FPInt t1 = a1 * a2;
 
             // Deal with colinear lines
             if (a1 == 0 && a2 == 0) {
@@ -150,9 +154,9 @@ namespace Amphibian.Collision
 
             // Now deal with normal intersections
             else if (t1 <= 0) {
-                float a3 = Signed2DTriArea(c, d, a);
-                float a4 = a3 + a2 - a1;
-                float t2 = a3 * a4;
+                FPInt a3 = Signed2DTriArea(c, d, a);
+                FPInt a4 = a3 + a2 - a1;
+                FPInt t2 = a3 * a4;
 
                 if (t2 <= 0) {
                     if (t1 * t2 == 0) {
@@ -165,19 +169,19 @@ namespace Amphibian.Collision
             }
 
             return TestResult.None;
-        }
+        }*/
 
-        internal Vector2 ClosestPoint (Vector2 p)
+        internal PointFP ClosestPoint (PointFP p)
         {
-            Vector2 a = _pos + _p0;
-            Vector2 ab = new Vector2(_w, _h);
+            VectorFP a = (VectorFP)_pos + _p0;
+            VectorFP ab = new VectorFP(_w, _h);
 
-            float t = Vector2.Dot(p - a, ab);
+            FPInt t = VectorFP.Dot(p - a, ab);
             if (t <= 0) {
                 return a;
             }
             else {
-                float d = Vector2.Dot(ab, ab);
+                FPInt d = VectorFP.Dot(ab, ab);
                 if (t >= d) {
                     return a + ab;
                 }
@@ -188,17 +192,17 @@ namespace Amphibian.Collision
             }
         }
 
-        internal static bool RangesOverlap (float a1, float a2, float b1, float b2)
+        internal static bool RangesOverlap (FPInt a1, FPInt a2, FPInt b1, FPInt b2)
         {
-            float min1 = a1;
-            float max1 = a2;
+            FPInt min1 = a1;
+            FPInt max1 = a2;
             if (min1 > max1) {
                 min1 = a2;
                 max1 = a1;
             }
 
-            float min2 = b1;
-            float max2 = b2;
+            FPInt min2 = b1;
+            FPInt max2 = b2;
             if (min2 > max2) {
                 min2 = b2;
                 max2 = b1;
@@ -207,23 +211,23 @@ namespace Amphibian.Collision
             return !(min1 > max2 || min2 > max1);
         }
 
-        internal bool IntersectsLine (Vector2 c, Vector2 d)
+        internal bool IntersectsLine (PointFP c, PointFP d)
         {
-            Vector2 a = _pos + _p0;
-            Vector2 b = a + new Vector2(_w, _h);
+            VectorFP a = (VectorFP)_pos + _p0;
+            VectorFP b = a + new VectorFP(_w, _h);
 
             return IntersectsLine(a, b, c, d);
         }
 
-        internal static bool IntersectsLine (Vector2 a, Vector2 b, Vector2 c, Vector2 d)
+        internal static bool IntersectsLine (PointFP a, PointFP b, PointFP c, PointFP d)
         {
             // Check that given line is on both sides of this line
-            float xf = b.Y - a.Y;
-            float yf = b.X - a.X;
-            float t = d.X * c.Y - c.X * d.Y;
+            FPInt xf = b.Y - a.Y;
+            FPInt yf = b.X - a.X;
+            FPInt t = d.X * c.Y - c.X * d.Y;
 
-            float f1 = xf * c.Y - yf * c.X - t;
-            float f2 = xf * d.Y - yf * d.X - t;
+            FPInt f1 = xf * c.Y - yf * c.X - t;
+            FPInt f2 = xf * d.Y - yf * d.X - t;
 
             if (f1 * f2 >= 0) {
                 return false;

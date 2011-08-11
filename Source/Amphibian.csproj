@@ -110,12 +110,11 @@
     <Compile Include="Collision\AABBMask.cs" />
     <Compile Include="Collision\AXLineMask.cs" />
     <Compile Include="Collision\AYLineMask.cs" />
-    <Compile Include="Collision\BoundingRectangle.cs" />
     <Compile Include="Collision\CircleMask.cs" />
     <Compile Include="Collision\Collision.cs" />
     <Compile Include="Collision\CollisionManager.cs" />
     <Compile Include="Collision\CollisionTileMapper.cs" />
-    <Compile Include="Collision\CollisionTR.cs" />
+    <None Include="Collision\CollisionTR.cs" />
     <Compile Include="Collision\CompositeMask.cs" />
     <Compile Include="Collision\LineMask.cs" />
     <Compile Include="Collision\Mask.cs" />
@@ -129,6 +128,7 @@
     <Compile Include="Geometry\FPMath.cs" />
     <Compile Include="Geometry\PointFP.cs" />
     <Compile Include="Geometry\RectangleFP.cs" />
+    <Compile Include="Geometry\VectorFP.cs" />
     <Compile Include="Input\ButtonController.cs" />
     <Compile Include="Input\InputController.cs" />
     <Compile Include="Input\KeyboardController.cs" />

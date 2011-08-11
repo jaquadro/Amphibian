@@ -5,16 +5,17 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Amphibian.Drawing;
+using Amphibian.Geometry;
 
 namespace Amphibian.Collision
 {
     public class AABBMask : Mask
     {
-        internal Vector2 _point;
-        internal float _w;
-        internal float _h;
+        internal PointFP _point;
+        internal FPInt _w;
+        internal FPInt _h;
 
-        public AABBMask (Vector2 p, float width, float height)
+        public AABBMask (PointFP p, FPInt width, FPInt height)
         {
             _type = MaskType.AABB;
             _point = p;
@@ -22,16 +23,16 @@ namespace Amphibian.Collision
             _h = height;
         }
 
-        public AABBMask (Vector2 p0, Vector2 p1)
+        public AABBMask (PointFP p0, PointFP p1)
         {
             _type = MaskType.AABB;
 
-            float minx = (p0.X < p1.X) ? p0.X : p1.X;
-            float miny = (p0.Y < p1.Y) ? p0.Y : p1.Y;
+            FPInt minx = (p0.X < p1.X) ? p0.X : p1.X;
+            FPInt miny = (p0.Y < p1.Y) ? p0.Y : p1.Y;
 
-            _point = new Vector2(minx, miny);
-            _w = Math.Abs(p1.X - p0.X);
-            _h = Math.Abs(p1.Y - p0.Y);
+            _point = new PointFP(minx, miny);
+            _w = FPMath.Abs(p1.X - p0.X);
+            _h = FPMath.Abs(p1.Y - p0.Y);
         }
 
         public override object Clone ()
@@ -42,9 +43,9 @@ namespace Amphibian.Collision
             return mask;
         }
 
-        public override BoundingRectangle Bounds
+        public override RectangleFP Bounds
         {
-            get { return new BoundingRectangle(_pos.X + _point.X, _pos.Y + _point.Y, _w, _h); }
+            get { return new RectangleFP(_pos.X + _point.X, _pos.Y + _point.Y, _w, _h); }
         }
 
         public override void Draw (SpriteBatch spriteBatch)
@@ -78,7 +79,7 @@ namespace Amphibian.Collision
             return false;
         }
 
-        public override TestResult TestOverlapExt (Mask mask)
+        /*public override TestResult TestOverlapExt (Mask mask)
         {
             switch (mask._type) {
                 case MaskType.Point:
@@ -119,47 +120,42 @@ namespace Amphibian.Collision
         public TestResult TestOverlapExt (TriangleMask mask)
         {
             return CollisionTR.TestOverlap(this, mask);
-        }
+        }*/
 
-        internal Vector2 ClosestPoint (Vector2 p)
+        internal PointFP ClosestPoint (PointFP p)
         {
-            //edge = false;
-            Vector2 r = _pos + _point;
-            Vector2 q = p;
+            VectorFP r = (VectorFP)_pos + _point;
+            PointFP q = p;
 
             if (q.X <= r.X) {
                 q.X = r.X;
-                //edge = true;
             }
             else {
-                float mx = r.X + _w;
+                FPInt mx = r.X + _w;
                 if (q.X >= mx) {
                     q.X = mx;
-                    //edge = true;
                 }
             }
 
             if (q.Y <= r.Y) {
                 q.Y = r.Y;
-                //edge = true;
             }
             else {
-                float my = r.Y + _h;
+                FPInt my = r.Y + _h;
                 if (q.Y >= my) {
                     q.Y = my;
-                    //edge = true;
                 }
             }
 
             return q;
         }
 
-        internal TestResult LineIntersect (Vector2 p0, Vector2 p1)
+        /*internal TestResult LineIntersect (PointFP p0, PointFP p1)
         {
-            Vector2 r = _pos + _point;
+            VectorFP r = (VectorFP)_pos + _point;
 
-            float rw = r.X + _w;
-            float rh = r.Y + _h;
+            FPInt rw = r.X + _w;
+            FPInt rh = r.Y + _h;
 
             if (p0.X == p1.X) {
                 // Parallel to Y
@@ -167,8 +163,8 @@ namespace Amphibian.Collision
                     return TestResult.None;
                 }
 
-                float pmin = Math.Min(p0.Y, p1.Y);
-                float pmax = p0.Y + p1.Y - pmin;
+                FPInt pmin = FPMath.Min(p0.Y, p1.Y);
+                FPInt pmax = p0.Y + p1.Y - pmin;
                 if (pmin > rh || pmax < r.Y) {
                     return TestResult.None;
                 }
@@ -188,8 +184,8 @@ namespace Amphibian.Collision
                     return TestResult.None;
                 }
 
-                float pmin = Math.Min(p0.X, p1.X);
-                float pmax = p0.X + p1.X - pmin;
+                FPInt pmin = FPMath.Min(p0.X, p1.X);
+                FPInt pmax = p0.X + p1.X - pmin;
                 if (pmin > rw || pmax < r.X) {
                     return TestResult.None;
                 }
@@ -204,11 +200,11 @@ namespace Amphibian.Collision
                 return TestResult.Overlapping;
             }
 
-            float m = (p0.Y - p1.Y) / (p0.X - p1.X);
-            float c = p0.Y - (m * p0.X);
+            FPInt m = (p0.Y - p1.Y) / (p0.X - p1.X);
+            FPInt c = p0.Y - (m * p0.X);
 
-            float topIntersect = c;
-            float botIntersect = c;
+            FPInt topIntersect = c;
+            FPInt botIntersect = c;
 
             if (m > 0) {
                 // Slope descending left to right
@@ -221,8 +217,8 @@ namespace Amphibian.Collision
                 botIntersect += (m * r.X);          // b = mL + c
             }
 
-            float topTriPoint = p0.Y;
-            float botTriPoint = p1.Y;
+            FPInt topTriPoint = p0.Y;
+            FPInt botTriPoint = p1.Y;
 
             if (p0.Y > p1.Y) {
                 // P0 is actually lower
@@ -230,8 +226,8 @@ namespace Amphibian.Collision
                 botTriPoint = p0.Y;
             }
 
-            float topOver = (topIntersect > topTriPoint) ? topIntersect : topTriPoint;
-            float botOver = (botIntersect < botTriPoint) ? botIntersect : botTriPoint;
+            FPInt topOver = (topIntersect > topTriPoint) ? topIntersect : topTriPoint;
+            FPInt botOver = (botIntersect < botTriPoint) ? botIntersect : botTriPoint;
 
             // Test ranges
             if (topOver > botOver || botOver < r.Y || topOver > rh) {
@@ -244,14 +240,14 @@ namespace Amphibian.Collision
             }
 
             return TestResult.Overlapping;
-        }
+        }*/
 
-        internal bool IntersectsLine (Vector2 p0, Vector2 p1)
+        internal bool IntersectsLine (PointFP p0, PointFP p1)
         {
-            Vector2 r = _pos + _point;
+            VectorFP r = (VectorFP)_pos + _point;
 
-            float rw = r.X + _w;
-            float rh = r.Y + _h;
+            FPInt rw = r.X + _w;
+            FPInt rh = r.Y + _h;
 
             if (p0.X == p1.X) {
                 // Parallel to Y
@@ -259,8 +255,8 @@ namespace Amphibian.Collision
                     return false;
                 }
 
-                float pmin = Math.Min(p0.Y, p1.Y);
-                float pmax = p0.Y + p1.Y - pmin;
+                FPInt pmin = FPMath.Min(p0.Y, p1.Y);
+                FPInt pmax = p0.Y + p1.Y - pmin;
 
                 return !(pmin > rh || pmax < r.Y);
             }
@@ -270,17 +266,17 @@ namespace Amphibian.Collision
                     return false;
                 }
 
-                float pmin = Math.Min(p0.X, p1.X);
-                float pmax = p0.X + p1.X - pmin;
+                FPInt pmin = FPMath.Min(p0.X, p1.X);
+                FPInt pmax = p0.X + p1.X - pmin;
 
                 return !(pmin > rw || pmax < r.X);
             }
 
-            float m = (p0.Y - p1.Y) / (p0.X - p1.X);
-            float c = p0.Y - (m * p0.X);
+            FPInt m = (p0.Y - p1.Y) / (p0.X - p1.X);
+            FPInt c = p0.Y - (m * p0.X);
 
-            float topIntersect = c;
-            float botIntersect = c;
+            FPInt topIntersect = c;
+            FPInt botIntersect = c;
 
             if (m > 0) {
                 // Slope descending left to right
@@ -293,8 +289,8 @@ namespace Amphibian.Collision
                 botIntersect += (m * r.X);          // b = mL + c
             }
 
-            float topTriPoint = p0.Y;
-            float botTriPoint = p1.Y;
+            FPInt topTriPoint = p0.Y;
+            FPInt botTriPoint = p1.Y;
 
             if (p0.Y > p1.Y) {
                 // P0 is actually lower
@@ -302,8 +298,8 @@ namespace Amphibian.Collision
                 botTriPoint = p0.Y;
             }
 
-            float topOver = (topIntersect > topTriPoint) ? topIntersect : topTriPoint;
-            float botOver = (botIntersect < botTriPoint) ? botIntersect : botTriPoint;
+            FPInt topOver = (topIntersect > topTriPoint) ? topIntersect : topTriPoint;
+            FPInt botOver = (botIntersect < botTriPoint) ? botIntersect : botTriPoint;
 
             return !(topOver > botOver || botOver < r.Y || topOver > rh);
         }

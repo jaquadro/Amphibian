@@ -2,15 +2,16 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Amphibian.Drawing;
+using Amphibian.Geometry;
 
 namespace Amphibian.Collision
 {
     public sealed class CircleMask : Mask
     {
-        internal Vector2 _p;
-        internal float _radius;
+        internal PointFP _p;
+        internal FPInt _radius;
 
-        public CircleMask (Vector2 center, float radius)
+        public CircleMask (PointFP center, FPInt radius)
         {
             _type = MaskType.Circle;
             _p = center;
@@ -25,14 +26,15 @@ namespace Amphibian.Collision
             return mask;
         }
 
-        public override BoundingRectangle Bounds
+        public override RectangleFP Bounds
         {
-            get { return new BoundingRectangle(_pos.X + _p.X - (_radius * 0.5f), _pos.Y + _p.Y - (_radius * 0.5f), _radius, _radius); }
+            get { return new RectangleFP(_pos.X + _p.X - (_radius * (FPInt)0.5f), _pos.Y + _p.Y - (_radius * (FPInt)0.5f), _radius, _radius); }
         }
 
         public override void Draw (SpriteBatch spriteBatch)
         {
-            Primitives2D.DrawCircle(spriteBatch, _pos + _p, _radius, 24, Color.White);
+            VectorFP c = (VectorFP)_pos + _p;
+            Primitives2D.DrawCircle(spriteBatch, (float)c.X, (float)c.Y, (float)_radius, 24, Color.White);
         }
 
         public override bool TestOverlap (Mask mask)
@@ -59,7 +61,7 @@ namespace Amphibian.Collision
             return false;
         }
 
-        public override TestResult TestOverlapExt (Mask mask)
+        /*public override TestResult TestOverlapExt (Mask mask)
         {
             switch (mask._type) {
                 case MaskType.Point:
@@ -100,6 +102,6 @@ namespace Amphibian.Collision
         public TestResult TestOverlapExt (TriangleMask mask)
         {
             return CollisionTR.TestOverlap(this, mask);
-        }
+        }*/
     }
 }

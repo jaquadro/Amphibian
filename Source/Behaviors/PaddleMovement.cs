@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Amphibian.Input;
+using Amphibian.Geometry;
 
 namespace Amphibian.Behaviors
 {
@@ -26,13 +27,13 @@ namespace Amphibian.Behaviors
         private ButtonController<TActionSet> _controller;
         private Dictionary<PaddleAction, TActionSet> _inputMap;
 
-        private Vector2 _center;
+        private PointFP _center;
         private PaddleDirection _direction;
-        private float _range;
+        private FPInt _range;
         private float _speed;
 
         private GameObject _object;
-        private float _pos;
+        private FPInt _pos;
 
         public PaddleMovement (GameObject obj, string buttonControllerName, Dictionary<PaddleAction, TActionSet> controlMap)
             : base()
@@ -63,13 +64,13 @@ namespace Amphibian.Behaviors
             set { _direction = value; }
         }
 
-        public Vector2 Origin
+        public PointFP Origin
         {
             get { return _center; }
             set { _center = value; }
         }
 
-        public float Range
+        public FPInt Range
         {
             get { return _range; }
             set { _range = value; }
@@ -127,15 +128,14 @@ namespace Amphibian.Behaviors
                 }
             }
 
-            _pos += diff;
-            _pos = MathHelper.Max(_pos, -_range);
-            _pos = MathHelper.Min(_pos, _range);
+            _pos += (FPInt)diff;
+            _pos = FPMath.Clamp(_pos, -_range, _range);
 
             if (_direction == PaddleDirection.Horizontal) {
-                _object.X = (float)(Math.Floor(_center.X + _pos));
+                _object.X = _center.X + _pos;
             }
             else {
-                _object.Y = (float)(Math.Floor(_center.Y + _pos));
+                _object.Y = _center.Y + _pos;
             }
         }
     }

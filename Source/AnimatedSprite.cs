@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Amphibian.Geometry;
 
 namespace Amphibian
 {
@@ -158,7 +159,7 @@ namespace Amphibian
             }
         }
 
-        public override void Draw (SpriteBatch spriteBatch, Vector2 position)
+        public override void Draw (SpriteBatch spriteBatch, PointFP position)
         {
             if (_frames.Count > 0) {
                 _frames[_index].Frame.Draw(spriteBatch, position);
