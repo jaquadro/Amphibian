@@ -105,7 +105,8 @@
     <Compile Include="Behavior.cs" />
     <Compile Include="Behaviors\CircleMovement.cs" />
     <Compile Include="Behaviors\PaddleMovement.cs" />
-    <Compile Include="Behaviors\PlatformMovement.cs" />
+    <None Include="Behaviors\PlatformMovement.cs" />
+    <Compile Include="Behaviors\PlayerPlatformMovement.cs" />
     <Compile Include="Camera.cs" />
     <Compile Include="Collision\AABBMask.cs" />
     <Compile Include="Collision\AXLineMask.cs" />
@@ -128,6 +129,7 @@
     <Compile Include="Geometry\FPMath.cs" />
     <Compile Include="Geometry\PointFP.cs" />
     <Compile Include="Geometry\RectangleFP.cs" />
+    <Compile Include="Geometry\SharedPointFP.cs" />
     <Compile Include="Geometry\VectorFP.cs" />
     <Compile Include="Input\ButtonController.cs" />
     <Compile Include="Input\InputController.cs" />

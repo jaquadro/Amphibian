@@ -17,7 +17,7 @@ namespace Amphibian.Collision
             Init(scalex, scaley);
         }
 
-        public Mask Lookup (int id, PointFP position)
+        public Mask Lookup (int id, SharedPointFP position)
         {
             if (_lookup.ContainsKey(id) == false) {
                 return null;

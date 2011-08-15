@@ -102,18 +102,18 @@ namespace Amphibian.Collision
             FPInt py2 = py1 + _h;
 
             // Check that given line is on both sides of AYLine
-            FPInt xf = py2 - py1;
-            FPInt t = px * xf;
+            FPLong xf = py2 - py1;
+            FPLong t = px * xf;
 
-            FPInt f1 = xf * c.X - t;
-            FPInt f2 = xf * d.X - t;
+            FPLong f1 = xf * c.X - t;
+            FPLong f2 = xf * d.X - t;
 
             if (f1 * f2 >= 0) {
                 return false;
             }
 
             // Check that AYLine is on both sides of given line
-            FPInt yf = d.X - c.X;
+            FPLong yf = d.X - c.X;
             t = (d.Y - c.Y) * px + (d.X * c.Y - c.X * d.Y);
 
             f1 = yf * py1 - t;

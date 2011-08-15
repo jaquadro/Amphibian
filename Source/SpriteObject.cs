@@ -13,12 +13,13 @@ namespace Amphibian
 {
     public class GameObject : Component
     {
-        protected PointFP _position;
+        protected SharedPointFP _position;
         protected List<Behavior> _behaviors;
 
         public GameObject ()
             : base()
         {
+            _position = new SharedPointFP(0, 0);
             _behaviors = new List<Behavior>();
         }
 
@@ -34,6 +35,11 @@ namespace Amphibian
         {
             get { return _position.Y; }
             set { _position.Y = value; }
+        }
+
+        internal SharedPointFP Position
+        {
+            get { return _position; }
         }
 
         #endregion
@@ -73,6 +79,12 @@ namespace Amphibian
             foreach (Behavior behavior in _behaviors) {
                 behavior.Execute();
             }
+        }
+
+        public void Offset (FPInt offsetX, FPInt offsetY)
+        {
+            _position.X += offsetX;
+            _position.Y += offsetY;
         }
     }
 

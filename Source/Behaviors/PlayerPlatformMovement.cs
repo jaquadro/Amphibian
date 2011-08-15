@@ -5,11 +5,29 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Amphibian.Collision;
 using Amphibian.Geometry;
+using Amphibian.Input;
 
 namespace Amphibian.Behaviors
 {
-    public class PlatformMovement : Behavior
+    public enum PlatformAction
     {
+        Left,
+        Right,
+        Up,
+        Down,
+        Jump,
+        Action
+    }
+
+    public class PlayerPlatformMovement<TActionSet> : Behavior
+        where TActionSet : struct
+    {
+        private const int _maxSlope = 2;
+
+        private string _controllerName;
+        private ButtonController<TActionSet> _controller;
+        private Dictionary<PlatformAction, TActionSet> _inputMap;
+
         private GameObject _object;
 
         private FPInt _xAccel;
@@ -27,19 +45,51 @@ namespace Amphibian.Behaviors
         // Detectors
         private FPInt _detLowLeft;
         private FPInt _detLowRight;
+        private AYLineMask _detLeft;
+        private AYLineMask _detRight;
 
-        public PlatformMovement (GameObject obj)
+        #region Constructors
+
+        private PlayerPlatformMovement (GameObject obj)
             : base()
         {
             _object = obj;
 
             ICollidable c = _object as ICollidable;
-            _floorDet = new AXLineMask(new PointFP(obj.X - c.CollisionMask.Bounds.Left, c.CollisionMask.Bounds.Bottom - obj.Y), c.CollisionMask.Bounds.Width);
-            _floorDet.Position = new PointFP(obj.X, obj.Y);
+            _floorDet = new AXLineMask(new PointFP(c.CollisionMask.Bounds.Left - _object.X, c.CollisionMask.Bounds.Bottom - _object.Y), c.CollisionMask.Bounds.Width);
+            _floorDet.Position = _object.Position;
 
-            _subFloorDet = _floorDet.Clone() as AXLineMask;
-            _subFloorDet.Position = new PointFP(_subFloorDet.Position.X, _subFloorDet.Position.Y + 1);
+            _subFloorDet = new AXLineMask(new PointFP(c.CollisionMask.Bounds.Left - _object.X, c.CollisionMask.Bounds.Bottom - _object.Y + 1), c.CollisionMask.Bounds.Width);
+            _subFloorDet.Position = _object.Position;
+
+            _detLowLeft = c.CollisionMask.Bounds.Left - _object.X + 2;
+            _detLowRight = c.CollisionMask.Bounds.Right - _object.X - 2;
+
+            _detLeft = new AYLineMask(new PointFP(_detLowLeft - 2, c.CollisionMask.Bounds.Top - _object.Y + _maxSlope), c.CollisionMask.Bounds.Height - (2 * _maxSlope));
+            _detRight = new AYLineMask(new PointFP(_detLowRight + 2, c.CollisionMask.Bounds.Top - _object.Y + _maxSlope), c.CollisionMask.Bounds.Height - (2 * _maxSlope));
+
+            _detLeft.Position = _object.Position;
+            _detRight.Position = _object.Position;
         }
+
+        public PlayerPlatformMovement (GameObject obj, string buttonControllerName, Dictionary<PlatformAction, TActionSet> controlMap)
+            : this(obj)
+        {
+            Engine engine = obj.Parent.Engine;
+
+            _controllerName = buttonControllerName;
+            _controller = engine.GetController(buttonControllerName) as ButtonController<TActionSet>;
+            _inputMap = controlMap;
+        }
+
+        public PlayerPlatformMovement (GameObject obj, ButtonController<TActionSet> buttonController, Dictionary<PlatformAction, TActionSet> controlMap)
+            : this(obj)
+        {
+            _controller = buttonController;
+            _inputMap = controlMap;
+        }
+
+        #endregion
 
         #region Properties
 
@@ -105,8 +155,28 @@ namespace Amphibian.Behaviors
 
         #endregion
 
+        #region Event Handlers
+
+        private void HandleControllerAdded (Object sender, ControllerEventArgs e)
+        {
+            if (_controllerName == e.Name) {
+                _controller = e.Controller as ButtonController<TActionSet>;
+            }
+        }
+
+        private void HandleControllerRemoved (Object sender, ControllerEventArgs e)
+        {
+            if (_controllerName == e.Name) {
+                _controller = null;
+            }
+        }
+
+        #endregion
+
         public override void Execute ()
         {
+            HandleInput();
+
             float time = (float)_object.Parent.Engine.GameTime.ElapsedGameTime.TotalSeconds;
 
             FPInt txAccel = (FPInt)((float)_xAccel * time);
@@ -118,10 +188,12 @@ namespace Amphibian.Behaviors
             FPInt txVelocity = (FPInt)((float)_xVelocity * time);
             FPInt tyVelocity = (FPInt)((float)_yVelocity * time);
 
-            _object.X += txVelocity;
+            MoveLR(txVelocity);
+
+            //_object.X += txVelocity;
             //_object.Y -= _yVelocity * time;
 
-            
+
 
             /*if (_object.Parent.OverlapsBackdrop(c.CollisionMask)) {
                 _xAccel = 0;
@@ -131,12 +203,19 @@ namespace Amphibian.Behaviors
             }*/
 
             Fall(tyVelocity);
+        }
 
-            ICollidable c = _object as ICollidable;
-            c.CollisionMask.Position = new PointFP(_object.X, c.CollisionMask.Position.Y);
-
-            _floorDet.Position = new PointFP(_object.X, _object.Y);
-            _subFloorDet.Position = new PointFP(_object.X, _object.Y + 1);
+        private void HandleInput ()
+        {
+            if (_controller.ButtonHeld(_inputMap[PlatformAction.Left])) {
+                _xAccel = -500;
+            }
+            else if (_controller.ButtonHeld(_inputMap[PlatformAction.Right])) {
+                _xAccel = 500;
+            }
+            else {
+                _xAccel = 0;
+            }
         }
 
         private void StepMovement (FPInt distX, FPInt distY)
@@ -154,7 +233,7 @@ namespace Amphibian.Behaviors
 
             // Y - No points colliding; Fall
             if (!(testLC | testLL | testLR)) {
-                
+
             }
             // Y - Center subpoint colliding; On Level Terrain
             else if (testLC && !(testLL | testLR)) {
@@ -168,6 +247,32 @@ namespace Amphibian.Behaviors
             else {
 
             }
+        }
+
+        private void MoveLR (FPInt dist)
+        {
+            _object.X += dist;
+
+            if (dist > 0) {
+                if (_object.Parent.OverlapsBackdrop(_detRight)) {
+                    _xVelocity = 0;
+
+                    _object.X = (FPInt)_object.X.Floor;
+                    while (_object.Parent.OverlapsBackdrop(_detRight)) {
+                        _object.X -= 1;
+                    }
+                }
+            }
+            else if (dist < 0) {
+                if (_object.Parent.OverlapsBackdrop(_detLeft)) {
+                    _xVelocity = 0;
+
+                    _object.X = (FPInt)_object.X.Floor;
+                    while (_object.Parent.OverlapsBackdrop(_detLeft)) {
+                        _object.X += 1;
+                    }
+                }
+            }            
         }
 
         /*private void MoveFall (FPInt distY)
@@ -186,15 +291,16 @@ namespace Amphibian.Behaviors
                 _yVelocity = 0;
 
                 while (_object.Parent.OverlapsBackdrop(_floorDet)) {
-                    _floorDet.Position = new PointFP(_floorDet.Position.X, _floorDet.Position.Y - 1);
+                    _object.Offset(0, -1);
+                    //_floorDet.Position = new PointFP(_floorDet.Position.X, _floorDet.Position.Y - 1);
                 }
 
-                _object.Y = _floorDet.Position.Y;
-                _subFloorDet.Position = new PointFP(_subFloorDet.Position.X, _floorDet.Position.Y + 1);
+                //_object.Y = _floorDet.Position.Y;
+                //_subFloorDet.Position = new PointFP(_subFloorDet.Position.X, _floorDet.Position.Y + 1);
 
-                ICollidable c = _object as ICollidable;
-                Mask mask = c.CollisionMask;
-                mask.Position = new PointFP(mask.Position.X, _object.Y);
+                //ICollidable c = _object as ICollidable;
+                //Mask mask = c.CollisionMask;
+                //mask.Position = new PointFP(mask.Position.X, _object.Y);
             }
             else {
                 AABBMask rmask = new AABBMask(new PointFP(_floorDet.Bounds.Left, _floorDet.Bounds.Bottom), _floorDet.Bounds.Width, -dist);
@@ -207,15 +313,15 @@ namespace Amphibian.Behaviors
                 }
 
                 _object.Y += rmask.Bounds.Height;
-                _floorDet.Position = new PointFP(_floorDet.Position.X, _object.Y);
-                _subFloorDet.Position = new PointFP(_floorDet.Position.X, _object.Y + 1);
+                //_floorDet.Position = new PointFP(_floorDet.Position.X, _object.Y);
+                //_subFloorDet.Position = new PointFP(_floorDet.Position.X, _object.Y + 1);
 
-                ICollidable c = _object as ICollidable;
-                Mask mask = c.CollisionMask;
-                mask.Position = new PointFP(mask.Position.X, _object.Y);
+                //ICollidable c = _object as ICollidable;
+                //Mask mask = c.CollisionMask;
+                //mask.Position = new PointFP(mask.Position.X, _object.Y);
             }
         }
 
-        
+
     }
 }

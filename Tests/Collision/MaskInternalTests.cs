@@ -13,228 +13,228 @@ namespace Amphibian.Collision.Tests
         [Test]
         public void TestAXLineIntersectLineNone ()
         {
-            AXLineMask axline = new AXLineMask(new PointFP(0, 0), 10);
+            AXLineMask axline = new AXLineMask(new SharedPointFP(0, 0), 10);
 
             // Against Pos Line
-            PointFP c = new PointFP(40, 80);
-            PointFP d = new PointFP(50, 90);
+            SharedPointFP c = new SharedPointFP(40, 80);
+            SharedPointFP d = new SharedPointFP(50, 90);
 
-            axline.Position = new PointFP(29, 80);
+            axline.Position = new SharedPointFP(29, 80);
             Assert.IsFalse(axline.IntersectsLine(c, d));
 
-            axline.Position = new PointFP(34, 85);
+            axline.Position = new SharedPointFP(34, 85);
             Assert.IsFalse(axline.IntersectsLine(c, d));
 
-            axline.Position = new PointFP(39, 90);
+            axline.Position = new SharedPointFP(39, 90);
             Assert.IsFalse(axline.IntersectsLine(c, d));
 
-            axline.Position = new PointFP(41, 80);
+            axline.Position = new SharedPointFP(41, 80);
             Assert.IsFalse(axline.IntersectsLine(c, d));
 
-            axline.Position = new PointFP(46, 85);
+            axline.Position = new SharedPointFP(46, 85);
             Assert.IsFalse(axline.IntersectsLine(c, d));
 
-            axline.Position = new PointFP(51, 90);
+            axline.Position = new SharedPointFP(51, 90);
             Assert.IsFalse(axline.IntersectsLine(c, d));
 
-            axline.Position = new PointFP(35, 79);
+            axline.Position = new SharedPointFP(35, 79);
             Assert.IsFalse(axline.IntersectsLine(c, d));
 
-            axline.Position = new PointFP(45, 91);
+            axline.Position = new SharedPointFP(45, 91);
             Assert.IsFalse(axline.IntersectsLine(c, d));
 
             // Against Neg Line
-            c = new PointFP(50, 80);
-            d = new PointFP(40, 90);
+            c = new SharedPointFP(50, 80);
+            d = new SharedPointFP(40, 90);
 
-            axline.Position = new PointFP(39, 80);
+            axline.Position = new SharedPointFP(39, 80);
             Assert.IsFalse(axline.IntersectsLine(c, d));
 
-            axline.Position = new PointFP(34, 85);
+            axline.Position = new SharedPointFP(34, 85);
             Assert.IsFalse(axline.IntersectsLine(c, d));
 
-            axline.Position = new PointFP(29, 90);
+            axline.Position = new SharedPointFP(29, 90);
             Assert.IsFalse(axline.IntersectsLine(c, d));
 
-            axline.Position = new PointFP(51, 80);
+            axline.Position = new SharedPointFP(51, 80);
             Assert.IsFalse(axline.IntersectsLine(c, d));
 
-            axline.Position = new PointFP(46, 85);
+            axline.Position = new SharedPointFP(46, 85);
             Assert.IsFalse(axline.IntersectsLine(c, d));
 
-            axline.Position = new PointFP(41, 90);
+            axline.Position = new SharedPointFP(41, 90);
             Assert.IsFalse(axline.IntersectsLine(c, d));
 
-            axline.Position = new PointFP(55, 79);
+            axline.Position = new SharedPointFP(55, 79);
             Assert.IsFalse(axline.IntersectsLine(c, d));
 
-            axline.Position = new PointFP(35, 91);
+            axline.Position = new SharedPointFP(35, 91);
             Assert.IsFalse(axline.IntersectsLine(c, d));
 
             // Against H Line
-            c = new PointFP(40, 80);
-            d = new PointFP(50, 80);
+            c = new SharedPointFP(40, 80);
+            d = new SharedPointFP(50, 80);
 
-            axline.Position = new PointFP(29, 80);
+            axline.Position = new SharedPointFP(29, 80);
             Assert.IsFalse(axline.IntersectsLine(c, d));
 
-            axline.Position = new PointFP(51, 80);
+            axline.Position = new SharedPointFP(51, 80);
             Assert.IsFalse(axline.IntersectsLine(c, d));
 
-            axline.Position = new PointFP(40, 79);
+            axline.Position = new SharedPointFP(40, 79);
             Assert.IsFalse(axline.IntersectsLine(c, d));
 
-            axline.Position = new PointFP(40, 81);
+            axline.Position = new SharedPointFP(40, 81);
             Assert.IsFalse(axline.IntersectsLine(c, d));
 
             // Against V Line
-            c = new PointFP(40, 80);
-            d = new PointFP(40, 90);
+            c = new SharedPointFP(40, 80);
+            d = new SharedPointFP(40, 90);
 
-            axline.Position = new PointFP(29, 85);
+            axline.Position = new SharedPointFP(29, 85);
             Assert.IsFalse(axline.IntersectsLine(c, d));
 
-            axline.Position = new PointFP(41, 85);
+            axline.Position = new SharedPointFP(41, 85);
             Assert.IsFalse(axline.IntersectsLine(c, d));
 
-            axline.Position = new PointFP(35, 79);
+            axline.Position = new SharedPointFP(35, 79);
             Assert.IsFalse(axline.IntersectsLine(c, d));
 
-            axline.Position = new PointFP(35, 91);
+            axline.Position = new SharedPointFP(35, 91);
             Assert.IsFalse(axline.IntersectsLine(c, d));
         }
 
         [Test]
         public void TestAXLineIntersectLineEdge ()
         {
-            AXLineMask axline = new AXLineMask(new PointFP(0, 0), 10);
+            AXLineMask axline = new AXLineMask(new SharedPointFP(0, 0), 10);
 
             // Against Pos Line
-            PointFP c = new PointFP(40, 80);
-            PointFP d = new PointFP(50, 90);
+            SharedPointFP c = new SharedPointFP(40, 80);
+            SharedPointFP d = new SharedPointFP(50, 90);
 
-            axline.Position = new PointFP(30, 80);
+            axline.Position = new SharedPointFP(30, 80);
             Assert.IsFalse(axline.IntersectsLine(c, d));
 
-            axline.Position = new PointFP(35, 85);
+            axline.Position = new SharedPointFP(35, 85);
             Assert.IsFalse(axline.IntersectsLine(c, d));
 
-            axline.Position = new PointFP(40, 90);
+            axline.Position = new SharedPointFP(40, 90);
             Assert.IsFalse(axline.IntersectsLine(c, d));
 
-            axline.Position = new PointFP(40, 80);
+            axline.Position = new SharedPointFP(40, 80);
             Assert.IsFalse(axline.IntersectsLine(c, d));
 
-            axline.Position = new PointFP(45, 85);
+            axline.Position = new SharedPointFP(45, 85);
             Assert.IsFalse(axline.IntersectsLine(c, d));
 
-            axline.Position = new PointFP(50, 90);
+            axline.Position = new SharedPointFP(50, 90);
             Assert.IsFalse(axline.IntersectsLine(c, d));
 
-            axline.Position = new PointFP(35, 80);
+            axline.Position = new SharedPointFP(35, 80);
             Assert.IsFalse(axline.IntersectsLine(c, d));
 
-            axline.Position = new PointFP(45, 90);
+            axline.Position = new SharedPointFP(45, 90);
             Assert.IsFalse(axline.IntersectsLine(c, d));
 
             // Against Neg Line
-            c = new PointFP(50, 80);
-            d = new PointFP(40, 90);
+            c = new SharedPointFP(50, 80);
+            d = new SharedPointFP(40, 90);
 
-            axline.Position = new PointFP(40, 80);
+            axline.Position = new SharedPointFP(40, 80);
             Assert.IsFalse(axline.IntersectsLine(c, d));
 
-            axline.Position = new PointFP(35, 85);
+            axline.Position = new SharedPointFP(35, 85);
             Assert.IsFalse(axline.IntersectsLine(c, d));
 
-            axline.Position = new PointFP(30, 90);
+            axline.Position = new SharedPointFP(30, 90);
             Assert.IsFalse(axline.IntersectsLine(c, d));
 
-            axline.Position = new PointFP(50, 80);
+            axline.Position = new SharedPointFP(50, 80);
             Assert.IsFalse(axline.IntersectsLine(c, d));
 
-            axline.Position = new PointFP(45, 85);
+            axline.Position = new SharedPointFP(45, 85);
             Assert.IsFalse(axline.IntersectsLine(c, d));
 
-            axline.Position = new PointFP(40, 90);
+            axline.Position = new SharedPointFP(40, 90);
             Assert.IsFalse(axline.IntersectsLine(c, d));
 
-            axline.Position = new PointFP(55, 80);
+            axline.Position = new SharedPointFP(55, 80);
             Assert.IsFalse(axline.IntersectsLine(c, d));
 
-            axline.Position = new PointFP(35, 90);
+            axline.Position = new SharedPointFP(35, 90);
             Assert.IsFalse(axline.IntersectsLine(c, d));
 
             // Against H Line
-            c = new PointFP(40, 80);
-            d = new PointFP(50, 80);
+            c = new SharedPointFP(40, 80);
+            d = new SharedPointFP(50, 80);
 
-            axline.Position = new PointFP(30, 80);
+            axline.Position = new SharedPointFP(30, 80);
             Assert.IsFalse(axline.IntersectsLine(c, d));
 
-            axline.Position = new PointFP(50, 80);
+            axline.Position = new SharedPointFP(50, 80);
             Assert.IsFalse(axline.IntersectsLine(c, d));
 
             // Against V Line
-            c = new PointFP(40, 80);
-            d = new PointFP(40, 90);
+            c = new SharedPointFP(40, 80);
+            d = new SharedPointFP(40, 90);
 
-            axline.Position = new PointFP(30, 85);
+            axline.Position = new SharedPointFP(30, 85);
             Assert.IsFalse(axline.IntersectsLine(c, d));
 
-            axline.Position = new PointFP(40, 85);
+            axline.Position = new SharedPointFP(40, 85);
             Assert.IsFalse(axline.IntersectsLine(c, d));
 
-            axline.Position = new PointFP(35, 80);
+            axline.Position = new SharedPointFP(35, 80);
             Assert.IsFalse(axline.IntersectsLine(c, d));
 
-            axline.Position = new PointFP(35, 90);
+            axline.Position = new SharedPointFP(35, 90);
             Assert.IsFalse(axline.IntersectsLine(c, d));
         }
 
         [Test]
         public void TestAXLineIntersectLineColinear ()
         {
-            AXLineMask axline = new AXLineMask(new PointFP(0, 0), 10);
+            AXLineMask axline = new AXLineMask(new SharedPointFP(0, 0), 10);
 
             // Against H Line
-            PointFP c = new PointFP(40, 80);
-            PointFP d = new PointFP(50, 80);
+            SharedPointFP c = new SharedPointFP(40, 80);
+            SharedPointFP d = new SharedPointFP(50, 80);
 
-            axline.Position = new PointFP(35, 80);
+            axline.Position = new SharedPointFP(35, 80);
             Assert.IsFalse(axline.IntersectsLine(c, d));
 
-            axline.Position = new PointFP(40, 80);
+            axline.Position = new SharedPointFP(40, 80);
             Assert.IsFalse(axline.IntersectsLine(c, d));
 
-            axline.Position = new PointFP(45, 80);
+            axline.Position = new SharedPointFP(45, 80);
             Assert.IsFalse(axline.IntersectsLine(c, d));
         }
 
         [Test]
         public void TestAXLineIntersectLine ()
         {
-            AXLineMask axline = new AXLineMask(new PointFP(0, 0), 10);
+            AXLineMask axline = new AXLineMask(new SharedPointFP(0, 0), 10);
 
             // Against V Line
-            PointFP c = new PointFP(40, 80);
-            PointFP d = new PointFP(40, 90);
+            SharedPointFP c = new SharedPointFP(40, 80);
+            SharedPointFP d = new SharedPointFP(40, 90);
 
-            axline.Position = new PointFP(35, 85);
+            axline.Position = new SharedPointFP(35, 85);
             Assert.IsTrue(axline.IntersectsLine(c, d));
 
             // Against Pos Line
-            c = new PointFP(40, 80);
-            d = new PointFP(50, 90);
+            c = new SharedPointFP(40, 80);
+            d = new SharedPointFP(50, 90);
 
-            axline.Position = new PointFP(40, 85);
+            axline.Position = new SharedPointFP(40, 85);
             Assert.IsTrue(axline.IntersectsLine(c, d));
 
             // Against Neg Line
-            c = new PointFP(50, 80);
-            d = new PointFP(40, 90);
+            c = new SharedPointFP(50, 80);
+            d = new SharedPointFP(40, 90);
 
-            axline.Position = new PointFP(40, 85);
+            axline.Position = new SharedPointFP(40, 85);
             Assert.IsTrue(axline.IntersectsLine(c, d));
         }
 
@@ -243,228 +243,228 @@ namespace Amphibian.Collision.Tests
         [Test]
         public void TestAYLineIntersectLineNone ()
         {
-            AYLineMask ayline = new AYLineMask(new PointFP(0, 0), 10);
+            AYLineMask ayline = new AYLineMask(new SharedPointFP(0, 0), 10);
 
             // Against Pos Line
-            PointFP c = new PointFP(40, 80);
-            PointFP d = new PointFP(50, 90);
+            SharedPointFP c = new SharedPointFP(40, 80);
+            SharedPointFP d = new SharedPointFP(50, 90);
 
-            ayline.Position = new PointFP(40, 69);
+            ayline.Position = new SharedPointFP(40, 69);
             Assert.IsFalse(ayline.IntersectsLine(c, d));
 
-            ayline.Position = new PointFP(45, 74);
+            ayline.Position = new SharedPointFP(45, 74);
             Assert.IsFalse(ayline.IntersectsLine(c, d));
 
-            ayline.Position = new PointFP(50, 79);
+            ayline.Position = new SharedPointFP(50, 79);
             Assert.IsFalse(ayline.IntersectsLine(c, d));
 
-            ayline.Position = new PointFP(40, 81);
+            ayline.Position = new SharedPointFP(40, 81);
             Assert.IsFalse(ayline.IntersectsLine(c, d));
 
-            ayline.Position = new PointFP(45, 86);
+            ayline.Position = new SharedPointFP(45, 86);
             Assert.IsFalse(ayline.IntersectsLine(c, d));
 
-            ayline.Position = new PointFP(50, 91);
+            ayline.Position = new SharedPointFP(50, 91);
             Assert.IsFalse(ayline.IntersectsLine(c, d));
 
-            ayline.Position = new PointFP(39, 75);
+            ayline.Position = new SharedPointFP(39, 75);
             Assert.IsFalse(ayline.IntersectsLine(c, d));
 
-            ayline.Position = new PointFP(51, 85);
+            ayline.Position = new SharedPointFP(51, 85);
             Assert.IsFalse(ayline.IntersectsLine(c, d));
 
             // Against Neg Line
-            c = new PointFP(50, 80);
-            d = new PointFP(40, 90);
+            c = new SharedPointFP(50, 80);
+            d = new SharedPointFP(40, 90);
 
-            ayline.Position = new PointFP(40, 79);
+            ayline.Position = new SharedPointFP(40, 79);
             Assert.IsFalse(ayline.IntersectsLine(c, d));
 
-            ayline.Position = new PointFP(45, 74);
+            ayline.Position = new SharedPointFP(45, 74);
             Assert.IsFalse(ayline.IntersectsLine(c, d));
 
-            ayline.Position = new PointFP(50, 69);
+            ayline.Position = new SharedPointFP(50, 69);
             Assert.IsFalse(ayline.IntersectsLine(c, d));
 
-            ayline.Position = new PointFP(50, 81);
+            ayline.Position = new SharedPointFP(50, 81);
             Assert.IsFalse(ayline.IntersectsLine(c, d));
 
-            ayline.Position = new PointFP(45, 86);
+            ayline.Position = new SharedPointFP(45, 86);
             Assert.IsFalse(ayline.IntersectsLine(c, d));
 
-            ayline.Position = new PointFP(40, 91);
+            ayline.Position = new SharedPointFP(40, 91);
             Assert.IsFalse(ayline.IntersectsLine(c, d));
 
-            ayline.Position = new PointFP(39, 85);
+            ayline.Position = new SharedPointFP(39, 85);
             Assert.IsFalse(ayline.IntersectsLine(c, d));
 
-            ayline.Position = new PointFP(51, 75);
+            ayline.Position = new SharedPointFP(51, 75);
             Assert.IsFalse(ayline.IntersectsLine(c, d));
 
             // Against H Line
-            c = new PointFP(40, 80);
-            d = new PointFP(50, 80);
+            c = new SharedPointFP(40, 80);
+            d = new SharedPointFP(50, 80);
 
-            ayline.Position = new PointFP(39, 75);
+            ayline.Position = new SharedPointFP(39, 75);
             Assert.IsFalse(ayline.IntersectsLine(c, d));
 
-            ayline.Position = new PointFP(51, 75);
+            ayline.Position = new SharedPointFP(51, 75);
             Assert.IsFalse(ayline.IntersectsLine(c, d));
 
-            ayline.Position = new PointFP(45, 69);
+            ayline.Position = new SharedPointFP(45, 69);
             Assert.IsFalse(ayline.IntersectsLine(c, d));
 
-            ayline.Position = new PointFP(45, 81);
+            ayline.Position = new SharedPointFP(45, 81);
             Assert.IsFalse(ayline.IntersectsLine(c, d));
 
             // Against V Line
-            c = new PointFP(40, 80);
-            d = new PointFP(40, 90);
+            c = new SharedPointFP(40, 80);
+            d = new SharedPointFP(40, 90);
 
-            ayline.Position = new PointFP(39, 80);
+            ayline.Position = new SharedPointFP(39, 80);
             Assert.IsFalse(ayline.IntersectsLine(c, d));
 
-            ayline.Position = new PointFP(41, 80);
+            ayline.Position = new SharedPointFP(41, 80);
             Assert.IsFalse(ayline.IntersectsLine(c, d));
 
-            ayline.Position = new PointFP(40, 69);
+            ayline.Position = new SharedPointFP(40, 69);
             Assert.IsFalse(ayline.IntersectsLine(c, d));
 
-            ayline.Position = new PointFP(40, 91);
+            ayline.Position = new SharedPointFP(40, 91);
             Assert.IsFalse(ayline.IntersectsLine(c, d));
         }
 
         [Test]
         public void TestAYLineIntersectLineEdge ()
         {
-            AYLineMask ayline = new AYLineMask(new PointFP(0, 0), 10);
+            AYLineMask ayline = new AYLineMask(new SharedPointFP(0, 0), 10);
 
             // Against Pos Line
-            PointFP c = new PointFP(40, 80);
-            PointFP d = new PointFP(50, 90);
+            SharedPointFP c = new SharedPointFP(40, 80);
+            SharedPointFP d = new SharedPointFP(50, 90);
 
-            ayline.Position = new PointFP(40, 70);
+            ayline.Position = new SharedPointFP(40, 70);
             Assert.IsFalse(ayline.IntersectsLine(c, d));
 
-            ayline.Position = new PointFP(45, 75);
+            ayline.Position = new SharedPointFP(45, 75);
             Assert.IsFalse(ayline.IntersectsLine(c, d));
 
-            ayline.Position = new PointFP(50, 80);
+            ayline.Position = new SharedPointFP(50, 80);
             Assert.IsFalse(ayline.IntersectsLine(c, d));
 
-            ayline.Position = new PointFP(40, 80);
+            ayline.Position = new SharedPointFP(40, 80);
             Assert.IsFalse(ayline.IntersectsLine(c, d));
 
-            ayline.Position = new PointFP(45, 85);
+            ayline.Position = new SharedPointFP(45, 85);
             Assert.IsFalse(ayline.IntersectsLine(c, d));
 
-            ayline.Position = new PointFP(50, 90);
+            ayline.Position = new SharedPointFP(50, 90);
             Assert.IsFalse(ayline.IntersectsLine(c, d));
 
-            ayline.Position = new PointFP(40, 75);
+            ayline.Position = new SharedPointFP(40, 75);
             Assert.IsFalse(ayline.IntersectsLine(c, d));
 
-            ayline.Position = new PointFP(50, 85);
+            ayline.Position = new SharedPointFP(50, 85);
             Assert.IsFalse(ayline.IntersectsLine(c, d));
 
             // Against Neg Line
-            c = new PointFP(50, 80);
-            d = new PointFP(40, 90);
+            c = new SharedPointFP(50, 80);
+            d = new SharedPointFP(40, 90);
 
-            ayline.Position = new PointFP(40, 80);
+            ayline.Position = new SharedPointFP(40, 80);
             Assert.IsFalse(ayline.IntersectsLine(c, d));
 
-            ayline.Position = new PointFP(45, 75);
+            ayline.Position = new SharedPointFP(45, 75);
             Assert.IsFalse(ayline.IntersectsLine(c, d));
 
-            ayline.Position = new PointFP(50, 70);
+            ayline.Position = new SharedPointFP(50, 70);
             Assert.IsFalse(ayline.IntersectsLine(c, d));
 
-            ayline.Position = new PointFP(50, 80);
+            ayline.Position = new SharedPointFP(50, 80);
             Assert.IsFalse(ayline.IntersectsLine(c, d));
 
-            ayline.Position = new PointFP(45, 85);
+            ayline.Position = new SharedPointFP(45, 85);
             Assert.IsFalse(ayline.IntersectsLine(c, d));
 
-            ayline.Position = new PointFP(40, 90);
+            ayline.Position = new SharedPointFP(40, 90);
             Assert.IsFalse(ayline.IntersectsLine(c, d));
 
-            ayline.Position = new PointFP(40, 85);
+            ayline.Position = new SharedPointFP(40, 85);
             Assert.IsFalse(ayline.IntersectsLine(c, d));
 
-            ayline.Position = new PointFP(50, 75);
+            ayline.Position = new SharedPointFP(50, 75);
             Assert.IsFalse(ayline.IntersectsLine(c, d));
 
             // Against H Line
-            c = new PointFP(40, 80);
-            d = new PointFP(50, 80);
+            c = new SharedPointFP(40, 80);
+            d = new SharedPointFP(50, 80);
 
-            ayline.Position = new PointFP(40, 75);
+            ayline.Position = new SharedPointFP(40, 75);
             Assert.IsFalse(ayline.IntersectsLine(c, d));
 
-            ayline.Position = new PointFP(50, 75);
+            ayline.Position = new SharedPointFP(50, 75);
             Assert.IsFalse(ayline.IntersectsLine(c, d));
 
-            ayline.Position = new PointFP(45, 70);
+            ayline.Position = new SharedPointFP(45, 70);
             Assert.IsFalse(ayline.IntersectsLine(c, d));
 
-            ayline.Position = new PointFP(45, 80);
+            ayline.Position = new SharedPointFP(45, 80);
             Assert.IsFalse(ayline.IntersectsLine(c, d));
 
             // Against V Line
-            c = new PointFP(40, 80);
-            d = new PointFP(40, 90);
+            c = new SharedPointFP(40, 80);
+            d = new SharedPointFP(40, 90);
 
-            ayline.Position = new PointFP(40, 70);
+            ayline.Position = new SharedPointFP(40, 70);
             Assert.IsFalse(ayline.IntersectsLine(c, d));
 
-            ayline.Position = new PointFP(40, 90);
+            ayline.Position = new SharedPointFP(40, 90);
             Assert.IsFalse(ayline.IntersectsLine(c, d));
         }
 
         [Test]
         public void TestAYLineIntersectLineColinear ()
         {
-            AYLineMask ayline = new AYLineMask(new PointFP(0, 0), 10);
+            AYLineMask ayline = new AYLineMask(new SharedPointFP(0, 0), 10);
 
             // Against H Line
-            PointFP c = new PointFP(40, 80);
-            PointFP d = new PointFP(50, 80);
+            SharedPointFP c = new SharedPointFP(40, 80);
+            SharedPointFP d = new SharedPointFP(50, 80);
 
-            ayline.Position = new PointFP(40, 75);
+            ayline.Position = new SharedPointFP(40, 75);
             Assert.IsFalse(ayline.IntersectsLine(c, d));
 
-            ayline.Position = new PointFP(40, 80);
+            ayline.Position = new SharedPointFP(40, 80);
             Assert.IsFalse(ayline.IntersectsLine(c, d));
 
-            ayline.Position = new PointFP(40, 85);
+            ayline.Position = new SharedPointFP(40, 85);
             Assert.IsFalse(ayline.IntersectsLine(c, d));
         }
 
         [Test]
         public void TestAYLineIntersectLine ()
         {
-            AYLineMask ayline = new AYLineMask(new PointFP(0, 0), 10);
+            AYLineMask ayline = new AYLineMask(new SharedPointFP(0, 0), 10);
 
             // Against H Line
-            PointFP c = new PointFP(40, 80);
-            PointFP d = new PointFP(50, 80);
+            SharedPointFP c = new SharedPointFP(40, 80);
+            SharedPointFP d = new SharedPointFP(50, 80);
 
-            ayline.Position = new PointFP(45, 75);
+            ayline.Position = new SharedPointFP(45, 75);
             Assert.IsTrue(ayline.IntersectsLine(c, d));
 
             // Against Pos Line
-            c = new PointFP(40, 80);
-            d = new PointFP(50, 90);
+            c = new SharedPointFP(40, 80);
+            d = new SharedPointFP(50, 90);
 
-            ayline.Position = new PointFP(45, 80);
+            ayline.Position = new SharedPointFP(45, 80);
             Assert.IsTrue(ayline.IntersectsLine(c, d));
 
             // Against Neg Line
-            c = new PointFP(50, 80);
-            d = new PointFP(40, 90);
+            c = new SharedPointFP(50, 80);
+            d = new SharedPointFP(40, 90);
 
-            ayline.Position = new PointFP(45, 80);
+            ayline.Position = new SharedPointFP(45, 80);
             Assert.IsTrue(ayline.IntersectsLine(c, d));
         }
     }

@@ -20,16 +20,32 @@ namespace Amphibian.Collision
     public abstract class Mask : ICloneable
     {
         internal MaskType _type;
-        internal PointFP _pos;
+        internal SharedPointFP _pos;
+
+        protected Mask ()
+        {
+            _pos = new SharedPointFP(0, 0);
+        }
 
         public abstract bool TestOverlap (Mask mask);
 
+        public virtual bool TestOverlap (FPInt x, FPInt y)
+        {
+            return TestOverlap(new PointMask(new PointFP(x, y)));
+        }
+
         //public abstract TestResult TestOverlapExt (Mask mask);
         
-        public PointFP Position
+        public SharedPointFP Position
         {
             get { return _pos; }
             set { _pos = value; }
+        }
+
+        public void Offset (FPInt offsetX, FPInt offsetY)
+        {
+            _pos.X += offsetX;
+            _pos.Y += offsetY;
         }
 
         public abstract RectangleFP Bounds { get; }

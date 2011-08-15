@@ -3,20 +3,20 @@
 namespace Amphibian.Geometry
 {
     [SerializableAttribute]
-    public struct PointFP : IEquatable<PointFP>
+    public sealed class SharedPointFP : IEquatable<SharedPointFP>
     {
         public FPInt X;
         public FPInt Y;
 
         #region Constructors
 
-        public PointFP (FPInt x, FPInt y)
+        public SharedPointFP (FPInt x, FPInt y)
         {
             X = x;
             Y = y;
         }
 
-        public PointFP (int x, int y)
+        public SharedPointFP (int x, int y)
         {
             X = (FPInt)x;
             Y = (FPInt)y;
@@ -45,12 +45,13 @@ namespace Amphibian.Geometry
 
         #region Comparison Operators
 
-        public static bool operator == (PointFP v1, PointFP v2)
+        public static bool operator == (SharedPointFP v1, SharedPointFP v2)
         {
             return (v1.X == v2.X) && (v1.Y == v2.Y);
         }
 
-        public static bool operator != (PointFP v1, PointFP v2)
+
+        public static bool operator != (SharedPointFP v1, SharedPointFP v2)
         {
             return (v1.X != v2.X) || (v1.Y != v2.Y);
         }
@@ -61,26 +62,43 @@ namespace Amphibian.Geometry
 
         public override bool Equals (object obj)
         {
-            if (obj is PointFP) {
-                return (PointFP)obj == this;
+            if (obj is SharedPointFP) {
+                return (SharedPointFP)obj == this;
             }
             return false;
         }
 
-        public bool Equals (PointFP other)
+        public bool Equals (SharedPointFP other)
         {
             return other == this;
-        }
-
-        public override int GetHashCode ()
-        {
-            int hash = X.GetHashCode() * 37;
-            return hash ^ Y.GetHashCode();
         }
 
         public override string ToString ()
         {
             return "(" + X + ", " + Y + ")";
+        }
+
+        #endregion
+
+        #region Implicit Conversions
+
+        public static implicit operator PointFP (SharedPointFP value)
+        {
+            return new PointFP(value.X, value.Y);
+        }
+
+        public static implicit operator VectorFP (SharedPointFP value)
+        {
+            return new VectorFP(value.X, value.Y);
+        }
+
+        #endregion
+
+        #region Explicit Conversions
+
+        public static explicit operator SharedPointFP (PointFP value)
+        {
+            return new SharedPointFP(value.X, value.Y);
         }
 
         #endregion

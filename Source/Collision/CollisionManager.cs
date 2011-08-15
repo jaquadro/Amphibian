@@ -50,7 +50,7 @@ namespace Amphibian.Collision
 
         public void AddObject (int id, int x, int y)
         {
-            PointFP position = new PointFP(x * _tileWidth, y * _tileHeight);
+            SharedPointFP position = new SharedPointFP(x * _tileWidth, y * _tileHeight);
 
             Mask mask = _trans.Lookup(id, position);
             if (mask == null) {
@@ -97,10 +97,10 @@ namespace Amphibian.Collision
             int maxYId = (int)(rect.Bottom / _tileHeight);
 
             for (int x = minXId; x <= maxXId; x++) {
-                if (x >= _width)
+                if (x >= _width || x < 0)
                     continue;
                 for (int y = minYId; y <= maxYId; y++) {
-                    if (y >= _height)
+                    if (y >= _height || y < 0)
                         continue;
 
                     if (_grid[x, y] == null) {
@@ -114,6 +114,22 @@ namespace Amphibian.Collision
             }
 
             return false;
+        }
+
+        public bool OverlapsAny (FPInt x, FPInt y)
+        {
+            int txId = (int)(x.Floor / _tileWidth);
+            int tyId = (int)(x.Floor / _tileWidth);
+
+            if (txId < 0 || txId >= _width || tyId < 0 || tyId >= _height) {
+                return false;
+            }
+
+            if (_grid[txId, tyId] == null) {
+                return false;
+            }
+
+            return _grid[txId, tyId].TestOverlap(x, y);
         }
 
         public void Draw (SpriteBatch spriteBatch, Rectangle drawArea)

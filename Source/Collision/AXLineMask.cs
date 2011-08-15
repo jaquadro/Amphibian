@@ -102,18 +102,18 @@ namespace Amphibian.Collision
             FPInt px2 = px1 + _w;
 
             // Check that given line is on both sides of AXLine
-            FPInt yf = px2 - px1;
-            FPInt t = py * yf;
+            FPLong yf = px2 - px1;
+            FPLong t = py * yf;
 
-            FPInt f1 = yf * c.Y - t;
-            FPInt f2 = yf * d.Y - t;
+            FPLong f1 = yf * c.Y - t;
+            FPLong f2 = yf * d.Y - t;
 
             if (f1 * f2 >= 0) {
                 return false;
             }
 
             // Check that AXLine is on both sides of given line
-            FPInt xf = d.Y - c.Y;
+            FPLong xf = d.Y - c.Y;
             t = (d.X - c.X) * py - (d.X * c.Y - c.X * d.Y);
 
             f1 = xf * px1 - t;

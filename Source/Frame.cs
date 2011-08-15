@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Amphibian.Collision;
 using TiledLib;
 using Amphibian.Drawing;
+using Amphibian.Geometry;
 
 // What does a frame encompass?
 // - General frame data (dimensions, etc)
@@ -179,7 +180,7 @@ namespace Amphibian
         protected virtual void Load ()
         {
             // Load map
-            _map = _engine.Content.Load<Map>("testlevel");
+            _map = _engine.Content.Load<Map>("purple_caves_lev");
             _layers = new List<TileLayer>();
             _tileColManager = new TileCollisionManager(_map.Width, _map.Height, _map.TileWidth * 2, _map.TileHeight * 2);
 
@@ -205,7 +206,7 @@ namespace Amphibian
             for (int x = 0; x < layer.Width; x++) {
                 for (int y = 0; y < layer.Height; y++) {
                     if (layer.Tiles[x, y] != null) {
-                        _tileColManager.AddObject(layer.Tiles[x, y].Id - 97, x, y);
+                        _tileColManager.AddObject(layer.Tiles[x, y].Id - 65, x, y);
                     }
                 }
             }
@@ -238,15 +239,15 @@ namespace Amphibian
             _engine.SpriteBatch.Begin(SpriteSortMode.Immediate, null, null, null, null, null, _camera.GetTranslationMatrix());
             _engine.GraphicsDevice.SamplerStates[0] = _samplerState;
 
-            foreach (TileLayer tl in _layers) {
-                _map.Draw(_engine.SpriteBatch, _camera.Bounds, tl);
-            }
-
             foreach (Component c in _components) {
                 c.Draw();
             }
 
-            _tileColManager.Draw(_engine.SpriteBatch, _camera.Bounds);
+            foreach (TileLayer tl in _layers) {
+                _map.Draw(_engine.SpriteBatch, _camera.Bounds, tl);
+            }
+
+            //_tileColManager.Draw(_engine.SpriteBatch, _camera.Bounds);
 
             _engine.SpriteBatch.End();
         }
@@ -254,6 +255,11 @@ namespace Amphibian
         public bool OverlapsBackdrop (Mask mask)
         {
             return _tileColManager.OverlapsAny(mask);
+        }
+
+        public bool OverlapsBackdrop (FPInt x, FPInt y)
+        {
+            return _tileColManager.OverlapsAny(x, y);
         }
     }
 }

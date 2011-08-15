@@ -335,7 +335,7 @@ namespace Amphibian.Geometry
 
         public override string ToString ()
         {
-            return (_raw >> ShiftBy) + "+" + ((_raw & SubMask) / OneL);
+            return (_raw >> ShiftBy) + "+" + ((float)(_raw & SubMask) / OneL);
         }
 
         #endregion

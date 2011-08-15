@@ -27,7 +27,7 @@ namespace Amphibian.Collision
             VectorFP c = (VectorFP)_pos + _p2;
 
             _det = (b.Y - c.Y) * (a.X - c.X) + (c.X - b.X) * (a.Y - c.Y);
-            _det = 1 / _det;
+            //_det = 1 / _det;
 
             FPInt minx = FPMath.Min(_p0.X, FPMath.Min(_p1.X, _p2.X));
             FPInt maxx = FPMath.Max(_p0.X, FPMath.Max(_p1.X, _p2.X));
@@ -83,6 +83,11 @@ namespace Amphibian.Collision
             }
 
             return false;
+        }
+
+        public override bool TestOverlap (FPInt x, FPInt y)
+        {
+            return Collision.TestOverlap(this, x, y);
         }
 
         /*public override TestResult TestOverlapExt (Mask mask)
@@ -142,7 +147,7 @@ namespace Amphibian.Collision
             FPInt v = (b.Y - c.Y) * (p.X - c.X) + (c.X - b.X) * (p.Y - c.Y);
             FPInt u = (c.Y - a.Y) * (p.X - c.X) + (a.X - c.X) * (p.Y - c.Y);
 
-            return new PointFP(v * _det, u * _det);
+            return new PointFP(v / _det, u / _det);
         }
 
         internal PointFP ClosestPoint (PointFP p)

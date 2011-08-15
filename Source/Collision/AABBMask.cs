@@ -79,6 +79,11 @@ namespace Amphibian.Collision
             return false;
         }
 
+        public override bool TestOverlap (FPInt x, FPInt y)
+        {
+            return Collision.TestOverlap(this, x, y);
+        }
+
         /*public override TestResult TestOverlapExt (Mask mask)
         {
             switch (mask._type) {
