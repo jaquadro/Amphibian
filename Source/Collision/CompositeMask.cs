@@ -100,6 +100,30 @@ namespace Amphibian.Collision
             return false;
         }
 
+        public override bool TestOverlapEdge (Mask mask)
+        {
+            switch (mask._type) {
+                case MaskType.Point:
+                    return Collision.TestOverlap(mask as PointMask, this);
+                case MaskType.Circle:
+                    return Collision.TestOverlap(mask as CircleMask, this);
+                case MaskType.AXLine:
+                    return Collision.TestOverlap(mask as AXLineMask, this);
+                case MaskType.AYLine:
+                    return Collision.TestOverlap(mask as AYLineMask, this);
+                case MaskType.Line:
+                    return Collision.TestOverlap(mask as LineMask, this);
+                case MaskType.AABB:
+                    return Collision.TestOverlap(mask as AABBMask, this);
+                case MaskType.Triangle:
+                    return Collision.TestOverlap(mask as TriangleMask, this);
+                case MaskType.Composite:
+                    return Collision.TestOverlap(this, mask as CompositeMask);
+            }
+
+            return false;
+        }
+
         /*public override TestResult TestOverlapExt (Mask mask)
         {
             return TestResult.None;

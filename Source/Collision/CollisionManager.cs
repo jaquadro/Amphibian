@@ -116,10 +116,39 @@ namespace Amphibian.Collision
             return false;
         }
 
+        public bool OverlapsEdgeAny (Mask mask)
+        {
+            RectangleFP rect = mask.Bounds;
+
+            int minXId = (int)(rect.Left / _tileWidth);
+            int maxXId = (int)(rect.Right / _tileWidth);
+            int minYId = (int)(rect.Top / _tileHeight);
+            int maxYId = (int)(rect.Bottom / _tileHeight);
+
+            for (int x = minXId; x <= maxXId; x++) {
+                if (x >= _width || x < 0)
+                    continue;
+                for (int y = minYId; y <= maxYId; y++) {
+                    if (y >= _height || y < 0)
+                        continue;
+
+                    if (_grid[x, y] == null) {
+                        continue;
+                    }
+
+                    if (_grid[x, y].TestOverlapEdge(mask)) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
         public bool OverlapsAny (FPInt x, FPInt y)
         {
             int txId = (int)(x.Floor / _tileWidth);
-            int tyId = (int)(x.Floor / _tileWidth);
+            int tyId = (int)(y.Floor / _tileHeight);
 
             if (txId < 0 || txId >= _width || tyId < 0 || tyId >= _height) {
                 return false;
@@ -130,6 +159,22 @@ namespace Amphibian.Collision
             }
 
             return _grid[txId, tyId].TestOverlap(x, y);
+        }
+
+        public bool OverlapsEdgeAny (FPInt x, FPInt y)
+        {
+            int txId = (int)(x.Floor / _tileWidth);
+            int tyId = (int)(y.Floor / _tileHeight);
+
+            if (txId < 0 || txId >= _width || tyId < 0 || tyId >= _height) {
+                return false;
+            }
+
+            if (_grid[txId, tyId] == null) {
+                return false;
+            }
+
+            return _grid[txId, tyId].TestOverlapEdge(x, y);
         }
 
         public void Draw (SpriteBatch spriteBatch, Rectangle drawArea)

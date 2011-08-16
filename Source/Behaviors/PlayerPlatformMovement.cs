@@ -43,6 +43,7 @@ namespace Amphibian.Behaviors
         private AXLineMask _subFloorDet;
 
         // Detectors
+        private AXLineMask _detLow;
         private FPInt _detLowLeft;
         private FPInt _detLowRight;
         private AYLineMask _detLeft;
@@ -62,12 +63,15 @@ namespace Amphibian.Behaviors
             _subFloorDet = new AXLineMask(new PointFP(c.CollisionMask.Bounds.Left - _object.X, c.CollisionMask.Bounds.Bottom - _object.Y + 1), c.CollisionMask.Bounds.Width);
             _subFloorDet.Position = _object.Position;
 
-            _detLowLeft = c.CollisionMask.Bounds.Left - _object.X + 2;
-            _detLowRight = c.CollisionMask.Bounds.Right - _object.X - 2;
+            _detLow = new AXLineMask(new PointFP(c.CollisionMask.Bounds.Left - _object.X + 1, c.CollisionMask.Bounds.Bottom - _object.Y), c.CollisionMask.Bounds.Width - 2);
 
-            _detLeft = new AYLineMask(new PointFP(_detLowLeft - 2, c.CollisionMask.Bounds.Top - _object.Y + _maxSlope), c.CollisionMask.Bounds.Height - (2 * _maxSlope));
-            _detRight = new AYLineMask(new PointFP(_detLowRight + 2, c.CollisionMask.Bounds.Top - _object.Y + _maxSlope), c.CollisionMask.Bounds.Height - (2 * _maxSlope));
+            _detLowLeft = c.CollisionMask.Bounds.Left - _object.X;
+            _detLowRight = c.CollisionMask.Bounds.Right - _object.X;
 
+            _detLeft = new AYLineMask(new PointFP(_detLowLeft, c.CollisionMask.Bounds.Top - _object.Y + _maxSlope), c.CollisionMask.Bounds.Height - (4 * _maxSlope));
+            _detRight = new AYLineMask(new PointFP(_detLowRight, c.CollisionMask.Bounds.Top - _object.Y + _maxSlope), c.CollisionMask.Bounds.Height - (4 * _maxSlope));
+
+            _detLow.Position = _object.Position;
             _detLeft.Position = _object.Position;
             _detRight.Position = _object.Position;
         }
@@ -189,20 +193,7 @@ namespace Amphibian.Behaviors
             FPInt tyVelocity = (FPInt)((float)_yVelocity * time);
 
             MoveLR(txVelocity);
-
-            //_object.X += txVelocity;
-            //_object.Y -= _yVelocity * time;
-
-
-
-            /*if (_object.Parent.OverlapsBackdrop(c.CollisionMask)) {
-                _xAccel = 0;
-                _yAccel = 0;
-                _xVelocity = 0;
-                _yVelocity = 0;
-            }*/
-
-            Fall(tyVelocity);
+            StepMovement(txVelocity, tyVelocity);
         }
 
         private void HandleInput ()
@@ -216,36 +207,40 @@ namespace Amphibian.Behaviors
             else {
                 _xAccel = 0;
             }
+
+            if (_controller.ButtonHeld(_inputMap[PlatformAction.Jump])) {
+                _yVelocity = -300;
+            }
         }
 
         private void StepMovement (FPInt distX, FPInt distY)
         {
-            ICollidable c = _object as ICollidable;
-            RectangleFP bb = c.CollisionMask.Bounds;
-
             // X Movement
-            _object.X += distX;
+            //_object.X += distX;
 
             // Y Movement
-            bool testLL = _object.Parent.OverlapsBackdrop(_object.X + _detLowLeft, bb.Bottom);
-            bool testLR = _object.Parent.OverlapsBackdrop(_object.X + _detLowRight, bb.Bottom);
-            bool testLC = _object.Parent.OverlapsBackdrop(_object.X, bb.Bottom + 1);
+            _object.Y += distY;
 
-            // Y - No points colliding; Fall
-            if (!(testLC | testLL | testLR)) {
+            if (distY > 0) {
+                if (_object.Parent.TestBackdropEdge(_detLow)) {
+                    _yVelocity = 0;
 
-            }
-            // Y - Center subpoint colliding; On Level Terrain
-            else if (testLC && !(testLL | testLR)) {
+                    _object.Y = (FPInt)_object.Y.Floor;
+                    while (_object.Parent.TestBackdropEdge(_detLow)) {
+                        _object.Y -= 1;
+                    }
+                    _object.Y += 1;
 
-            }
-            // Y - Both points colliding; Dig Out
-            else if (testLL & testLR) {
+                    bool testLL = _object.Parent.TestBackdropEdge(_object.X + _detLowLeft, _detLow.Position.Y);
+                    bool testLR = _object.Parent.TestBackdropEdge(_object.X + _detLowRight, _detLow.Position.Y);
 
-            }
-            // Y - One point colliding; Downward Slope Movement (Modified Fall)
-            else {
+                    if (testLL && testLR) {
+                        // Done for now
+                    }
+                    else if (testLL) {
 
+                    }
+                }
             }
         }
 
@@ -254,43 +249,40 @@ namespace Amphibian.Behaviors
             _object.X += dist;
 
             if (dist > 0) {
-                if (_object.Parent.OverlapsBackdrop(_detRight)) {
+                if (_object.Parent.TestBackdrop(_detRight)) {
                     _xVelocity = 0;
 
                     _object.X = (FPInt)_object.X.Floor;
-                    while (_object.Parent.OverlapsBackdrop(_detRight)) {
+                    while (_object.Parent.TestBackdrop(_detRight)) {
                         _object.X -= 1;
                     }
                 }
             }
             else if (dist < 0) {
-                if (_object.Parent.OverlapsBackdrop(_detLeft)) {
+                if (_object.Parent.TestBackdrop(_detLeft)) {
                     _xVelocity = 0;
 
                     _object.X = (FPInt)_object.X.Floor;
-                    while (_object.Parent.OverlapsBackdrop(_detLeft)) {
+                    while (_object.Parent.TestBackdrop(_detLeft)) {
                         _object.X += 1;
                     }
                 }
             }            
         }
 
-        /*private void MoveFall (FPInt distY)
-        {
-            AYLineMask 
-        }*/
+        
 
         private void Fall (FPInt dist)
         {
-            if (_object.Parent.OverlapsBackdrop(_subFloorDet)) {
-                if (!_object.Parent.OverlapsBackdrop(_floorDet)) {
+            if (_object.Parent.TestBackdrop(_subFloorDet)) {
+                if (!_object.Parent.TestBackdrop(_floorDet)) {
                     _yVelocity = 0;
                     return;
                 }
 
                 _yVelocity = 0;
 
-                while (_object.Parent.OverlapsBackdrop(_floorDet)) {
+                while (_object.Parent.TestBackdrop(_floorDet)) {
                     _object.Offset(0, -1);
                     //_floorDet.Position = new PointFP(_floorDet.Position.X, _floorDet.Position.Y - 1);
                 }
@@ -303,11 +295,11 @@ namespace Amphibian.Behaviors
                 //mask.Position = new PointFP(mask.Position.X, _object.Y);
             }
             else {
-                AABBMask rmask = new AABBMask(new PointFP(_floorDet.Bounds.Left, _floorDet.Bounds.Bottom), _floorDet.Bounds.Width, -dist);
-                if (_object.Parent.OverlapsBackdrop(rmask)) {
+                AABBMask rmask = new AABBMask(new PointFP(_floorDet.Bounds.Left, _floorDet.Bounds.Bottom), _floorDet.Bounds.Width, dist);
+                if (_object.Parent.TestBackdrop(rmask)) {
                     _yVelocity = 0;
 
-                    while (_object.Parent.OverlapsBackdrop(rmask)) {
+                    while (_object.Parent.TestBackdrop(rmask)) {
                         rmask = new AABBMask(new PointFP(rmask.Bounds.Left, rmask.Bounds.Top), rmask.Bounds.Width, rmask.Bounds.Height - 1);
                     }
                 }

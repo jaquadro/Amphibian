@@ -29,9 +29,16 @@ namespace Amphibian.Collision
 
         public abstract bool TestOverlap (Mask mask);
 
+        public abstract bool TestOverlapEdge (Mask mask);
+
         public virtual bool TestOverlap (FPInt x, FPInt y)
         {
             return TestOverlap(new PointMask(new PointFP(x, y)));
+        }
+
+        public virtual bool TestOverlapEdge (FPInt x, FPInt y)
+        {
+            return TestOverlap(x, y);
         }
 
         //public abstract TestResult TestOverlapExt (Mask mask);

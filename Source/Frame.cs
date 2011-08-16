@@ -252,14 +252,24 @@ namespace Amphibian
             _engine.SpriteBatch.End();
         }
 
-        public bool OverlapsBackdrop (Mask mask)
+        public bool TestBackdrop (Mask mask)
         {
             return _tileColManager.OverlapsAny(mask);
         }
 
-        public bool OverlapsBackdrop (FPInt x, FPInt y)
+        public bool TestBackdropEdge (Mask mask)
+        {
+            return _tileColManager.OverlapsEdgeAny(mask);
+        }
+
+        public bool TestBackdrop (FPInt x, FPInt y)
         {
             return _tileColManager.OverlapsAny(x, y);
+        }
+
+        public bool TestBackdropEdge (FPInt x, FPInt y)
+        {
+            return _tileColManager.OverlapsEdgeAny(x, y);
         }
     }
 }

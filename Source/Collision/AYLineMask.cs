@@ -65,15 +65,39 @@ namespace Amphibian.Collision
             return false;
         }
 
+        public override bool TestOverlapEdge (Mask mask)
+        {
+            switch (mask._type) {
+                case MaskType.Point:
+                    return Collision.TestOverlap(mask as PointMask, this);
+                case MaskType.Circle:
+                    return Collision.TestOverlap(mask as CircleMask, this);
+                case MaskType.AXLine:
+                    return Collision.TestOverlap(mask as AXLineMask, this);
+                case MaskType.AYLine:
+                    return Collision.TestOverlap(this, mask as AYLineMask);
+                case MaskType.Line:
+                    return Collision.TestOverlap(this, mask as LineMask);
+                case MaskType.AABB:
+                    return Collision.TestOverlap(this, mask as AABBMask);
+                case MaskType.Triangle:
+                    return Collision.TestOverlap(this, mask as TriangleMask);
+                case MaskType.Composite:
+                    return Collision.TestOverlap(this, mask as CompositeMask);
+            }
+
+            return false;
+        }
+
         public override RectangleFP Bounds
         {
             get { return new RectangleFP(_pos.X + _p.X, _pos.Y + _p.Y, 0, _h); }
         }
 
-        /*public override TestResult TestOverlapExt (Mask mask)
+        public override bool TestOverlapEdge (FPInt x, FPInt y)
         {
-            return TestResult.None;
-        }*/
+            return Collision.TestOverlapEdge(this, x, y);
+        }
 
         internal PointFP ClosestPoint (PointFP p)
         {

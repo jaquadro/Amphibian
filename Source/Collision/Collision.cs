@@ -487,5 +487,153 @@ namespace Amphibian.Collision
 
             return false;
         }
+
+        // Point -- [____] Collision + Edge Tests
+
+        public static bool TestOverlapEdge (PointMask ptMask, FPInt x, FPInt y)
+        {
+            VectorFP p2 = (VectorFP)ptMask._pos + ptMask._point;
+
+            return x == p2.X && y == p2.Y;
+        }
+
+        public static bool TestOverlapEdge (PointMask ptMask1, PointMask ptMask2)
+        {
+            VectorFP p1 = (VectorFP)ptMask1._pos + ptMask1._point;
+
+            return TestOverlapEdge(ptMask2, p1.X, p1.Y);
+        }
+
+        public static bool TestOverlapEdge (CircleMask cMask, FPInt x, FPInt y)
+        {
+            VectorFP p1 = (VectorFP)cMask._pos + cMask._p;
+
+            FPInt dx = p1.X - x;
+            FPInt dy = p1.Y - y;
+            FPInt d2 = dx * dx + dy * dy;
+            FPInt r2 = cMask._radius * cMask._radius;
+
+            return (d2 <= r2);
+        }
+
+        public static bool TestOverlapEdge (PointMask ptMask, CircleMask cMask)
+        {
+            VectorFP p0 = (VectorFP)ptMask._pos + ptMask._point;
+
+            return TestOverlapEdge(cMask, p0.X, p0.Y);
+        }
+
+        public static bool TestOverlapEdge (AXLineMask xlMask, FPInt x, FPInt y)
+        {
+            VectorFP p2 = (VectorFP)xlMask._pos + xlMask._p;
+
+            return (y == p2.Y && x >= p2.X && x <= p2.X + xlMask._w);
+        }
+
+        public static bool TestOverlapEdge (PointMask ptMask, AXLineMask xlMask)
+        {
+            VectorFP p1 = (VectorFP)ptMask._pos + ptMask._point;
+
+            return TestOverlapEdge(xlMask, p1.X, p1.Y);
+        }
+
+        public static bool TestOverlapEdge (AYLineMask ylMask, FPInt x, FPInt y)
+        {
+            VectorFP p2 = (VectorFP)ylMask._pos + ylMask._p;
+
+            return (x == p2.X && y >= p2.Y && y <= p2.Y + ylMask._h);
+        }
+
+        public static bool TestOverlapEdge (PointMask ptMask, AYLineMask ylMask)
+        {
+            VectorFP p1 = (VectorFP)ptMask._pos + ptMask._point;
+
+            return TestOverlapEdge(ylMask, p1.X, p1.Y);
+        }
+
+        public static bool TestOverlapEdge (LineMask lnMask, FPInt x, FPInt y)
+        {
+            PointFP cp = lnMask.ClosestPoint(new PointFP(x, y));
+
+            return x == cp.X && y == cp.Y;
+        }
+
+        public static bool TestOverlapEdge (PointMask ptMask, LineMask lnMask)
+        {
+            VectorFP p1 = (VectorFP)ptMask._pos + ptMask._point;
+
+            return TestOverlapEdge(lnMask, p1.X, p1.Y);
+        }
+
+        public static bool TestOverlapEdge (AABBMask rMask, FPInt x, FPInt y)
+        {
+            VectorFP p1 = (VectorFP)rMask._pos + rMask._point;
+
+            return (x >= p1.X && x <= p1.X + rMask._w && y >= p1.Y && y <= p1.Y + rMask._h);
+        }
+
+        public static bool TestOverlapEdge (PointMask ptMask, AABBMask rMask)
+        {
+            VectorFP p0 = (VectorFP)ptMask._pos + ptMask._point;
+
+            return TestOverlapEdge(rMask, p0.X, p0.Y);
+        }
+
+        public static bool TestOverlapEdge (TriangleMask triMask, FPInt x, FPInt y)
+        {
+            PointFP bary = triMask.Barycentric(new VectorFP(x, y));
+
+            return (bary.X >= 0 && bary.Y >= 0 && (bary.X + bary.Y) <= 1);
+        }
+
+        public static bool TestOverlapEdge (PointMask ptMask, TriangleMask triMask)
+        {
+            PointFP bary = triMask.Barycentric((VectorFP)ptMask._pos + ptMask._point);
+
+            return (bary.X >= 0 && bary.Y >= 0 && (bary.X + bary.Y) <= 1);
+        }
+
+        // AXLine -- [____] Collision + Edge Tests
+
+        public static bool TestOverlapEdge (AXLineMask xlMask, AABBMask rMask)
+        {
+            FPInt py = xlMask._pos.Y + xlMask._p.Y;
+            FPInt px1 = xlMask._pos.X + xlMask._p.X;
+            FPInt px2 = px1 + xlMask._w;
+
+            VectorFP r1 = (VectorFP)rMask._pos + rMask._point;
+            VectorFP r2 = r1 + new VectorFP(rMask._w, rMask._h);
+
+            return !(py > r2.Y || py < r1.Y || px1 > r2.X || px2 < r1.X);
+        }
+
+        public static bool TestOverlapEdge (AXLineMask xlMask, TriangleMask triMask)
+        {
+            VectorFP a = (VectorFP)triMask._pos + triMask._p0;
+            VectorFP b = (VectorFP)triMask._pos + triMask._p1;
+            VectorFP c = (VectorFP)triMask._pos + triMask._p2;
+
+            if (xlMask.IntersectsLineEdge(a, b) || xlMask.IntersectsLineEdge(b, c) || xlMask.IntersectsLineEdge(a, c)) {
+                return true;
+            }
+
+            VectorFP q = triMask.Barycentric((VectorFP)xlMask._pos + xlMask._p);
+
+            return (q.X >= 0 && q.Y >= 0 && (q.X + q.Y) <= 1);
+        }
+
+        // AABB -- [____] Collision Tests
+
+        public static bool TestOverlapEdge (AABBMask rMask, AXLineMask xlMask)
+        {
+            return TestOverlapEdge(xlMask, rMask);
+        }
+
+        // Triangle -- [____] Collision Tests
+
+        public static bool TestOverlapEdge (TriangleMask triMask, AXLineMask xlMAsk)
+        {
+            return TestOverlapEdge(xlMAsk, triMask);
+        }
     }
 }
