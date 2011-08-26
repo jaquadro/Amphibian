@@ -12,6 +12,7 @@ namespace Amphibian.Input
 
         private Dictionary<TActionSet, bool> _held;
         private Dictionary<TActionSet, bool> _pressed;
+        private Dictionary<TActionSet, bool> _released;
 
         public KeyboardController (Dictionary<TActionSet, Keys> map)
         {
@@ -24,10 +25,12 @@ namespace Amphibian.Input
             _keymap = map;
             _held = new Dictionary<TActionSet, bool>();
             _pressed = new Dictionary<TActionSet, bool>();
+            _released = new Dictionary<TActionSet, bool>();
 
             foreach (TActionSet button in Enum.GetValues(typeof(TActionSet))) {
                 _held[button] = false;
                 _pressed[button] = false;
+                _released[button] = false;
             }
         }
 
@@ -37,8 +40,11 @@ namespace Amphibian.Input
 
             foreach (KeyValuePair<TActionSet, Keys> button in _keymap) {
                 bool keystate = _state.IsKeyDown(button.Value);
-                if (_held[button.Key] && !keystate) {
+                if (!_held[button.Key] && keystate) {
                     _pressed[button.Key] = true;
+                }
+                else if (_held[button.Key] && !keystate) {
+                    _released[button.Key] = true;
                 }
                 _held[button.Key] = keystate;
             }
@@ -48,12 +54,18 @@ namespace Amphibian.Input
         {
             foreach (TActionSet button in _keymap.Keys) {
                 _pressed[button] = false;
+                _released[button] = false;
             }
         }
 
         public override bool ButtonPressed (TActionSet action)
         {
             return _pressed[action];
+        }
+
+        public override bool ButtonReleased (TActionSet action)
+        {
+            return _released[action];
         }
 
         public override bool ButtonHeld (TActionSet action)

@@ -208,8 +208,8 @@ namespace Amphibian.Behaviors
                 _xAccel = 0;
             }
 
-            if (_controller.ButtonHeld(_inputMap[PlatformAction.Jump])) {
-                _yVelocity = -300;
+            if (_controller.ButtonPressed(_inputMap[PlatformAction.Jump])) {
+                _yVelocity = -700;
             }
         }
 

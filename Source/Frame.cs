@@ -237,7 +237,7 @@ namespace Amphibian
         public virtual void Draw ()
         {
             _engine.SpriteBatch.Begin(SpriteSortMode.Immediate, null, null, null, null, null, _camera.GetTranslationMatrix());
-            _engine.GraphicsDevice.SamplerStates[0] = _samplerState;
+            _engine.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
 
             foreach (Component c in _components) {
                 c.Draw();

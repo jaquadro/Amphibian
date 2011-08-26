@@ -7,6 +7,8 @@ namespace Amphibian.Input
     {
         public abstract bool ButtonPressed (TActionSet action);
 
+        public abstract bool ButtonReleased (TActionSet action);
+
         public abstract bool ButtonHeld (TActionSet action);
     }
 }
