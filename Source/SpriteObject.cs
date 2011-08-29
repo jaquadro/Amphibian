@@ -14,13 +14,17 @@ namespace Amphibian
     public class GameObject : Component
     {
         protected SharedPointFP _position;
+        protected SharedPointFP _renderAt;
+
         protected List<Behavior> _behaviors;
+        protected List<InterpBehavior> _interpBehaviors;
 
         public GameObject ()
             : base()
         {
             _position = new SharedPointFP(0, 0);
             _behaviors = new List<Behavior>();
+            _interpBehaviors = new List<InterpBehavior>();
         }
 
         #region Properties
@@ -42,12 +46,17 @@ namespace Amphibian
             get { return _position; }
         }
 
+        internal SharedPointFP RenderAt
+        {
+            get { return _renderAt; }
+            set { _renderAt = value; }
+        }
+
         #endregion
 
         public void AddBehavior (Behavior behavior)
         {
             Type bType = behavior.GetType();
-
             foreach (Behavior b in _behaviors) {
                 if (bType == _behaviors.GetType()) {
                     return;
@@ -55,9 +64,18 @@ namespace Amphibian
             }
 
             _behaviors.Add(behavior);
+
+            if (behavior is InterpBehavior) {
+                _interpBehaviors.Add(behavior as InterpBehavior);
+            }
         }
 
         public void RemoveBehavior (Behavior behavior)
+        {
+            RemoveBehavior(behavior.GetType());
+        }
+
+        public void RemoveBehavior (InterpBehavior behavior)
         {
             RemoveBehavior(behavior.GetType());
         }
@@ -70,6 +88,13 @@ namespace Amphibian
                     return;
                 }
             }
+
+            foreach (InterpBehavior b in _interpBehaviors) {
+                if (behaviorType == b.GetType()) {
+                    _interpBehaviors.Remove(b);
+                    return;
+                }
+            }
         }
 
         public override void Update ()
@@ -78,6 +103,15 @@ namespace Amphibian
 
             foreach (Behavior behavior in _behaviors) {
                 behavior.Execute();
+            }
+        }
+
+        public override void Interpolate (double alpha)
+        {
+            base.Update();
+
+            foreach (InterpBehavior behavior in _interpBehaviors) {
+                behavior.Interpolate(alpha);
             }
         }
 
@@ -111,7 +145,7 @@ namespace Amphibian
             base.Draw();
 
             if (this.Sprite != null) {
-                this.Sprite.Draw(Parent.Engine.SpriteBatch, _position);
+                this.Sprite.Draw(Parent.Engine.SpriteBatch, _renderAt ?? _position);
             }
         }
     }

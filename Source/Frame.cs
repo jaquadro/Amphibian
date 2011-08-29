@@ -234,6 +234,19 @@ namespace Amphibian
             _updating.Clear();
         }
 
+        public virtual void Interpolate (double alpha)
+        {
+            foreach (Component c in _components) {
+                _updating.Add(c);
+            }
+
+            foreach (Component c in _updating) {
+                c.Interpolate(alpha);
+            }
+
+            _updating.Clear();
+        }
+
         public virtual void Draw ()
         {
             _engine.SpriteBatch.Begin(SpriteSortMode.Immediate, null, null, null, null, null, _camera.GetTranslationMatrix());

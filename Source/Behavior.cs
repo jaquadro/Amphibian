@@ -10,4 +10,14 @@ namespace Amphibian
         {
         }
     }
+
+    public abstract class InterpBehavior : Behavior
+    {
+        protected InterpBehavior ()
+            : base()
+        {
+        }
+
+        public abstract void Interpolate (double alpha);
+    }
 }

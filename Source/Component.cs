@@ -92,6 +92,11 @@ namespace Amphibian
 
         }
 
+        public virtual void Interpolate (double alpha)
+        {
+
+        }
+
         public virtual void Draw ()
         {
 

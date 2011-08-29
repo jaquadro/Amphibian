@@ -173,6 +173,24 @@ namespace Amphibian
             _sortFrameStack.Clear();
         }
 
+        public void Interpolate (double alpha)
+        {
+            // Determine update depth of frame stack
+            for (int i = _frameStack.Count - 1; i >= 0; i--) {
+                _sortFrameStack.Add(_frameStack[i]);
+                if (_frameStack[i].BlocksUpdates) {
+                    break;
+                }
+            }
+
+            // Update each frame
+            foreach (Frame frame in _sortFrameStack) {
+                frame.Interpolate(alpha);
+            }
+
+            _sortFrameStack.Clear();
+        }
+
         public void Draw (GameTime gameTime)
         {
             _gameTime = gameTime;

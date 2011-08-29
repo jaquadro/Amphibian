@@ -19,9 +19,15 @@ namespace Amphibian.Behaviors
         Action
     }
 
-    public class PlayerPlatformMovement<TActionSet> : Behavior
+    public class PlayerPlatformMovement<TActionSet> : InterpBehavior
         where TActionSet : struct
     {
+        private class State
+        {
+            public FPInt ObjectX;
+            public FPInt ObjectY;
+        }
+
         private const int _maxSlope = 2;
 
         private string _controllerName;
@@ -49,6 +55,9 @@ namespace Amphibian.Behaviors
         private AYLineMask _detLeft;
         private AYLineMask _detRight;
 
+        private State _current;
+        private State _prev;
+
         #region Constructors
 
         private PlayerPlatformMovement (GameObject obj)
@@ -74,6 +83,9 @@ namespace Amphibian.Behaviors
             _detLow.Position = _object.Position;
             _detLeft.Position = _object.Position;
             _detRight.Position = _object.Position;
+
+            _current = new State();
+            _prev = new State();
         }
 
         public PlayerPlatformMovement (GameObject obj, string buttonControllerName, Dictionary<PlatformAction, TActionSet> controlMap)
@@ -198,6 +210,27 @@ namespace Amphibian.Behaviors
 
             MoveLR(txVelocity);
             StepMovement(txVelocity, tyVelocity);
+
+            _prev = _current;
+            _current.ObjectX = _object.X;
+            _current.ObjectY = _object.Y;
+
+            _object.RenderAt = null;
+        }
+
+        public override void Interpolate (double alpha)
+        {
+            FPInt midx = _current.ObjectX;
+            if (midx != _prev.ObjectX) {
+                midx = (FPInt)((double)midx * alpha + (double)_prev.ObjectX * (1.0 - alpha));
+            }
+
+            FPInt midy = _current.ObjectY;
+            if (midy != _prev.ObjectY) {
+                midy = (FPInt)((double)midy * alpha + (double)_prev.ObjectY * (1.0 - alpha));
+            }
+
+            _object.RenderAt = new SharedPointFP(midx, midy);
         }
 
         private void HandleInput ()
