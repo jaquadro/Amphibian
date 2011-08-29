@@ -76,7 +76,7 @@ namespace Amphibian
 
         public override void Draw (SpriteBatch spriteBatch, PointFP position)
         {
-            Vector2 p = new Vector2(position.X.Round, position.Y.Round);
+            Vector2 p = new Vector2(position.X.Floor, position.Y.Floor);
             spriteBatch.Draw(_texture, p, _source,
                 new Color(1f, 1f, 1f, Opacity), Rotation, _origin, Scale, Effects, 0);
         }

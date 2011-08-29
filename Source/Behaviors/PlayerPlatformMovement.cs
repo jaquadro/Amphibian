@@ -181,16 +181,20 @@ namespace Amphibian.Behaviors
         {
             HandleInput();
 
-            float time = (float)_object.Parent.Engine.GameTime.ElapsedGameTime.TotalSeconds;
+            //float time = (float)_object.Parent.Engine.GameTime.ElapsedGameTime.TotalSeconds;
 
-            FPInt txAccel = (FPInt)((float)_xAccel * time);
-            FPInt tyAccel = (FPInt)((float)_yAccel * time);
+            //FPInt txAccel = (FPInt)((float)_xAccel * time);
+            //FPInt tyAccel = (FPInt)((float)_yAccel * time);
+            FPInt txAccel = _xAccel;
+            FPInt tyAccel = _yAccel;
 
             _xVelocity = FPMath.Clamp(_xVelocity + txAccel, _xMinVel, _xMaxVel);
             _yVelocity = FPMath.Clamp(_yVelocity + tyAccel, _yMinVel, _yMaxVel);
 
-            FPInt txVelocity = (FPInt)((float)_xVelocity * time);
-            FPInt tyVelocity = (FPInt)((float)_yVelocity * time);
+            //FPInt txVelocity = (FPInt)((float)_xVelocity * time);
+            //FPInt tyVelocity = (FPInt)((float)_yVelocity * time);
+            FPInt txVelocity = _xVelocity;
+            FPInt tyVelocity = _yVelocity;
 
             MoveLR(txVelocity);
             StepMovement(txVelocity, tyVelocity);
@@ -199,17 +203,20 @@ namespace Amphibian.Behaviors
         private void HandleInput ()
         {
             if (_controller.ButtonHeld(_inputMap[PlatformAction.Left])) {
-                _xAccel = -500;
+                //_xAccel = (FPInt)(-0.5);
+                _xVelocity = -2;
             }
             else if (_controller.ButtonHeld(_inputMap[PlatformAction.Right])) {
-                _xAccel = 500;
+                //_xAccel = (FPInt)0.5;
+                _xVelocity = 2;
             }
             else {
-                _xAccel = 0;
+                //_xAccel = 0;
+                _xVelocity = 0;
             }
 
             if (_controller.ButtonPressed(_inputMap[PlatformAction.Jump])) {
-                _yVelocity = -700;
+                _yVelocity = -12;
             }
         }
 
@@ -272,7 +279,7 @@ namespace Amphibian.Behaviors
 
         
 
-        private void Fall (FPInt dist)
+        /*private void Fall (FPInt dist)
         {
             if (_object.Parent.TestBackdrop(_subFloorDet)) {
                 if (!_object.Parent.TestBackdrop(_floorDet)) {
@@ -312,7 +319,7 @@ namespace Amphibian.Behaviors
                 //Mask mask = c.CollisionMask;
                 //mask.Position = new PointFP(mask.Position.X, _object.Y);
             }
-        }
+        }*/
 
 
     }

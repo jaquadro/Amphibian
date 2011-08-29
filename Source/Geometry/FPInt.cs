@@ -45,13 +45,17 @@ namespace Amphibian.Geometry
 
         public int Ceil
         {
-            //get { return (int)(_raw >> ShiftBy) + ((_raw & SubMask) != 0 ? 1 : 0); }
             get { return (int)((_raw + ((OneI - _raw) & SubMask)) >> ShiftBy); }
         }
 
         public int Round
         {
             get { return (int)((_raw + RoundingFactor) >> ShiftBy); }
+        }
+
+        public int Trunc
+        {
+            get { return (_raw >= 0) ? Floor : Ceil; }
         }
 
         public FPInt Inverse
