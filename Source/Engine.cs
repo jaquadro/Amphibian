@@ -43,7 +43,9 @@ namespace Amphibian
 
         private Dictionary<string, InputController> _input;
 
-        
+        private double _simulationStep;
+        private double _updateAccumulator;
+        private GameTime _prevTime;
 
         public Engine (GraphicsDeviceManager graphics)
         {
@@ -60,6 +62,10 @@ namespace Amphibian
             _sortFrameStack = new List<Frame>();
 
             _input = new Dictionary<string, InputController>();
+
+            // Default Values
+            _simulationStep = 1 / 60.0;
+            _prevTime = new GameTime(TimeSpan.Zero, TimeSpan.Zero);
         }
 
         #region Properties
@@ -87,6 +93,12 @@ namespace Amphibian
         public SpriteBatch SpriteBatch
         {
             get { return _spriteBatch; }
+        }
+
+        public double SimulationStep
+        {
+            get { return _simulationStep; }
+            set { _simulationStep = value; }
         }
 
         #endregion
@@ -145,6 +157,30 @@ namespace Amphibian
 
         public void Update (GameTime gameTime)
         {
+            _updateAccumulator += gameTime.ElapsedGameTime.TotalSeconds;
+
+            TimeSpan simStart = _prevTime.TotalGameTime;
+            TimeSpan simSpan = TimeSpan.FromSeconds(_simulationStep);
+
+            while (_updateAccumulator >= _simulationStep) {
+                simStart.Add(simSpan);
+                GameTime simTime = new GameTime(simStart, simSpan);
+
+                UpdateStep(simTime);
+
+                _updateAccumulator -= _simulationStep;
+            }
+
+            if (_updateAccumulator > 0) {
+                double alpha = _updateAccumulator / _simulationStep;
+                InterpolateStep(alpha);
+            }
+
+            _prevTime = gameTime;
+        }
+
+        protected void UpdateStep (GameTime gameTime)
+        {
             _gameTime = gameTime;
 
             // Refresh controllers
@@ -173,7 +209,7 @@ namespace Amphibian
             _sortFrameStack.Clear();
         }
 
-        public void Interpolate (double alpha)
+        protected void InterpolateStep (double alpha)
         {
             // Determine update depth of frame stack
             for (int i = _frameStack.Count - 1; i >= 0; i--) {

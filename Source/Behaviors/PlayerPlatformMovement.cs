@@ -193,20 +193,20 @@ namespace Amphibian.Behaviors
         {
             HandleInput();
 
-            //float time = (float)_object.Parent.Engine.GameTime.ElapsedGameTime.TotalSeconds;
+            float time = (float)_object.Parent.Engine.GameTime.ElapsedGameTime.TotalSeconds * 60f;
 
-            //FPInt txAccel = (FPInt)((float)_xAccel * time);
-            //FPInt tyAccel = (FPInt)((float)_yAccel * time);
-            FPInt txAccel = _xAccel;
-            FPInt tyAccel = _yAccel;
+            FPInt txAccel = (FPInt)((float)_xAccel * time);
+            FPInt tyAccel = (FPInt)((float)_yAccel * time);
+            //FPInt txAccel = _xAccel;
+            //FPInt tyAccel = _yAccel;
 
             _xVelocity = FPMath.Clamp(_xVelocity + txAccel, _xMinVel, _xMaxVel);
             _yVelocity = FPMath.Clamp(_yVelocity + tyAccel, _yMinVel, _yMaxVel);
 
-            //FPInt txVelocity = (FPInt)((float)_xVelocity * time);
-            //FPInt tyVelocity = (FPInt)((float)_yVelocity * time);
-            FPInt txVelocity = _xVelocity;
-            FPInt tyVelocity = _yVelocity;
+            FPInt txVelocity = (FPInt)((float)_xVelocity * time);
+            FPInt tyVelocity = (FPInt)((float)_yVelocity * time);
+            //FPInt txVelocity = _xVelocity;
+            //FPInt tyVelocity = _yVelocity;
 
             MoveLR(txVelocity);
             StepMovement(txVelocity, tyVelocity);
