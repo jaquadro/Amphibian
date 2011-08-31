@@ -38,12 +38,18 @@ namespace Amphibian.Behaviors
 
         private FPInt _xAccel;
         private FPInt _yAccel;
+        private FPInt _xDecel;
+        private FPInt _yDecel;
         private FPInt _xVelocity;
         private FPInt _yVelocity;
         private FPInt _xMinVel;
         private FPInt _yMinVel;
         private FPInt _xMaxVel;
         private FPInt _yMaxVel;
+        private bool _useXAccel;
+        private bool _useYAccel;
+        private bool _useXDecel;
+        private bool _useYDecel;
 
         private AXLineMask _floorDet;
         private AXLineMask _subFloorDet;
@@ -121,6 +127,18 @@ namespace Amphibian.Behaviors
             set { _yAccel = value; }
         }
 
+        public FPInt DecelX
+        {
+            get { return _xDecel; }
+            set { _xDecel = value; }
+        }
+
+        public FPInt DecelY
+        {
+            get { return _yDecel; }
+            set { _yDecel = value; }
+        }
+
         public FPInt MaxVelocityX
         {
             get { return _xMaxVel; }
@@ -155,6 +173,30 @@ namespace Amphibian.Behaviors
         {
             get { return _yVelocity; }
             set { _yVelocity = value; }
+        }
+
+        public bool UseAccelX
+        {
+            get { return _useXAccel; }
+            set { _useXAccel = value; }
+        }
+
+        public bool UseAccelY
+        {
+            get { return _useYAccel; }
+            set { _useYAccel = value; }
+        }
+
+        public bool UseDecelX
+        {
+            get { return _useXDecel; }
+            set { _useXDecel = value; }
+        }
+
+        public bool UseDecelY
+        {
+            get { return _useYDecel; }
+            set { _useYDecel = value; }
         }
 
         public FPInt DetectorLowerLeft
@@ -195,21 +237,11 @@ namespace Amphibian.Behaviors
 
             float time = (float)_object.Parent.Engine.GameTime.ElapsedGameTime.TotalSeconds * 60f;
 
-            FPInt txAccel = (FPInt)((float)_xAccel * time);
-            FPInt tyAccel = (FPInt)((float)_yAccel * time);
-            //FPInt txAccel = _xAccel;
-            //FPInt tyAccel = _yAccel;
+            FPInt diffPosX, diffPosY;
+            StepPhysics(time, out diffPosX, out diffPosY);
 
-            _xVelocity = FPMath.Clamp(_xVelocity + txAccel, _xMinVel, _xMaxVel);
-            _yVelocity = FPMath.Clamp(_yVelocity + tyAccel, _yMinVel, _yMaxVel);
-
-            FPInt txVelocity = (FPInt)((float)_xVelocity * time);
-            FPInt tyVelocity = (FPInt)((float)_yVelocity * time);
-            //FPInt txVelocity = _xVelocity;
-            //FPInt tyVelocity = _yVelocity;
-
-            MoveLR(txVelocity);
-            StepMovement(txVelocity, tyVelocity);
+            MoveLR(diffPosX);
+            StepMovement(diffPosX, diffPosY);
 
             _prev = _current;
             _current.ObjectX = _object.X;
@@ -233,19 +265,57 @@ namespace Amphibian.Behaviors
             _object.RenderAt = new SharedPointFP(midx, midy);
         }
 
+        private void StepPhysics (float time, out FPInt diffPosX, out FPInt diffPosY)
+        {
+            FPInt diffVelX = 0;
+            FPInt diffVelY = 0;
+
+            if (_useXAccel)
+                diffVelX = (FPInt)((float)_xAccel * time);
+            if (_useYAccel)
+                diffVelY = (FPInt)((float)_yAccel * time);
+
+            if (_useXDecel) {
+                FPInt diffVelXDecel = (FPInt)((float)_xDecel * time);
+                if (_xVelocity > 0) {
+                    diffVelX += -FPMath.Min(_xVelocity, diffVelXDecel);
+                }
+                else {
+                    diffVelX += -FPMath.Max(_xVelocity, -diffVelXDecel);
+                }
+            }
+
+            FPInt nextVelX = FPMath.Clamp(_xVelocity + diffVelX, _xMinVel, _xMaxVel);
+            FPInt nextVelY = FPMath.Clamp(_yVelocity + diffVelY, _yMinVel, _yMaxVel);
+
+            diffPosX = (FPInt)((float)((_xVelocity + nextVelX) >> 1) * time);
+            diffPosY = (FPInt)((float)((_yVelocity + nextVelY) >> 1) * time);
+
+            _xVelocity = nextVelX;
+            _yVelocity = nextVelY;
+        }
+
         private void HandleInput ()
         {
             if (_controller.ButtonHeld(_inputMap[PlatformAction.Left])) {
                 //_xAccel = (FPInt)(-0.5);
-                _xVelocity = -2;
+                //_xVelocity = -2;
+                _xAccel = -FPMath.Abs(_xAccel);
+                _useXAccel = true;
+                _useXDecel = false;
             }
             else if (_controller.ButtonHeld(_inputMap[PlatformAction.Right])) {
                 //_xAccel = (FPInt)0.5;
-                _xVelocity = 2;
+                //_xVelocity = 2;
+                _xAccel = FPMath.Abs(_xAccel);
+                _useXAccel = true;
+                _useXDecel = false;
             }
             else {
                 //_xAccel = 0;
-                _xVelocity = 0;
+                //_xVelocity = 0;
+                _useXAccel = false;
+                _useXDecel = true;
             }
 
             if (_controller.ButtonPressed(_inputMap[PlatformAction.Jump])) {
