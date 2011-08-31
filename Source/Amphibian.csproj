@@ -105,7 +105,7 @@
     <Compile Include="Behavior.cs" />
     <Compile Include="Behaviors\CircleMovement.cs" />
     <Compile Include="Behaviors\PaddleMovement.cs" />
-    <None Include="Behaviors\PlatformMovement.cs" />
+    <Compile Include="Behaviors\PlatformMovement.cs" />
     <Compile Include="Behaviors\PlayerPlatformMovement.cs" />
     <Compile Include="Camera.cs" />
     <Compile Include="Collision\AABBMask.cs" />

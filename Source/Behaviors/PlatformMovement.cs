@@ -8,25 +8,48 @@ using Amphibian.Geometry;
 
 namespace Amphibian.Behaviors
 {
-    public class PlatformMovement : Behavior
+    public enum PlatformAccelState
     {
+        Fixed,
+        Accelerate,
+        Decelerate
+    }
+
+    public class PlatformMovement : InterpBehavior
+    {
+        private class State
+        {
+            public FPInt ObjectX;
+            public FPInt ObjectY;
+        }
+
+        private const int _maxSlope = 2;
+
         private GameObject _object;
 
         private FPInt _xAccel;
         private FPInt _yAccel;
+        private FPInt _xDecel;
+        private FPInt _yDecel;
         private FPInt _xVelocity;
         private FPInt _yVelocity;
         private FPInt _xMinVel;
         private FPInt _yMinVel;
         private FPInt _xMaxVel;
         private FPInt _yMaxVel;
-
-        private AXLineMask _floorDet;
-        private AXLineMask _subFloorDet;
+        private PlatformAccelState _xAccelState;
+        private PlatformAccelState _yAccelState;
 
         // Detectors
+        private AXLineMask _detLow;
+        private AXLineMask _detHigh;
         private FPInt _detLowLeft;
         private FPInt _detLowRight;
+        private AYLineMask _detLeft;
+        private AYLineMask _detRight;
+
+        private State _current;
+        private State _prev;
 
         public PlatformMovement (GameObject obj)
             : base()
@@ -34,11 +57,23 @@ namespace Amphibian.Behaviors
             _object = obj;
 
             ICollidable c = _object as ICollidable;
-            _floorDet = new AXLineMask(new PointFP(obj.X - c.CollisionMask.Bounds.Left, c.CollisionMask.Bounds.Bottom - obj.Y), c.CollisionMask.Bounds.Width);
-            _floorDet.Position = new PointFP(obj.X, obj.Y);
 
-            _subFloorDet = _floorDet.Clone() as AXLineMask;
-            _subFloorDet.Position = new PointFP(_subFloorDet.Position.X, _subFloorDet.Position.Y + 1);
+            _detLow = new AXLineMask(new PointFP(c.CollisionMask.Bounds.Left - _object.X + 1, c.CollisionMask.Bounds.Bottom - _object.Y), c.CollisionMask.Bounds.Width - 2);
+            _detHigh = new AXLineMask(new PointFP(c.CollisionMask.Bounds.Left - _object.X + 1, c.CollisionMask.Bounds.Top - _object.Y), c.CollisionMask.Bounds.Width - 2);
+
+            _detLowLeft = c.CollisionMask.Bounds.Left - _object.X;
+            _detLowRight = c.CollisionMask.Bounds.Right - _object.X;
+
+            _detLeft = new AYLineMask(new PointFP(_detLowLeft, c.CollisionMask.Bounds.Top - _object.Y + _maxSlope), c.CollisionMask.Bounds.Height - (4 * _maxSlope));
+            _detRight = new AYLineMask(new PointFP(_detLowRight, c.CollisionMask.Bounds.Top - _object.Y + _maxSlope), c.CollisionMask.Bounds.Height - (4 * _maxSlope));
+
+            _detLow.Position = _object.Position;
+            _detHigh.Position = _object.Position;
+            _detLeft.Position = _object.Position;
+            _detRight.Position = _object.Position;
+
+            _current = new State();
+            _prev = new State();
         }
 
         #region Properties
@@ -53,6 +88,18 @@ namespace Amphibian.Behaviors
         {
             get { return _yAccel; }
             set { _yAccel = value; }
+        }
+
+        public FPInt DecelX
+        {
+            get { return _xDecel; }
+            set { _xDecel = value; }
+        }
+
+        public FPInt DecelY
+        {
+            get { return _yDecel; }
+            set { _yDecel = value; }
         }
 
         public FPInt MaxVelocityX
@@ -91,6 +138,18 @@ namespace Amphibian.Behaviors
             set { _yVelocity = value; }
         }
 
+        public PlatformAccelState AccelStateX
+        {
+            get { return _xAccelState; }
+            set { _xAccelState = value; }
+        }
+
+        public PlatformAccelState AccelStateY
+        {
+            get { return _yAccelState; }
+            set { _yAccelState = value; }
+        }
+
         public FPInt DetectorLowerLeft
         {
             get { return _detLowLeft; }
@@ -107,113 +166,193 @@ namespace Amphibian.Behaviors
 
         public override void Execute ()
         {
-            float time = (float)_object.Parent.Engine.GameTime.ElapsedGameTime.TotalSeconds;
+            float time = (float)_object.Parent.Engine.GameTime.ElapsedGameTime.TotalSeconds * 60f;
 
-            FPInt txAccel = (FPInt)((float)_xAccel * time);
-            FPInt tyAccel = (FPInt)((float)_yAccel * time);
+            FPInt diffPosX, diffPosY;
+            StepPhysics(time, out diffPosX, out diffPosY);
 
-            _xVelocity = FPMath.Clamp(_xVelocity + txAccel, _xMinVel, _xMaxVel);
-            _yVelocity = FPMath.Clamp(_yVelocity + tyAccel, _yMinVel, _yMaxVel);
+            MoveHorizontal(diffPosX);
+            MoveVertical(diffPosX, diffPosY);
 
-            FPInt txVelocity = (FPInt)((float)_xVelocity * time);
-            FPInt tyVelocity = (FPInt)((float)_yVelocity * time);
+            _prev = _current;
+            _current.ObjectX = _object.X;
+            _current.ObjectY = _object.Y;
 
-            _object.X += txVelocity;
-            //_object.Y -= _yVelocity * time;
-
-            
-
-            /*if (_object.Parent.OverlapsBackdrop(c.CollisionMask)) {
-                _xAccel = 0;
-                _yAccel = 0;
-                _xVelocity = 0;
-                _yVelocity = 0;
-            }*/
-
-            Fall(tyVelocity);
-
-            ICollidable c = _object as ICollidable;
-            c.CollisionMask.Position = new PointFP(_object.X, c.CollisionMask.Position.Y);
-
-            _floorDet.Position = new PointFP(_object.X, _object.Y);
-            _subFloorDet.Position = new PointFP(_object.X, _object.Y + 1);
+            _object.RenderAt = null;
         }
 
-        private void StepMovement (FPInt distX, FPInt distY)
+        public override void Interpolate (double alpha)
         {
-            ICollidable c = _object as ICollidable;
-            RectangleFP bb = c.CollisionMask.Bounds;
-
-            // X Movement
-            _object.X += distX;
-
-            // Y Movement
-            bool testLL = _object.Parent.OverlapsBackdrop(_object.X + _detLowLeft, bb.Bottom);
-            bool testLR = _object.Parent.OverlapsBackdrop(_object.X + _detLowRight, bb.Bottom);
-            bool testLC = _object.Parent.OverlapsBackdrop(_object.X, bb.Bottom + 1);
-
-            // Y - No points colliding; Fall
-            if (!(testLC | testLL | testLR)) {
-                
+            FPInt midx = _current.ObjectX;
+            if (midx != _prev.ObjectX) {
+                midx = (FPInt)((double)midx * alpha + (double)_prev.ObjectX * (1.0 - alpha));
             }
-            // Y - Center subpoint colliding; On Level Terrain
-            else if (testLC && !(testLL | testLR)) {
 
+            FPInt midy = _current.ObjectY;
+            if (midy != _prev.ObjectY) {
+                midy = (FPInt)((double)midy * alpha + (double)_prev.ObjectY * (1.0 - alpha));
             }
-            // Y - Both points colliding; Dig Out
-            else if (testLL & testLR) {
 
-            }
-            // Y - One point colliding; Downward Slope Movement (Modified Fall)
-            else {
-
-            }
+            _object.RenderAt = new SharedPointFP(midx, midy);
         }
 
-        /*private void MoveFall (FPInt distY)
+        private void StepPhysics (float time, out FPInt diffPosX, out FPInt diffPosY)
         {
-            AYLineMask 
-        }*/
+            FPInt diffVelX = 0;
+            FPInt diffVelY = 0;
 
-        private void Fall (FPInt dist)
-        {
-            if (_object.Parent.OverlapsBackdrop(_subFloorDet)) {
-                if (!_object.Parent.OverlapsBackdrop(_floorDet)) {
-                    _yVelocity = 0;
-                    return;
-                }
-
-                _yVelocity = 0;
-
-                while (_object.Parent.OverlapsBackdrop(_floorDet)) {
-                    _floorDet.Position = new PointFP(_floorDet.Position.X, _floorDet.Position.Y - 1);
-                }
-
-                _object.Y = _floorDet.Position.Y;
-                _subFloorDet.Position = new PointFP(_subFloorDet.Position.X, _floorDet.Position.Y + 1);
-
-                ICollidable c = _object as ICollidable;
-                Mask mask = c.CollisionMask;
-                mask.Position = new PointFP(mask.Position.X, _object.Y);
+            switch (_xAccelState) {
+                case PlatformAccelState.Accelerate:
+                    diffVelX = (FPInt)((float)_xAccel * time);
+                    break;
+                case PlatformAccelState.Decelerate:
+                    diffVelX = (FPInt)((float)_xDecel * time);
+                    if (_xVelocity > 0) {
+                        diffVelX = -FPMath.Min(_xVelocity, diffVelX);
+                    }
+                    else {
+                        diffVelX = -FPMath.Max(_xVelocity, -diffVelX);
+                    }
+                    break;
             }
-            else {
-                AABBMask rmask = new AABBMask(new PointFP(_floorDet.Bounds.Left, _floorDet.Bounds.Bottom), _floorDet.Bounds.Width, -dist);
-                if (_object.Parent.OverlapsBackdrop(rmask)) {
+
+            switch (_yAccelState) {
+                case PlatformAccelState.Accelerate:
+                    diffVelY = (FPInt)((float)_yAccel * time);
+                    break;
+                case PlatformAccelState.Decelerate:
+                    diffVelY = (FPInt)((float)_yDecel * time);
+                    if (_yVelocity > 0) {
+                        diffVelY = -FPMath.Min(_yVelocity, diffVelY);
+                    }
+                    else {
+                        diffVelY = -FPMath.Max(_yVelocity, -diffVelY);
+                    }
+                    break;
+            }
+
+            FPInt nextVelX = FPMath.Clamp(_xVelocity + diffVelX, _xMinVel, _xMaxVel);
+            FPInt nextVelY = FPMath.Clamp(_yVelocity + diffVelY, _yMinVel, _yMaxVel);
+
+            diffPosX = (FPInt)((float)((_xVelocity + nextVelX) >> 1) * time);
+            diffPosY = (FPInt)((float)((_yVelocity + nextVelY) >> 1) * time);
+
+            _xVelocity = nextVelX;
+            _yVelocity = nextVelY;
+        }
+
+        private void MoveVertical (FPInt distX, FPInt distY)
+        {
+            _object.Y += distY;
+
+            if (distY > 0) {
+                if (_object.Parent.TestBackdropEdge(_detLow)) {
                     _yVelocity = 0;
 
-                    while (_object.Parent.OverlapsBackdrop(rmask)) {
-                        rmask = new AABBMask(new PointFP(rmask.Bounds.Left, rmask.Bounds.Top), rmask.Bounds.Width, rmask.Bounds.Height - 1);
+                    _object.Y = (FPInt)_object.Y.Floor;
+                    while (_object.Parent.TestBackdropEdge(_detLow)) {
+                        _object.Y -= 1;
+                    }
+                    _object.Y += 1;
+
+                    /*bool testLL = _object.Parent.TestBackdropEdge(_object.X + _detLowLeft, _detLow.Position.Y);
+                    bool testLR = _object.Parent.TestBackdropEdge(_object.X + _detLowRight, _detLow.Position.Y);
+
+                    if (testLL && testLR) {
+                        // Done for now
+                    }
+                    else if (testLL) {
+                        if (_object.Parent.TestBackdropEdge(_object.X + _detLowLeft + 5, _detLow.Position.Y + 5)) {
+                            _yVelocity = 10;
+                        }
+                    }*/
+                }
+            }
+            else if (distY < 0) {
+                if (_object.Parent.TestBackdropEdge(_detHigh)) {
+                    _yVelocity = 0;
+
+                    _object.Y = (FPInt)_object.Y.Floor;
+                    while (_object.Parent.TestBackdropEdge(_detHigh)) {
+                        _object.Y += 1;
                     }
                 }
-
-                _object.Y += rmask.Bounds.Height;
-                _floorDet.Position = new PointFP(_floorDet.Position.X, _object.Y);
-                _subFloorDet.Position = new PointFP(_floorDet.Position.X, _object.Y + 1);
-
-                ICollidable c = _object as ICollidable;
-                Mask mask = c.CollisionMask;
-                mask.Position = new PointFP(mask.Position.X, _object.Y);
             }
+        }
+
+        private void MoveHorizontal (FPInt dist)
+        {
+            if (dist > 0) {
+                _object.X -= dist.Ceil - dist;
+                dist = (FPInt)dist.Ceil;
+
+                for (; dist > 0; dist -= 1) {
+                    _object.X += 1;
+
+                    if (_object.Parent.TestBackdrop(_detRight)) {
+                        _xVelocity = 0;
+                        _object.X = (FPInt)_object.X.Floor;
+
+                        if (_object.Parent.TestBackdrop(_detRight)) {
+                            _object.X -= 1;
+                        }
+                    }
+
+                    bool test1 = _object.Parent.TestBackdropEdge(_object.X + _detLowLeft, _detLow.Position.Y);
+                    bool test2 = _object.Parent.TestBackdropEdge(_object.X + _detLowLeft, _detLow.Position.Y + 1);
+
+                    if (!test1 && test2) {
+                        _object.Y += 1;
+                    }
+                }
+            }
+            else if (dist < 0) {
+                _object.X += dist - dist.Floor;
+                dist = (FPInt)dist.Floor;
+
+                for (; dist < 0; dist += 1) {
+                    _object.X -= 1;
+
+                    if (_object.Parent.TestBackdrop(_detLeft)) {
+                        _xVelocity = 0;
+                        _object.X = (FPInt)_object.X.Ceil;
+
+                        if (_object.Parent.TestBackdrop(_detLeft)) {
+                            _object.X += 1;
+                        }
+                    }
+
+                    bool test1 = _object.Parent.TestBackdropEdge(_object.X + _detLowRight, _detLow.Position.Y);
+                    bool test2 = _object.Parent.TestBackdropEdge(_object.X + _detLowRight, _detLow.Position.Y + 1);
+
+                    if (!test1 && test2) {
+                        _object.Y += 1;
+                    }
+                }
+            }
+
+            /*_object.X += dist;
+
+            if (dist > 0) {
+                if (_object.Parent.TestBackdrop(_detRight)) {
+                    _xVelocity = 0;
+
+                    _object.X = (FPInt)_object.X.Floor;
+                    while (_object.Parent.TestBackdrop(_detRight)) {
+                        _object.X -= 1;
+                    }
+                }
+            }
+            else if (dist < 0) {
+                if (_object.Parent.TestBackdrop(_detLeft)) {
+                    _xVelocity = 0;
+
+                    _object.X = (FPInt)_object.X.Floor;
+                    while (_object.Parent.TestBackdrop(_detLeft)) {
+                        _object.X += 1;
+                    }
+                }
+            }*/
         }
 
         
