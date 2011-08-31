@@ -19,6 +19,13 @@ namespace Amphibian.Behaviors
         Action
     }
 
+    public enum PlatformAccelState
+    {
+        Fixed,
+        Accelerate,
+        Decelerate
+    }
+
     public class PlayerPlatformMovement<TActionSet> : InterpBehavior
         where TActionSet : struct
     {
@@ -46,16 +53,12 @@ namespace Amphibian.Behaviors
         private FPInt _yMinVel;
         private FPInt _xMaxVel;
         private FPInt _yMaxVel;
-        private bool _useXAccel;
-        private bool _useYAccel;
-        private bool _useXDecel;
-        private bool _useYDecel;
-
-        private AXLineMask _floorDet;
-        private AXLineMask _subFloorDet;
+        private PlatformAccelState _xAccelState;
+        private PlatformAccelState _yAccelState;
 
         // Detectors
         private AXLineMask _detLow;
+        private AXLineMask _detHigh;
         private FPInt _detLowLeft;
         private FPInt _detLowRight;
         private AYLineMask _detLeft;
@@ -72,13 +75,9 @@ namespace Amphibian.Behaviors
             _object = obj;
 
             ICollidable c = _object as ICollidable;
-            _floorDet = new AXLineMask(new PointFP(c.CollisionMask.Bounds.Left - _object.X, c.CollisionMask.Bounds.Bottom - _object.Y), c.CollisionMask.Bounds.Width);
-            _floorDet.Position = _object.Position;
-
-            _subFloorDet = new AXLineMask(new PointFP(c.CollisionMask.Bounds.Left - _object.X, c.CollisionMask.Bounds.Bottom - _object.Y + 1), c.CollisionMask.Bounds.Width);
-            _subFloorDet.Position = _object.Position;
 
             _detLow = new AXLineMask(new PointFP(c.CollisionMask.Bounds.Left - _object.X + 1, c.CollisionMask.Bounds.Bottom - _object.Y), c.CollisionMask.Bounds.Width - 2);
+            _detHigh = new AXLineMask(new PointFP(c.CollisionMask.Bounds.Left - _object.X + 1, c.CollisionMask.Bounds.Top - _object.Y), c.CollisionMask.Bounds.Width - 2);
 
             _detLowLeft = c.CollisionMask.Bounds.Left - _object.X;
             _detLowRight = c.CollisionMask.Bounds.Right - _object.X;
@@ -87,6 +86,7 @@ namespace Amphibian.Behaviors
             _detRight = new AYLineMask(new PointFP(_detLowRight, c.CollisionMask.Bounds.Top - _object.Y + _maxSlope), c.CollisionMask.Bounds.Height - (4 * _maxSlope));
 
             _detLow.Position = _object.Position;
+            _detHigh.Position = _object.Position;
             _detLeft.Position = _object.Position;
             _detRight.Position = _object.Position;
 
@@ -175,28 +175,16 @@ namespace Amphibian.Behaviors
             set { _yVelocity = value; }
         }
 
-        public bool UseAccelX
+        public PlatformAccelState AccelStateX
         {
-            get { return _useXAccel; }
-            set { _useXAccel = value; }
+            get { return _xAccelState; }
+            set { _xAccelState = value; }
         }
 
-        public bool UseAccelY
+        public PlatformAccelState AccelStateY
         {
-            get { return _useYAccel; }
-            set { _useYAccel = value; }
-        }
-
-        public bool UseDecelX
-        {
-            get { return _useXDecel; }
-            set { _useXDecel = value; }
-        }
-
-        public bool UseDecelY
-        {
-            get { return _useYDecel; }
-            set { _useYDecel = value; }
+            get { return _yAccelState; }
+            set { _yAccelState = value; }
         }
 
         public FPInt DetectorLowerLeft
@@ -265,24 +253,58 @@ namespace Amphibian.Behaviors
             _object.RenderAt = new SharedPointFP(midx, midy);
         }
 
+        private void HandleInput ()
+        {
+            if (_controller.ButtonHeld(_inputMap[PlatformAction.Left])) {
+                _xAccel = -FPMath.Abs(_xAccel);
+                _xAccelState = PlatformAccelState.Accelerate;
+            }
+            else if (_controller.ButtonHeld(_inputMap[PlatformAction.Right])) {
+                _xAccel = FPMath.Abs(_xAccel);
+                _xAccelState = PlatformAccelState.Accelerate;
+            }
+            else {
+                _xAccelState = PlatformAccelState.Decelerate;
+            }
+
+            if (_controller.ButtonPressed(_inputMap[PlatformAction.Jump])) {
+                _yVelocity = -12;
+            }
+        }
+
         private void StepPhysics (float time, out FPInt diffPosX, out FPInt diffPosY)
         {
             FPInt diffVelX = 0;
             FPInt diffVelY = 0;
 
-            if (_useXAccel)
-                diffVelX = (FPInt)((float)_xAccel * time);
-            if (_useYAccel)
-                diffVelY = (FPInt)((float)_yAccel * time);
+            switch(_xAccelState) {
+                case PlatformAccelState.Accelerate:
+                    diffVelX = (FPInt)((float)_xAccel * time);
+                    break;
+                case PlatformAccelState.Decelerate:
+                    diffVelX = (FPInt)((float)_xDecel * time);
+                    if (_xVelocity > 0) {
+                        diffVelX = -FPMath.Min(_xVelocity, diffVelX);
+                    }
+                    else {
+                        diffVelX = -FPMath.Max(_xVelocity, -diffVelX);
+                    }
+                    break;
+            }
 
-            if (_useXDecel) {
-                FPInt diffVelXDecel = (FPInt)((float)_xDecel * time);
-                if (_xVelocity > 0) {
-                    diffVelX += -FPMath.Min(_xVelocity, diffVelXDecel);
-                }
-                else {
-                    diffVelX += -FPMath.Max(_xVelocity, -diffVelXDecel);
-                }
+            switch (_yAccelState) {
+                case PlatformAccelState.Accelerate:
+                    diffVelY = (FPInt)((float)_yAccel * time);
+                    break;
+                case PlatformAccelState.Decelerate:
+                    diffVelY = (FPInt)((float)_yDecel * time);
+                    if (_yVelocity > 0) {
+                        diffVelY = -FPMath.Min(_yVelocity, diffVelY);
+                    }
+                    else {
+                        diffVelY = -FPMath.Max(_yVelocity, -diffVelY);
+                    }
+                    break;
             }
 
             FPInt nextVelX = FPMath.Clamp(_xVelocity + diffVelX, _xMinVel, _xMaxVel);
@@ -295,40 +317,8 @@ namespace Amphibian.Behaviors
             _yVelocity = nextVelY;
         }
 
-        private void HandleInput ()
-        {
-            if (_controller.ButtonHeld(_inputMap[PlatformAction.Left])) {
-                //_xAccel = (FPInt)(-0.5);
-                //_xVelocity = -2;
-                _xAccel = -FPMath.Abs(_xAccel);
-                _useXAccel = true;
-                _useXDecel = false;
-            }
-            else if (_controller.ButtonHeld(_inputMap[PlatformAction.Right])) {
-                //_xAccel = (FPInt)0.5;
-                //_xVelocity = 2;
-                _xAccel = FPMath.Abs(_xAccel);
-                _useXAccel = true;
-                _useXDecel = false;
-            }
-            else {
-                //_xAccel = 0;
-                //_xVelocity = 0;
-                _useXAccel = false;
-                _useXDecel = true;
-            }
-
-            if (_controller.ButtonPressed(_inputMap[PlatformAction.Jump])) {
-                _yVelocity = -12;
-            }
-        }
-
         private void StepMovement (FPInt distX, FPInt distY)
         {
-            // X Movement
-            //_object.X += distX;
-
-            // Y Movement
             _object.Y += distY;
 
             if (distY > 0) {
@@ -349,6 +339,16 @@ namespace Amphibian.Behaviors
                     }
                     else if (testLL) {
 
+                    }
+                }
+            }
+            else if (distY < 0) {
+                if (_object.Parent.TestBackdropEdge(_detHigh)) {
+                    _yVelocity = 0;
+
+                    _object.Y = (FPInt)_object.Y.Floor;
+                    while (_object.Parent.TestBackdropEdge(_detHigh)) {
+                        _object.Y += 1;
                     }
                 }
             }
@@ -379,51 +379,5 @@ namespace Amphibian.Behaviors
                 }
             }            
         }
-
-        
-
-        /*private void Fall (FPInt dist)
-        {
-            if (_object.Parent.TestBackdrop(_subFloorDet)) {
-                if (!_object.Parent.TestBackdrop(_floorDet)) {
-                    _yVelocity = 0;
-                    return;
-                }
-
-                _yVelocity = 0;
-
-                while (_object.Parent.TestBackdrop(_floorDet)) {
-                    _object.Offset(0, -1);
-                    //_floorDet.Position = new PointFP(_floorDet.Position.X, _floorDet.Position.Y - 1);
-                }
-
-                //_object.Y = _floorDet.Position.Y;
-                //_subFloorDet.Position = new PointFP(_subFloorDet.Position.X, _floorDet.Position.Y + 1);
-
-                //ICollidable c = _object as ICollidable;
-                //Mask mask = c.CollisionMask;
-                //mask.Position = new PointFP(mask.Position.X, _object.Y);
-            }
-            else {
-                AABBMask rmask = new AABBMask(new PointFP(_floorDet.Bounds.Left, _floorDet.Bounds.Bottom), _floorDet.Bounds.Width, dist);
-                if (_object.Parent.TestBackdrop(rmask)) {
-                    _yVelocity = 0;
-
-                    while (_object.Parent.TestBackdrop(rmask)) {
-                        rmask = new AABBMask(new PointFP(rmask.Bounds.Left, rmask.Bounds.Top), rmask.Bounds.Width, rmask.Bounds.Height - 1);
-                    }
-                }
-
-                _object.Y += rmask.Bounds.Height;
-                //_floorDet.Position = new PointFP(_floorDet.Position.X, _object.Y);
-                //_subFloorDet.Position = new PointFP(_floorDet.Position.X, _object.Y + 1);
-
-                //ICollidable c = _object as ICollidable;
-                //Mask mask = c.CollisionMask;
-                //mask.Position = new PointFP(mask.Position.X, _object.Y);
-            }
-        }*/
-
-
     }
 }
