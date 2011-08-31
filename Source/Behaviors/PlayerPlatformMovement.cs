@@ -331,15 +331,17 @@ namespace Amphibian.Behaviors
                     }
                     _object.Y += 1;
 
-                    bool testLL = _object.Parent.TestBackdropEdge(_object.X + _detLowLeft, _detLow.Position.Y);
+                    /*bool testLL = _object.Parent.TestBackdropEdge(_object.X + _detLowLeft, _detLow.Position.Y);
                     bool testLR = _object.Parent.TestBackdropEdge(_object.X + _detLowRight, _detLow.Position.Y);
 
                     if (testLL && testLR) {
                         // Done for now
                     }
                     else if (testLL) {
-
-                    }
+                        if (_object.Parent.TestBackdropEdge(_object.X + _detLowLeft + 5, _detLow.Position.Y + 5)) {
+                            _yVelocity = 10;
+                        }
+                    }*/
                 }
             }
             else if (distY < 0) {
@@ -356,7 +358,56 @@ namespace Amphibian.Behaviors
 
         private void MoveLR (FPInt dist)
         {
-            _object.X += dist;
+            if (dist > 0) {
+                _object.X -= dist.Ceil - dist;
+                dist = (FPInt)dist.Ceil;
+
+                for (; dist > 0; dist -= 1) {
+                    _object.X += 1;
+
+                    if (_object.Parent.TestBackdrop(_detRight)) {
+                        _xVelocity = 0;
+                        _object.X = (FPInt)_object.X.Floor;
+
+                        if (_object.Parent.TestBackdrop(_detRight)) {
+                            _object.X -= 1;
+                        }
+                    }
+
+                    bool test1 = _object.Parent.TestBackdropEdge(_object.X + _detLowLeft, _detLow.Position.Y);
+                    bool test2 = _object.Parent.TestBackdropEdge(_object.X + _detLowLeft, _detLow.Position.Y + 1);
+
+                    if (!test1 && test2) {
+                        _object.Y += 1;
+                    }
+                }
+            }
+            else if (dist < 0) {
+                _object.X += dist - dist.Floor;
+                dist = (FPInt)dist.Floor;
+
+                for (; dist < 0; dist += 1) {
+                    _object.X -= 1;
+
+                    if (_object.Parent.TestBackdrop(_detLeft)) {
+                        _xVelocity = 0;
+                        _object.X = (FPInt)_object.X.Ceil;
+
+                        if (_object.Parent.TestBackdrop(_detLeft)) {
+                            _object.X += 1;
+                        }
+                    }
+
+                    bool test1 = _object.Parent.TestBackdropEdge(_object.X + _detLowRight, _detLow.Position.Y);
+                    bool test2 = _object.Parent.TestBackdropEdge(_object.X + _detLowRight, _detLow.Position.Y + 1);
+
+                    if (!test1 && test2) {
+                        _object.Y += 1;
+                    }
+                }
+            }
+
+            /*_object.X += dist;
 
             if (dist > 0) {
                 if (_object.Parent.TestBackdrop(_detRight)) {
@@ -377,7 +428,7 @@ namespace Amphibian.Behaviors
                         _object.X += 1;
                     }
                 }
-            }            
+            }*/       
         }
     }
 }
