@@ -5,6 +5,9 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Amphibian.Collision;
 using Amphibian.Geometry;
+using Microsoft.Xna.Framework.Graphics;
+using Amphibian.Debug;
+using Amphibian.Drawing;
 
 namespace Amphibian.Behaviors
 {
@@ -355,6 +358,14 @@ namespace Amphibian.Behaviors
             }*/
         }
 
-        
+        public void DebugDraw (SpriteBatch spriteBatch)
+        {
+            if (ADebug.RenderCollisionGeometry) {
+                _detLow.Draw(spriteBatch, Pens.Red);
+                _detHigh.Draw(spriteBatch, Pens.Red);
+                _detLeft.Draw(spriteBatch, Pens.Red);
+                _detRight.Draw(spriteBatch, Pens.Red);
+            }
+        }
     }
 }

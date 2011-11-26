@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.Xna.Framework;
 
 namespace Amphibian.Geometry
 {
@@ -92,6 +93,11 @@ namespace Amphibian.Geometry
             return new VectorFP(value.X, value.Y);
         }
 
+        public static implicit operator SharedPointFP (Point src)
+        {
+            return new SharedPointFP(src.X, src.Y);
+        }
+
         #endregion
 
         #region Explicit Conversions
@@ -99,6 +105,21 @@ namespace Amphibian.Geometry
         public static explicit operator SharedPointFP (PointFP value)
         {
             return new SharedPointFP(value.X, value.Y);
+        }
+
+        public static explicit operator Point (SharedPointFP src)
+        {
+            return new Point(src.X.Round, src.Y.Round);
+        }
+
+        public static explicit operator Vector2 (SharedPointFP src)
+        {
+            return new Vector2((float)src.X, (float)src.Y);
+        }
+
+        public static explicit operator SharedPointFP (Vector2 src)
+        {
+            return new SharedPointFP((FPInt)src.X, (FPInt)src.Y);
         }
 
         #endregion

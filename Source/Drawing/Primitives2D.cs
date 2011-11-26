@@ -5,6 +5,64 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Amphibian.Drawing
 {
+    /*public abstract class Brush
+    {
+        protected Brush ()
+        {
+        }
+
+        public virtual float Alpha { get; protected set; }
+        public virtual Texture2D Texture { get; protected set; }
+    }
+
+    public class SolidColorBrush : Brush
+    {
+        public Color Color { get; private set; }
+
+        public SolidColorBrush (SpriteBatch spriteBatch, Color color)
+            : base()
+        {
+            Alpha = color.A / 255f;
+            Color = color;
+
+            color = new Color(color.R, color.G, color.B, 255);
+
+            Texture = new Texture2D(spriteBatch.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
+            Texture.SetData(new Color[] { color });
+        }
+    }
+
+    public class LineStippleBrush : Brush
+    {
+        public LineStippleBrush (SpriteBatch spriteBatch, Color color, string pattern, int thickness)
+            : base()
+        {
+            Color[] data = new Color[pattern.Length * thickness];
+            for (int i = 0; i < pattern.Length; i++) {
+                if (pattern[i] == ' ') {
+                    data[i] = Color.Transparent;
+                }
+                else {
+                    data[i] = color;
+                }
+            }
+
+            for (int i = 1; i < thickness; i++) {
+                for (int j = 0; j < pattern.Length; j++) {
+                    data[i * j] = data[j];
+                }
+            }
+
+            Texture = new Texture2D(spriteBatch.GraphicsDevice, pattern.Length, thickness, false, SurfaceFormat.Color);
+            Texture.SetData(data);
+        }
+
+        public override float Alpha
+        {
+            get { return 1f; }
+        }
+    }*/
+
     /// <summary>
     /// </summary>
     public static class Primitives2D
@@ -138,12 +196,12 @@ namespace Amphibian.Drawing
         /// Draws a list of connecting points
         /// </summary>
         /// <param name="spriteBatch">The destination drawing surface</param>
-        /// /// <param name="position">Where to position the points</param>
+        /// <param name="position">Where to position the points</param>
         /// <param name="points">The points to connect with lines</param>
         /// <param name="color">The color to use</param>
-        private static void DrawPoints (SpriteBatch spriteBatch, Vector2 position, List<Vector2> points, Color color)
+        private static void DrawPoints (SpriteBatch spriteBatch, Vector2 position, List<Vector2> points, Brush brush)
         {
-            DrawPoints(spriteBatch, position, points, color, 1.0f);
+            DrawPoints(spriteBatch, position, points, brush, 1.0f);
         }
 
 
@@ -151,18 +209,18 @@ namespace Amphibian.Drawing
         /// Draws a list of connecting points
         /// </summary>
         /// <param name="spriteBatch">The destination drawing surface</param>
-        /// /// <param name="position">Where to position the points</param>
+        /// <param name="position">Where to position the points</param>
         /// <param name="points">The points to connect with lines</param>
         /// <param name="color">The color to use</param>
         /// <param name="color">The thickness to use</param>
         /// <param name="thickness">The thickness of the lines</param>
-        private static void DrawPoints (SpriteBatch spriteBatch, Vector2 position, List<Vector2> points, Color color, float thickness)
+        private static void DrawPoints (SpriteBatch spriteBatch, Vector2 position, List<Vector2> points, Brush brush, float thickness)
         {
             if (points.Count < 2)
                 return;
 
             for (int i = 1; i < points.Count; i++) {
-                DrawLine(spriteBatch, points[i - 1] + position, points[i] + position, color, thickness);
+                DrawLine(spriteBatch, points[i - 1] + position, points[i] + position, brush, thickness);
             }
         }
 
@@ -352,12 +410,12 @@ namespace Amphibian.Drawing
         /// <param name="spriteBatch">The destination drawing surface</param>
         /// <param name="rect">The rectangle to draw</param>
         /// <param name="color">The color to draw the rectangle in</param>
-        public static void FillRectangle (SpriteBatch spriteBatch, Rectangle rect, Color color)
+        public static void FillRectangle (SpriteBatch spriteBatch, Rectangle rect, Brush brush)
         {
-            if (m_pixel == null) { CreateThePixel(spriteBatch); }
+            //if (m_pixel == null) { CreateThePixel(spriteBatch); }
 
             // Simply use the function already there
-            spriteBatch.Draw(m_pixel, rect, color);
+            spriteBatch.Draw(brush.Texture, rect, Color.White * brush.Alpha);
         }
 
         /// <summary>
@@ -367,11 +425,11 @@ namespace Amphibian.Drawing
         /// <param name="rect">The rectangle to draw</param>
         /// <param name="angle">The angle to draw the rectangle at</param>
         /// <param name="color">The color to draw the rectangle in</param>
-        public static void FillRectangle (SpriteBatch spriteBatch, Rectangle rect, Color color, float angle)
+        public static void FillRectangle (SpriteBatch spriteBatch, Rectangle rect, Brush brush, float angle)
         {
-            if (m_pixel == null) { CreateThePixel(spriteBatch); }
+            //if (m_pixel == null) { CreateThePixel(spriteBatch); }
 
-            spriteBatch.Draw(m_pixel, rect, null, color, angle, Vector2.Zero, SpriteEffects.None, 0);
+            spriteBatch.Draw(brush.Texture, rect, null, Color.White * brush.Alpha, angle, Vector2.Zero, SpriteEffects.None, 0);
         }
 
         /// <summary>
@@ -381,9 +439,9 @@ namespace Amphibian.Drawing
         /// <param name="location">Where to draw</param>
         /// <param name="size">The size of the rectangle</param>
         /// <param name="color">The color to draw the rectangle in</param>
-        public static void FillRectangle (SpriteBatch spriteBatch, Vector2 location, Vector2 size, Color color)
+        public static void FillRectangle (SpriteBatch spriteBatch, Vector2 location, Vector2 size, Brush brush)
         {
-            FillRectangle(spriteBatch, location, size, color, 0.0f);
+            FillRectangle(spriteBatch, location, size, brush, 0.0f);
         }
 
         /// <summary>
@@ -394,15 +452,15 @@ namespace Amphibian.Drawing
         /// <param name="size">The size of the rectangle</param>
         /// <param name="angle">The angle to draw the rectangle at</param>
         /// <param name="color">The color to draw the rectangle in</param>
-        public static void FillRectangle (SpriteBatch spriteBatch, Vector2 location, Vector2 size, Color color, float angle)
+        public static void FillRectangle (SpriteBatch spriteBatch, Vector2 location, Vector2 size, Brush brush, float angle)
         {
-            if (m_pixel == null) { CreateThePixel(spriteBatch); }
+            //if (m_pixel == null) { CreateThePixel(spriteBatch); }
 
             // stretch the pixel between the two vectors
-            spriteBatch.Draw(m_pixel,
+            spriteBatch.Draw(brush.Texture,
                              location,
                              null,
-                             color,
+                             Color.White * brush.Alpha,
                              angle,
                              Vector2.Zero,
                              size,
@@ -419,12 +477,12 @@ namespace Amphibian.Drawing
         /// <param name="x2">The X coord of the right side</param>
         /// <param name="y2">The Y coord of the bottom side</param>
         /// <param name="color">The color to draw the rectangle in</param>
-        public static void FillRectangle (SpriteBatch spriteBatch, float x1, float y1, float x2, float y2, Color color)
+        public static void FillRectangle (SpriteBatch spriteBatch, float x1, float y1, float x2, float y2, Brush brush)
         {
-            if (m_pixel == null) { CreateThePixel(spriteBatch); }
+            //if (m_pixel == null) { CreateThePixel(spriteBatch); }
 
             // Simply use the function already there
-            FillRectangle(spriteBatch, new Vector2(x1, y1), new Vector2(x2, y2), color, 1.0f);
+            FillRectangle(spriteBatch, new Vector2(x1, y1), new Vector2(x2, y2), brush, 1.0f);
         }
 
         /// <summary>
@@ -437,12 +495,12 @@ namespace Amphibian.Drawing
         /// <param name="y2">The Y coord of the bottom side</param>
         /// <param name="color">The color to draw the rectangle in</param>
         /// <param name="thickness">The thickness of the line</param>
-        public static void FillRectangle (SpriteBatch spriteBatch, float x1, float y1, float x2, float y2, Color color, float thickness)
+        public static void FillRectangle (SpriteBatch spriteBatch, float x1, float y1, float x2, float y2, Brush brush, float thickness)
         {
-            if (m_pixel == null) { CreateThePixel(spriteBatch); }
+            //if (m_pixel == null) { CreateThePixel(spriteBatch); }
 
             // Simply use the function already there
-            FillRectangle(spriteBatch, new Vector2(x1, y1), new Vector2(x2, y2), color, thickness);
+            FillRectangle(spriteBatch, new Vector2(x1, y1), new Vector2(x2, y2), brush, thickness);
         }
 
         #endregion
@@ -456,9 +514,9 @@ namespace Amphibian.Drawing
         /// <param name="spriteBatch">The destination drawing surface</param>
         /// <param name="rect">The rectangle to draw</param>
         /// <param name="color">The color to draw the rectangle in</param>
-        public static void DrawRectangle (SpriteBatch spriteBatch, Rectangle rect, Color color)
+        public static void DrawRectangle (SpriteBatch spriteBatch, Rectangle rect, Brush brush)
         {
-            DrawRectangle(spriteBatch, rect, color, 1.0f, 0.0f, new Vector2(rect.X, rect.Y));
+            DrawRectangle(spriteBatch, rect, brush, 1.0f, 0.0f, new Vector2(rect.X, rect.Y));
         }
 
         /// <summary>
@@ -468,9 +526,9 @@ namespace Amphibian.Drawing
         /// <param name="rect">The rectangle to draw</param>
         /// <param name="color">The color to draw the rectangle in</param>
         /// <param name="thickness">The thickness of the lines</param>
-        public static void DrawRectangle (SpriteBatch spriteBatch, Rectangle rect, Color color, float thickness)
+        public static void DrawRectangle (SpriteBatch spriteBatch, Rectangle rect, Brush brush, float thickness)
         {
-            DrawRectangle(spriteBatch, rect, color, thickness, 0.0f, new Vector2(rect.X, rect.Y));
+            DrawRectangle(spriteBatch, rect, brush, thickness, 0.0f, new Vector2(rect.X, rect.Y));
         }
 
         /// <summary>
@@ -481,9 +539,9 @@ namespace Amphibian.Drawing
         /// <param name="color">The color to draw the rectangle in</param>
         /// <param name="thickness">The thickness of the lines</param>
         /// <param name="angle">The angle to draw the rectangle at, this will rotate around the top-left of the rectangle by default</param>
-        public static void DrawRectangle (SpriteBatch spriteBatch, Rectangle rect, Color color, float thickness, float angle)
+        public static void DrawRectangle (SpriteBatch spriteBatch, Rectangle rect, Brush brush, float thickness, float angle)
         {
-            DrawRectangle(spriteBatch, rect, color, thickness, angle, new Vector2(rect.X, rect.Y));
+            DrawRectangle(spriteBatch, rect, brush, thickness, angle, new Vector2(rect.X, rect.Y));
         }
 
         /// <summary>
@@ -495,16 +553,22 @@ namespace Amphibian.Drawing
         /// <param name="thickness">The thickness of the lines</param>
         /// <param name="angle">The angle to draw the rectangle at</param>
         /// <param name="rotateAround">The location to rotate the rectangle around</param>
-        public static void DrawRectangle (SpriteBatch spriteBatch, Rectangle rect, Color color, float thickness, float angle, Vector2 rotateAround)
+        public static void DrawRectangle (SpriteBatch spriteBatch, Rectangle rect, Brush brush, float thickness, float angle, Vector2 rotateAround)
         {
 
             // TODO: Handle rotations
             // TODO: Figure out the pattern for the offsets required and then handle it in the line instead of here
 
-            DrawLine(spriteBatch, new Vector2(rect.X, rect.Y), new Vector2(rect.Right, rect.Y), color, thickness); // top
-            DrawLine(spriteBatch, new Vector2(rect.X + 1f, rect.Y), new Vector2(rect.X + 1f, rect.Bottom + 1f), color, thickness); // left
-            DrawLine(spriteBatch, new Vector2(rect.X, rect.Bottom), new Vector2(rect.Right, rect.Bottom), color, thickness); // bottom
-            DrawLine(spriteBatch, new Vector2(rect.Right + 1f, rect.Y), new Vector2(rect.Right + 1f, rect.Bottom + 1f), color, thickness); // right
+            DrawHLine(spriteBatch, new Vector2(rect.Left, rect.Top), rect.Width, brush);
+            DrawHLine(spriteBatch, new Vector2(rect.Left, rect.Bottom), rect.Width, brush);
+            DrawVLine(spriteBatch, new Vector2(rect.Left, rect.Top), rect.Height, brush);
+            DrawVLine(spriteBatch, new Vector2(rect.Right, rect.Top), rect.Height, brush);
+
+            /*DrawLine(spriteBatch, new Vector2(rect.X, rect.Y), new Vector2(rect.Right, rect.Y), brush, thickness); // top
+            DrawLine(spriteBatch, new Vector2(rect.X + 1f, rect.Y), new Vector2(rect.X + 1f, rect.Bottom + 1f), brush, thickness); // left
+            DrawLine(spriteBatch, new Vector2(rect.X, rect.Bottom), new Vector2(rect.Right, rect.Bottom), brush, thickness); // bottom
+            DrawLine(spriteBatch, new Vector2(rect.Right + 1f, rect.Y), new Vector2(rect.Right + 1f, rect.Bottom + 1f), brush, thickness); // right
+             */
             /*
             DrawLine(spriteBatch, new Vector2(rect.X, rect.Y), new Vector2(rect.X + rect.Width, rect.Y), Color.White, thickness); // top
             DrawLine(spriteBatch, new Vector2(rect.X, rect.Y), new Vector2(rect.X, rect.Y + rect.Height + 1f), Color.Red, thickness); // left
@@ -530,9 +594,9 @@ namespace Amphibian.Drawing
         /// <param name="location">Where to draw</param>
         /// <param name="size">The size of the rectangle</param>
         /// <param name="color">The color to draw the rectangle in</param>
-        public static void DrawRectangle (SpriteBatch spriteBatch, Vector2 location, Vector2 size, Color color)
+        public static void DrawRectangle (SpriteBatch spriteBatch, Vector2 location, Vector2 size, Brush brush)
         {
-            DrawRectangle(spriteBatch, new Rectangle((int)location.X, (int)location.Y, (int)size.X, (int)size.Y), color, 1.0f, 0.0f, location);
+            DrawRectangle(spriteBatch, new Rectangle((int)location.X, (int)location.Y, (int)size.X, (int)size.Y), brush, 1.0f, 0.0f, location);
         }
 
         /// <summary>
@@ -543,9 +607,9 @@ namespace Amphibian.Drawing
         /// <param name="size">The size of the rectangle</param>
         /// <param name="color">The color to draw the rectangle in</param>
         /// <param name="thickness">The thickness of the line</param>
-        public static void DrawRectangle (SpriteBatch spriteBatch, Vector2 location, Vector2 size, Color color, float thickness)
+        public static void DrawRectangle (SpriteBatch spriteBatch, Vector2 location, Vector2 size, Brush brush, float thickness)
         {
-            DrawRectangle(spriteBatch, new Rectangle((int)location.X, (int)location.Y, (int)size.X, (int)size.Y), color, thickness, 0.0f, location);
+            DrawRectangle(spriteBatch, new Rectangle((int)location.X, (int)location.Y, (int)size.X, (int)size.Y), brush, thickness, 0.0f, location);
         }
 
         /// <summary>
@@ -557,9 +621,9 @@ namespace Amphibian.Drawing
         /// <param name="color">The color to draw the rectangle in</param>
         /// <param name="thickness">The thickness of the line</param>
         /// <param name="angle">The angle to draw the rectangle at, this will rotate around the top-left of the rectangle by default</param>
-        public static void DrawRectangle (SpriteBatch spriteBatch, Vector2 location, Vector2 size, Color color, float thickness, float angle)
+        public static void DrawRectangle (SpriteBatch spriteBatch, Vector2 location, Vector2 size, Brush brush, float thickness, float angle)
         {
-            DrawRectangle(spriteBatch, new Rectangle((int)location.X, (int)location.Y, (int)size.X, (int)size.Y), color, thickness, angle, location);
+            DrawRectangle(spriteBatch, new Rectangle((int)location.X, (int)location.Y, (int)size.X, (int)size.Y), brush, thickness, angle, location);
         }
 
         /// <summary>
@@ -572,9 +636,9 @@ namespace Amphibian.Drawing
         /// <param name="thickness">The thickness of the line</param>
         /// <param name="angle">The angle to draw the rectangle at</param>
         /// <param name="rotateAround">Rotate around this point</param>
-        public static void DrawRectangle (SpriteBatch spriteBatch, Vector2 location, Vector2 size, Color color, float thickness, float angle, Vector2 rotateAround)
+        public static void DrawRectangle (SpriteBatch spriteBatch, Vector2 location, Vector2 size, Brush brush, float thickness, float angle, Vector2 rotateAround)
         {
-            DrawRectangle(spriteBatch, new Rectangle((int)location.X, (int)location.Y, (int)size.X, (int)size.Y), color, thickness, angle, rotateAround);
+            DrawRectangle(spriteBatch, new Rectangle((int)location.X, (int)location.Y, (int)size.X, (int)size.Y), brush, thickness, angle, rotateAround);
         }
 
         #endregion
@@ -591,9 +655,9 @@ namespace Amphibian.Drawing
         /// <param name="x2">The X coord of the second point</param>
         /// <param name="y2">The Y coord of the second point</param>
         /// <param name="color">The color to use</param>
-        public static void DrawLine (SpriteBatch spriteBatch, float x1, float y1, float x2, float y2, Color color)
+        public static void DrawLine (SpriteBatch spriteBatch, float x1, float y1, float x2, float y2, Brush brush)
         {
-            DrawLine(spriteBatch, new Vector2(x1, y1), new Vector2(x2, y2), color, 1.0f);
+            DrawLine(spriteBatch, new Vector2(x1, y1), new Vector2(x2, y2), brush, 1.0f);
         }
 
         /// <summary>
@@ -606,9 +670,9 @@ namespace Amphibian.Drawing
         /// <param name="y2">The Y coord of the second point</param>
         /// <param name="color">The color to use</param>
         /// <param name="thickness">The thickness of the line</param>
-        public static void DrawLine (SpriteBatch spriteBatch, float x1, float y1, float x2, float y2, Color color, float thickness)
+        public static void DrawLine (SpriteBatch spriteBatch, float x1, float y1, float x2, float y2, Brush brush, float thickness)
         {
-            DrawLine(spriteBatch, new Vector2(x1, y1), new Vector2(x2, y2), color, thickness);
+            DrawLine(spriteBatch, new Vector2(x1, y1), new Vector2(x2, y2), brush, thickness);
         }
 
         /// <summary>
@@ -618,9 +682,9 @@ namespace Amphibian.Drawing
         /// <param name="point1">The first point</param>
         /// <param name="point2">The second point</param>
         /// <param name="color">The color to use</param>
-        public static void DrawLine (SpriteBatch spriteBatch, Vector2 point1, Vector2 point2, Color color)
+        public static void DrawLine (SpriteBatch spriteBatch, Vector2 point1, Vector2 point2, Brush brush)
         {
-            DrawLine(spriteBatch, point1, point2, color, 1.0f);
+            DrawLine(spriteBatch, point1, point2, brush, 1.0f);
         }
 
         /// <summary>
@@ -631,7 +695,7 @@ namespace Amphibian.Drawing
         /// <param name="point2">The second point</param>
         /// <param name="color">The color to use</param>
         /// <param name="thickness">The thickness of the line</param>
-        public static void DrawLine (SpriteBatch spriteBatch, Vector2 point1, Vector2 point2, Color color, float thickness)
+        public static void DrawLine (SpriteBatch spriteBatch, Vector2 point1, Vector2 point2, Brush brush, float thickness)
         {
             // calculate the distance between the two vectors
             float distance = Vector2.Distance(point1, point2);
@@ -639,7 +703,7 @@ namespace Amphibian.Drawing
             // calculate the angle between the two vectors
             float angle = (float)Math.Atan2(point2.Y - point1.Y, point2.X - point1.X);
 
-            DrawLine(spriteBatch, point1, distance, angle, color, thickness);
+            DrawLine(spriteBatch, point1, distance, angle, brush, thickness);
         }
 
         /// <summary>
@@ -650,9 +714,19 @@ namespace Amphibian.Drawing
         /// <param name="length">The length of the line</param>
         /// <param name="angle">The angle of this line from the starting point</param>
         /// <param name="color">The color to use</param>
-        public static void DrawLine (SpriteBatch spriteBatch, Vector2 point, float length, float angle, Color color)
+        public static void DrawLine (SpriteBatch spriteBatch, Vector2 point, float length, float angle, Brush brush)
         {
-            DrawLine(spriteBatch, point, length, angle, color, 1.0f);
+            DrawLine(spriteBatch, point, length, angle, brush, 1.0f);
+        }
+
+        public static void DrawHLine (SpriteBatch spriteBatch, Vector2 point, float length, Brush brush)
+        {
+            spriteBatch.Draw(brush.Texture, new Rectangle((int)point.X, (int)point.Y, (int)length, 1), Color.White * brush.Alpha);
+        }
+
+        public static void DrawVLine (SpriteBatch spriteBatch, Vector2 point, float length, Brush brush)
+        {
+            spriteBatch.Draw(brush.Texture, new Rectangle((int)point.X, (int)point.Y, 1, (int)length), Color.White * brush.Alpha);
         }
 
         /// <summary>
@@ -664,20 +738,46 @@ namespace Amphibian.Drawing
         /// <param name="angle">The angle of this line from the starting point</param>
         /// <param name="color">The color to use</param>
         /// <param name="thickness">The thickness of the line</param>
-        public static void DrawLine (SpriteBatch spriteBatch, Vector2 point, float length, float angle, Color color, float thickness)
+        public static void DrawLine (SpriteBatch spriteBatch, Vector2 point, float length, float angle, Brush brush, float thickness)
         {
             if (m_pixel == null) { CreateThePixel(spriteBatch); }
 
-            // stretch the pixel between the two vectors
-            spriteBatch.Draw(m_pixel,
-                             point,
+            float width = length * (float)Math.Cos(angle);
+            float height = length * (float)Math.Sin(angle);
+            Vector2 point2 = new Vector2(point.X + width, point.Y + height);
+
+            int steps = (int)(length / brush.Texture.Width);
+            float stepX = brush.Texture.Width * (float)Math.Cos(angle);
+            float stepY = brush.Texture.Width * (float)Math.Sin(angle);
+
+            Vector2 stepPoint = point;
+            for (int i = 0; i < steps; i++) {
+                spriteBatch.Draw(brush.Texture,
+                             stepPoint,
                              null,
-                             color,
+                             Color.White * brush.Alpha,
                              angle,
                              Vector2.Zero,
-                             new Vector2(length, thickness),
+                             Vector2.One,
                              SpriteEffects.None,
                              0);
+                stepPoint.X += stepX;
+                stepPoint.Y += stepY;
+            }
+
+            int rem = (int)(length - steps * brush.Texture.Width);
+
+            if (rem > 0) {
+                spriteBatch.Draw(brush.Texture,
+                             stepPoint,
+                             new Rectangle(0, 0, rem, brush.Texture.Height),
+                             Color.White * brush.Alpha,
+                             angle,
+                             Vector2.Zero,
+                             Vector2.One,
+                             SpriteEffects.None,
+                             0);
+            }
         }
 
         #endregion
@@ -707,9 +807,9 @@ namespace Amphibian.Drawing
         /// <param name="radius">The radius of the circle</param>
         /// <param name="sides">The number of sides to generate</param>
         /// <param name="color">The color of the circle</param>
-        public static void DrawCircle (SpriteBatch spriteBatch, Vector2 center, float radius, int sides, Color color)
+        public static void DrawCircle (SpriteBatch spriteBatch, Vector2 center, float radius, int sides, Brush brush)
         {
-            DrawPoints(spriteBatch, center, CreateCircle(radius, sides), color, 1.0f);
+            DrawPoints(spriteBatch, center, CreateCircle(radius, sides), brush, 1.0f);
         }
 
 
@@ -721,19 +821,19 @@ namespace Amphibian.Drawing
         /// <param name="radius">The radius of the circle</param>
         /// <param name="sides">The number of sides to generate</param>
         /// <param name="color">The color of the circle</param>
-        public static void DrawCircle (SpriteBatch spriteBatch, Vector2 center, float radius, int sides, Color color, float thickness)
+        public static void DrawCircle (SpriteBatch spriteBatch, Vector2 center, float radius, int sides, Brush brush, float thickness)
         {
-            DrawPoints(spriteBatch, center, CreateCircle(radius, sides), color, thickness);
+            DrawPoints(spriteBatch, center, CreateCircle(radius, sides), brush, thickness);
         }
 
-        public static void DrawCircle (SpriteBatch spriteBatch, float x, float y, float radius, int sides, Color color)
+        public static void DrawCircle (SpriteBatch spriteBatch, float x, float y, float radius, int sides, Brush brush)
         {
-            DrawPoints(spriteBatch, new Vector2(x, y), CreateCircle(radius, sides), color, 1.0f);
+            DrawPoints(spriteBatch, new Vector2(x, y), CreateCircle(radius, sides), brush, 1.0f);
         }
 
-        public static void DrawCircle (SpriteBatch spriteBatch, float x, float y, float radius, int sides, Color color, float thickness)
+        public static void DrawCircle (SpriteBatch spriteBatch, float x, float y, float radius, int sides, Brush brush, float thickness)
         {
-            DrawPoints(spriteBatch, new Vector2(x, y), CreateCircle(radius, sides), color, thickness);
+            DrawPoints(spriteBatch, new Vector2(x, y), CreateCircle(radius, sides), brush, thickness);
         }
 
         #endregion
@@ -751,9 +851,9 @@ namespace Amphibian.Drawing
         /// <param name="startingAngle">The starting angle of arc, 0 being to the east, 90 being south</param>
         /// <param name="degrees">The number of degrees to draw, clockwise from the starting angle</param>
         /// <param name="color">The color of the arc</param>
-        public static void DrawArc (SpriteBatch spriteBatch, Vector2 center, float radius, int sides, float startingAngle, float degrees, Color color)
+        public static void DrawArc (SpriteBatch spriteBatch, Vector2 center, float radius, int sides, float startingAngle, float degrees, Brush brush)
         {
-            DrawArc(spriteBatch, center, radius, sides, startingAngle, degrees, color, 1.0f);
+            DrawArc(spriteBatch, center, radius, sides, startingAngle, degrees, brush, 1.0f);
         }
 
 
@@ -768,11 +868,11 @@ namespace Amphibian.Drawing
         /// <param name="degrees">The number of degrees to draw, clockwise from the starting angle</param>
         /// <param name="color">The color of the arc</param>
         /// <param name="thickness">The thickness of the arc</param>
-        public static void DrawArc (SpriteBatch spriteBatch, Vector2 center, float radius, int sides, float startingAngle, float degrees, Color color, float thickness)
+        public static void DrawArc (SpriteBatch spriteBatch, Vector2 center, float radius, int sides, float startingAngle, float degrees, Brush brush, float thickness)
         {
             List<Vector2> arc = CreateArc(radius, sides, startingAngle, degrees);
             //List<Vector2> arc = CreateArc2(radius, sides, startingAngle, degrees);
-            DrawPoints(spriteBatch, center, arc, color, thickness);
+            DrawPoints(spriteBatch, center, arc, brush, thickness);
         }
 
         #endregion

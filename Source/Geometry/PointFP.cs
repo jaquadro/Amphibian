@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.Xna.Framework;
 
 namespace Amphibian.Geometry
 {
@@ -53,6 +54,34 @@ namespace Amphibian.Geometry
         public static bool operator != (PointFP v1, PointFP v2)
         {
             return (v1.X != v2.X) || (v1.Y != v2.Y);
+        }
+
+        #endregion
+
+        #region Implicit Conversions
+
+        public static implicit operator PointFP (Point src)
+        {
+            return new PointFP(src.X, src.Y);
+        }
+
+        #endregion
+
+        #region Explicit Conversions
+
+        public static explicit operator Point (PointFP src)
+        {
+            return new Point(src.X.Round, src.Y.Round);
+        }
+
+        public static explicit operator Vector2 (PointFP src)
+        {
+            return new Vector2((float)src.X, (float)src.Y);
+        }
+
+        public static explicit operator PointFP (Vector2 src)
+        {
+            return new PointFP((FPInt)src.X, (FPInt)src.Y);
         }
 
         #endregion

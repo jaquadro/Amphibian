@@ -50,15 +50,15 @@ namespace Amphibian.Collision
             get { return _bound; }
         }
 
-        public override void Draw (SpriteBatch spriteBatch)
+        public override void Draw (SpriteBatch spriteBatch, Pen pen)
         {
-            VectorFP a = (VectorFP)_pos + _p0;
-            VectorFP b = (VectorFP)_pos + _p1;
-            VectorFP c = (VectorFP)_pos + _p2;
+            Point a = (Point)((VectorFP)_pos + _p0);
+            Point b = (Point)((VectorFP)_pos + _p1);
+            Point c = (Point)((VectorFP)_pos + _p2);
 
-            Primitives2D.DrawLine(spriteBatch, (float)a.X, (float)a.Y, (float)b.X, (float)b.Y, Color.White);
-            Primitives2D.DrawLine(spriteBatch, (float)a.X, (float)a.Y, (float)c.X, (float)c.Y, Color.White);
-            Primitives2D.DrawLine(spriteBatch, (float)b.X, (float)b.Y, (float)c.X, (float)c.Y, Color.White);
+            Draw2D.DrawLine(spriteBatch, a, b, pen);
+            Draw2D.DrawLine(spriteBatch, b, c, pen);
+            Draw2D.DrawLine(spriteBatch, a, c, pen);
         }
 
         public override bool TestOverlap (Mask mask)

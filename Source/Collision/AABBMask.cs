@@ -48,11 +48,12 @@ namespace Amphibian.Collision
             get { return new RectangleFP(_pos.X + _point.X, _pos.Y + _point.Y, _w, _h); }
         }
 
-        public override void Draw (SpriteBatch spriteBatch)
+        public override void Draw (SpriteBatch spriteBatch, Pen pen)
         {
             int x = (int)(_pos.X + _point.X);
             int y = (int)(_pos.Y + _point.Y);
-            Primitives2D.DrawRectangle(spriteBatch, new Rectangle(x, y, (int)_w, (int)_h), Color.White);
+
+            Draw2D.DrawRectangle(spriteBatch, new Rectangle(x, y, (int)_w, (int)_h), pen);
         }
 
         public override bool TestOverlap (Mask mask)

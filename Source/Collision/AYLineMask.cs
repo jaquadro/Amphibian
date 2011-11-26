@@ -33,12 +33,10 @@ namespace Amphibian.Collision
             return mask;
         }
 
-        public override void Draw (SpriteBatch spriteBatch)
+        public override void Draw (SpriteBatch spriteBatch, Pen pen)
         {
             VectorFP a = (VectorFP)_pos + _p;
-            VectorFP b = (VectorFP)_pos + new VectorFP(_p.X, _p.Y + _h);
-
-            Primitives2D.DrawLine(spriteBatch, (float)a.X, (float)a.Y, (float)b.X, (float)b.Y, Color.White);
+            Draw2D.DrawLine(spriteBatch, new Point((int)a.X, (int)a.Y), (int)_h, (float)Math.PI / 2, pen);
         }
 
         public override bool TestOverlap (Mask mask)

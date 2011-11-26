@@ -35,7 +35,7 @@ namespace Amphibian.Collision
         public override void Draw (SpriteBatch spriteBatch)
         {
             VectorFP c = (VectorFP)_pos + _point;
-            Primitives2D.DrawCircle(spriteBatch, (float)c.X, (float)c.Y, 1, 4, Color.White);
+            //Primitives2D.DrawCircle(spriteBatch, (float)c.X, (float)c.Y, 1, 4, Color.White);
         }
 
         public override bool TestOverlap (Mask mask)

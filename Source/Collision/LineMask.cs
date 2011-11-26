@@ -36,12 +36,12 @@ namespace Amphibian.Collision
             return mask;
         }
 
-        public override void Draw (SpriteBatch spriteBatch)
+        public override void Draw (SpriteBatch spriteBatch, Pen pen)
         {
             VectorFP a = (VectorFP)_pos + _p0;
             VectorFP b = (VectorFP)_pos + new VectorFP(_p0.X + _w, _p0.Y + _h);
 
-            Primitives2D.DrawLine(spriteBatch, (float)a.X, (float)a.Y, (float)b.X, (float)b.Y, Color.White);
+            Draw2D.DrawLine(spriteBatch, (Point)a, (Point)b, pen);
         }
 
         public override RectangleFP Bounds

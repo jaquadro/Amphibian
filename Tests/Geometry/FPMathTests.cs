@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using Amphibian.Geometry;
 using Microsoft.Xna.Framework;
+using System.Diagnostics;
 
 namespace Amphibian.Tests.Geometry
 {
@@ -119,6 +120,14 @@ namespace Amphibian.Tests.Geometry
             Assert.AreEqual(-4, l5.Round);
             Assert.AreEqual(-4, l6.Round);
             Assert.AreEqual(-5, l7.Round);
+        }
+
+        [Test]
+        public void CastIntToLongTest ()
+        {
+            FPInt i1 = (FPInt)(-48160);
+            FPLong l1 = (FPLong)(-48160);
+            Assert.AreEqual(l1, (FPLong)i1);
         }
     }
 }

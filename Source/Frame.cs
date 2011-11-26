@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Amphibian.Collision;
-using TiledLib;
+//using TiledLib;
 using Amphibian.Drawing;
 using Amphibian.Geometry;
+using Treefrog.Runtime;
+using Amphibian.Debug;
 
 // What does a frame encompass?
 // - General frame data (dimensions, etc)
@@ -43,8 +45,9 @@ namespace Amphibian
 
         // For now, just one collision layer -- could add more later
         private TileCollisionManager _tileColManager;
-        private Map _map;
-        private List<TileLayer> _layers;
+        //private Map _map;
+        private Level _level;
+        private List<TileLayer> _layers = new List<TileLayer>();
 
         public Frame ()
         {
@@ -179,8 +182,33 @@ namespace Amphibian
 
         protected virtual void Load ()
         {
+            LevelIndex index = _engine.Content.Load<LevelIndex>("pcaves");
+            _level = _engine.Content.Load<Level>(index.ByName("Level 1").Asset);
+            _level.ScaleX = 2f;
+            _level.ScaleY = 2f;
+
+            _width = _level.Width * 2;
+            _height = _level.Height * 2;
+
+            foreach (Layer layer in _level.Layers) {
+                TileLayer tileLayer = layer as TileLayer;
+                if (tileLayer != null) {
+                    _tileColManager = new TileCollisionManager(tileLayer.Width, tileLayer.Height, tileLayer.TileWidth * 2, tileLayer.TileHeight * 2);
+                    break;
+                }
+            }
+
+            foreach (Layer layer in _level.Layers) {
+                if (layer.Properties["type"] != null && layer.Properties["type"].Value == "collision") {
+                    TileLayer tileLayer = layer as TileLayer;
+                    if (tileLayer != null) {
+                        initColMap(tileLayer);
+                    }
+                }
+            }
+
             // Load map
-            _map = _engine.Content.Load<Map>("purple_caves_lev");
+            /*_map = _engine.Content.Load<Map>("purple_caves_lev");
             _layers = new List<TileLayer>();
             _tileColManager = new TileCollisionManager(_map.Width, _map.Height, _map.TileWidth * 2, _map.TileHeight * 2);
 
@@ -198,7 +226,7 @@ namespace Amphibian
                         _layers.Add(tileLayer);
                     //}
                 }
-            }
+            }*/
         }
 
         private void initColMap (TileLayer layer)
@@ -206,7 +234,13 @@ namespace Amphibian
             for (int x = 0; x < layer.Width; x++) {
                 for (int y = 0; y < layer.Height; y++) {
                     if (layer.Tiles[x, y] != null) {
-                        _tileColManager.AddObject(layer.Tiles[x, y].Id - 65, x, y);
+                        foreach (Tile tile in layer.Tiles[x, y]) {
+                            Property poolType = tile.Tileset.Properties["type"];
+                            Property tileTid = tile.Properties["tid"];
+                            if (poolType != null && poolType.Value == "collision" && tileTid != null) {
+                                _tileColManager.AddObject((int)tileTid, x, y);
+                            }
+                        }
                     }
                 }
             }
@@ -256,11 +290,14 @@ namespace Amphibian
                 c.Draw();
             }
 
-            foreach (TileLayer tl in _layers) {
-                _map.Draw(_engine.SpriteBatch, _camera.Bounds, tl);
-            }
+            //_level.Draw(_engine.SpriteBatch, _camera.Bounds);
+            //foreach (TileLayer tl in _layers) {
+            //    _map.Draw(_engine.SpriteBatch, _camera.Bounds, tl);
+            //}
 
-            //_tileColManager.Draw(_engine.SpriteBatch, _camera.Bounds);
+            if (ADebug.RenderCollisionGeometry) {
+                _tileColManager.Draw(_engine.SpriteBatch, _camera.Bounds);
+            }
 
             _engine.SpriteBatch.End();
         }

@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Amphibian.Input;
+using Amphibian.Drawing;
 
 namespace Amphibian
 {
@@ -47,11 +48,11 @@ namespace Amphibian
         private double _updateAccumulator;
         private GameTime _prevTime;
 
-        public Engine (GraphicsDeviceManager graphics)
+        public Engine (IGraphicsDeviceService graphics)
         {
             _services = new ServiceContainer();
             _services.AddService(typeof(IGraphicsDeviceService), graphics);
-            _services.AddService(typeof(IGraphicsDeviceManager), graphics);
+            //_services.AddService(typeof(IGraphicsDeviceManager), graphics);
 
             _graphicsDevice = graphics.GraphicsDevice;
 
@@ -66,6 +67,9 @@ namespace Amphibian
             // Default Values
             _simulationStep = 1 / 60.0;
             _prevTime = new GameTime(TimeSpan.Zero, TimeSpan.Zero);
+
+            Brushes.Initialize(_graphicsDevice);
+            Pens.Initialize(_graphicsDevice);
         }
 
         #region Properties

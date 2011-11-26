@@ -276,7 +276,7 @@ namespace Amphibian.Geometry
 
         public static implicit operator FPLong (FPInt src)
         {
-            return new FPLong() { _raw = src._raw << (ShiftBy - FPInt.ShiftBy) };
+            return new FPLong() { _raw = (long)(src._raw) << (ShiftBy - FPInt.ShiftBy) };
         }
 
         #endregion

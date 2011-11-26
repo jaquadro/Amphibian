@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Amphibian.Geometry;
+using Amphibian.Drawing;
 
 namespace Amphibian.Collision
 {
@@ -21,6 +22,16 @@ namespace Amphibian.Collision
     {
         internal MaskType _type;
         internal SharedPointFP _pos;
+
+        private static Brush _brush;
+
+        protected static Brush GetBrush (SpriteBatch spriteBatch)
+        {
+            if (_brush == null) {
+                _brush = new SolidColorBrush(spriteBatch.GraphicsDevice, Color.White);
+            }
+            return _brush;
+        }
 
         protected Mask ()
         {
@@ -59,6 +70,11 @@ namespace Amphibian.Collision
 
         public abstract object Clone ();
 
-        public virtual void Draw (SpriteBatch spriteBatch) { }
+        public virtual void Draw (SpriteBatch spriteBatch, Pen pen) { }
+
+        public virtual void Draw (SpriteBatch spriteBatch)
+        {
+            Draw(spriteBatch, Pens.White);
+        }
     }
 }
