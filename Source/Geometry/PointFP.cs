@@ -1,5 +1,8 @@
 ﻿using System;
+
+#if XNA
 using Microsoft.Xna.Framework;
+#endif
 
 namespace Amphibian.Geometry
 {
@@ -59,16 +62,16 @@ namespace Amphibian.Geometry
         #endregion
 
         #region Implicit Conversions
-
+#if XNA
         public static implicit operator PointFP (Point src)
         {
             return new PointFP(src.X, src.Y);
         }
-
+#endif
         #endregion
 
         #region Explicit Conversions
-
+#if XNA
         public static explicit operator Point (PointFP src)
         {
             return new Point(src.X.Round, src.Y.Round);
@@ -83,7 +86,7 @@ namespace Amphibian.Geometry
         {
             return new PointFP((FPInt)src.X, (FPInt)src.Y);
         }
-
+#endif
         #endregion
 
         #region Object Overrides

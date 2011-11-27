@@ -21,7 +21,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE;WINDOWS</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;XNA;WINDOWS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoStdLib>true</NoStdLib>
@@ -122,13 +122,14 @@
     <Compile Include="Collision\PointMask.cs" />
     <Compile Include="Collision\TriangleMask.cs" />
     <Compile Include="Component.cs" />
+    <Compile Include="Debug\ADebug.cs" />
     <Compile Include="Debug\Performance.cs" />
     <Compile Include="Drawing\Brush.cs" />
     <Compile Include="Drawing\Brushes.cs" />
     <Compile Include="Drawing\Draw2D.cs" />
     <Compile Include="Drawing\Pen.cs" />
     <Compile Include="Drawing\Pens.cs" />
-    <Compile Include="Drawing\Primitives2D.cs" />
+    <None Include="Drawing\Primitives2D.cs" />
     <Compile Include="Drawing\SolidColorBrush.cs" />
     <Compile Include="Engine.cs" />
     <Compile Include="Geometry\FPInt.cs" />
@@ -154,10 +155,6 @@
     <ProjectReference Include="..\..\Editor\Treefrog.Runtime\Treefrog.Runtime.csproj">
       <Project>{A84CB117-B552-479F-956A-55EF1A827B1C}</Project>
       <Name>Treefrog.Runtime</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Vendor\TiledLib\GS4\TiledLib\TiledLib [Windows].csproj">
-      <Project>{5C081229-C1AA-4D40-A307-9264F7509158}</Project>
-      <Name>TiledLib [Windows]</Name>
     </ProjectReference>
     <ProjectReference Include="..\Vendor\TimeRulerLibrary\TimeRulerLibrary.csproj">
       <Project>{BDE38033-0722-470B-9F63-E3C9486A4B33}</Project>

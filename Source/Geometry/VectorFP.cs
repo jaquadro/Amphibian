@@ -1,5 +1,8 @@
 ﻿using System;
+
+#if XNA
 using Microsoft.Xna.Framework;
+#endif
 
 namespace Amphibian.Geometry
 {
@@ -175,7 +178,7 @@ namespace Amphibian.Geometry
         #endregion
 
         #region Explicit Conversions
-
+#if XNA
         public static explicit operator VectorFP (Vector2 value)
         {
             return new VectorFP((FPInt)value.X, (FPInt)value.Y);
@@ -190,7 +193,9 @@ namespace Amphibian.Geometry
         {
             return new Point(value.X.Round, value.Y.Round);
         }
-
+#endif
         #endregion
+
+
     }
 }

@@ -162,6 +162,13 @@ namespace Amphibian
 
         public event EventHandler<EventArgs> EnabledChanged;
 
+        protected virtual void OnEnabledChanged (EventArgs e)
+        {
+            if (EnabledChanged != null) {
+                EnabledChanged(this, e);
+            }
+        }
+
         public void Update (GameTime gameTime)
         {
             _lastTime = (float)gameTime.TotalGameTime.TotalSeconds;
@@ -177,6 +184,13 @@ namespace Amphibian
         }
 
         public event EventHandler<EventArgs> UpdateOrderChanged;
+
+        protected virtual void OnUpdateOrderChanged (EventArgs e)
+        {
+            if (UpdateOrderChanged != null) {
+                UpdateOrderChanged(this, e);
+            }
+        }
 
         #endregion
     }

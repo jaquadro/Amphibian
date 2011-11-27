@@ -20,6 +20,11 @@ namespace Amphibian.Debug
             get { return _currentRuler; }
         }
 
+        public static bool CommandUIOpen
+        {
+            get { return _debugCommandUI.Focused; }
+        }
+
         public static void Initialize (Game g)
         {
             _debugManager = new DebugManager(g);
@@ -67,38 +72,6 @@ namespace Amphibian.Debug
         public void Dispose ()
         {
             Performance.TimeRuler.EndMark(_index, _name);
-        }
-    }
-
-    public static class ADebug
-    {
-        public static bool RenderCollisionGeometry { get; private set; }
-
-        public static void Initialize (Game g)
-        {
-            IDebugCommandHost host = g.Services.GetService(typeof(IDebugCommandHost)) as IDebugCommandHost;
-
-            if (host != null) {
-                host.RegisterCommand("rendercol", "Render Collision Geometry", RenderCollisionCommand);
-            }
-        }
-
-        private static void RenderCollisionCommand (IDebugCommandHost host, string command, IList<string> arguments)
-        {
-            if (arguments.Count == 0) {
-                RenderCollisionGeometry = !RenderCollisionGeometry;
-            }
-
-            foreach (string arg in arguments) {
-                switch (arg.ToLower()) {
-                    case "on":
-                        RenderCollisionGeometry = true;
-                        break;
-                    case "off":
-                        RenderCollisionGeometry = false;
-                        break;
-                }
-            }
         }
     }
 }

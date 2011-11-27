@@ -65,6 +65,28 @@ namespace Amphibian.Drawing
             {
                 return !(key1 == key2);
             }
+
+            public override bool Equals (object obj)
+            {
+                if (obj is RectangleInfoKey) {
+                    return this == (RectangleInfoKey)obj;
+                }
+                return false;
+            }
+
+            public override int GetHashCode ()
+            {
+                int hash = 23;
+                hash = hash * 37 + Size.X;
+                hash = hash * 37 + Size.Y;
+                hash = hash * 37 + Angle.GetHashCode();
+                return hash;
+            }
+
+            public override string ToString ()
+            {
+                return Size.ToString() + ", " + Angle.ToString();
+            }
         }
 
         internal struct RectangleInfo

@@ -1,5 +1,9 @@
 ﻿using System;
 
+#if XNA
+using Microsoft.Xna.Framework;
+#endif
+
 namespace Amphibian.Geometry
 {
     [SerializableAttribute]
@@ -167,6 +171,23 @@ namespace Amphibian.Geometry
             return (v1.X != v2.X) || (v1.Y != v2.Y) || (v1.Width != v2.Width) || (v1.Height != v2.Height);
         }
 
+        #endregion
+
+        #region Implicit Conversions
+#if XNA
+        public static implicit operator RectangleFP (Rectangle value) {
+            return new RectangleFP(value.X, value.Y, value.Width, value.Height);
+        }
+#endif
+        #endregion
+
+        #region Explicit Conversions
+#if XNA
+        public static explicit operator Rectangle (RectangleFP value)
+        {
+            return new Rectangle(value.X.Round, value.Y.Round, value.Width.Round, value.Height.Round);
+        }
+#endif
         #endregion
 
         #region Object Overrides

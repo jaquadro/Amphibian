@@ -1,5 +1,8 @@
 ﻿using System;
+
+#if XNA
 using Microsoft.Xna.Framework;
+#endif
 
 namespace Amphibian.Geometry
 {
@@ -74,6 +77,14 @@ namespace Amphibian.Geometry
             return other == this;
         }
 
+        public override int GetHashCode ()
+        {
+            int hash = 23;
+            hash = hash * 37 + X._raw;
+            hash = hash * 37 + Y._raw;
+            return hash;
+        }
+
         public override string ToString ()
         {
             return "(" + X + ", " + Y + ")";
@@ -93,10 +104,12 @@ namespace Amphibian.Geometry
             return new VectorFP(value.X, value.Y);
         }
 
+#if XNA
         public static implicit operator SharedPointFP (Point src)
         {
             return new SharedPointFP(src.X, src.Y);
         }
+#endif
 
         #endregion
 
@@ -107,6 +120,7 @@ namespace Amphibian.Geometry
             return new SharedPointFP(value.X, value.Y);
         }
 
+#if XNA
         public static explicit operator Point (SharedPointFP src)
         {
             return new Point(src.X.Round, src.Y.Round);
@@ -121,6 +135,7 @@ namespace Amphibian.Geometry
         {
             return new SharedPointFP((FPInt)src.X, (FPInt)src.Y);
         }
+#endif
 
         #endregion
     }

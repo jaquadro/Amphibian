@@ -37,7 +37,7 @@ namespace Amphibian
 
     public class Parallax
     {
-        private enum DimClamp
+        internal enum DimClamp
         {
             FrameNeg,
             FramePos,
@@ -61,6 +61,12 @@ namespace Amphibian
 
             public DimClamp Clamp;
             public int ClampOffset;
+
+            public DimProperties ()
+            {
+                Clamp = DimClamp.FrameNeg;
+                ClampOffset = 0;
+            }
 
             public int Origin (int winPos, int winLength, int frameLength)
             {
