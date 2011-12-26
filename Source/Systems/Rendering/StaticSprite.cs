@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using Amphibian.Geometry;
 
-namespace Amphibian
+namespace Amphibian.Systems.Rendering
 {
     public class StaticSprite : Sprite
     {

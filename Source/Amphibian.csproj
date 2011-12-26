@@ -101,6 +101,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AmphibianGameTime.cs" />
     <Compile Include="AnimatedSprite.cs" />
     <Compile Include="Behavior.cs" />
     <Compile Include="Behaviors\CircleMovement.cs" />
@@ -111,10 +112,30 @@
     <Compile Include="Collision\AABBMask.cs" />
     <Compile Include="Collision\AXLineMask.cs" />
     <Compile Include="Collision\AYLineMask.cs" />
+    <Compile Include="Collision\BroadPhase\SelectiveSweep.cs" />
     <Compile Include="Collision\CircleMask.cs" />
     <Compile Include="Collision\Collision.cs" />
     <Compile Include="Collision\CollisionManager.cs" />
     <Compile Include="Collision\CollisionTileMapper.cs" />
+    <Compile Include="Components\Animation.cs" />
+    <Compile Include="Components\Collidable.cs" />
+    <Compile Include="Components\PlatformPhysics.cs" />
+    <Compile Include="Components\Position.cs" />
+    <Compile Include="Components\Renderable.cs" />
+    <Compile Include="EntitySystem\EntitySystem.cs" />
+    <Compile Include="EntitySystem\EntityWorld.cs" />
+    <Compile Include="EntitySystem\SystemManager.cs" />
+    <Compile Include="Systems\BackgroundCollisionSystem.cs" />
+    <Compile Include="Systems\CameraSystem.cs" />
+    <Compile Include="Systems\PlatformPhysicsSystem.cs" />
+    <Compile Include="Systems\Rendering\AnimatedSprite.cs" />
+    <Compile Include="Systems\Rendering\Spatial.cs" />
+    <Compile Include="Systems\Rendering\SpatialManager.cs" />
+    <Compile Include="Systems\Rendering\SpatialRef.cs" />
+    <Compile Include="Systems\Rendering\Sprite.cs" />
+    <Compile Include="Systems\Rendering\StaticSprite.cs" />
+    <Compile Include="Systems\RenderSystem.cs" />
+    <Compile Include="Utility\ResourcePool.cs" />
     <None Include="Collision\CollisionTR.cs" />
     <Compile Include="Collision\CompositeMask.cs" />
     <Compile Include="Collision\LineMask.cs" />
@@ -132,6 +153,14 @@
     <None Include="Drawing\Primitives2D.cs" />
     <Compile Include="Drawing\SolidColorBrush.cs" />
     <Compile Include="Engine.cs" />
+    <Compile Include="EntitySystem\Component.cs" />
+    <Compile Include="EntitySystem\ComponentType.cs" />
+    <Compile Include="EntitySystem\ComponentTypeManager.cs" />
+    <Compile Include="EntitySystem\Entity.cs" />
+    <Compile Include="EntitySystem\EntityManager.cs" />
+    <None Include="EntitySystem\MetaEntity.cs" />
+    <Compile Include="Utility\UnorderedList.cs" />
+    <Compile Include="GameObject.cs" />
     <Compile Include="Geometry\FPInt.cs" />
     <Compile Include="Frame.cs" />
     <Compile Include="Geometry\FPMath.cs" />
@@ -146,6 +175,7 @@
     <Compile Include="Geometry\FPLong.cs" />
     <Compile Include="Parallax.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReferenceClock.cs" />
     <Compile Include="Sprite.cs" />
     <Compile Include="SpriteObject.cs" />
     <Compile Include="StaticSprite.cs" />

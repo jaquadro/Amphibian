@@ -8,6 +8,8 @@ using Amphibian.Drawing;
 using Amphibian.Geometry;
 using Treefrog.Runtime;
 using Amphibian.Debug;
+using Amphibian.EntitySystem;
+using Amphibian.Systems;
 
 // What does a frame encompass?
 // - General frame data (dimensions, etc)
@@ -34,6 +36,8 @@ namespace Amphibian
         private int _width;
         private int _height;
 
+        private EntityWorld _entityWorld;
+
         private Camera _camera;
 
         private List<Component> _components;
@@ -45,15 +49,19 @@ namespace Amphibian
 
         // For now, just one collision layer -- could add more later
         private TileCollisionManager _tileColManager;
+        private CollisionManager _colManager;
         //private Map _map;
         private Level _level;
         private List<TileLayer> _layers = new List<TileLayer>();
 
         public Frame ()
         {
+            _entityWorld = new EntityWorld();
+
             _components = new List<Component>();
             _updating = new List<Component>();
             _comDict = new Dictionary<string, List<Component>>();
+            _colManager = new CollisionManager();
 
             _samplerState = new SamplerState()
             {
@@ -118,6 +126,11 @@ namespace Amphibian
             get { return _camera; }
         }
 
+        public EntityWorld EntityWorld
+        {
+            get { return _entityWorld; }
+        }
+
         public Component this[string name]
         {
             get
@@ -136,6 +149,11 @@ namespace Amphibian
             get { return _loaded; }
         }
 
+        public CollisionManager CollisionManager
+        {
+            get { return _colManager; }
+        }
+
         #endregion
 
         public void AddComponent (Component component)
@@ -148,6 +166,10 @@ namespace Amphibian
 
                 if (_components.Count >= 2 && component.DrawOrder < _components[_components.Count - 2].DrawOrder) {
                     OrderComponent(component);
+                }
+
+                if (component is ICollidable) {
+                    _colManager.AddObject(component as ICollidable);
                 }
             }
         }
@@ -207,6 +229,8 @@ namespace Amphibian
                 }
             }
 
+            
+
             // Load map
             /*_map = _engine.Content.Load<Map>("purple_caves_lev");
             _layers = new List<TileLayer>();
@@ -246,6 +270,13 @@ namespace Amphibian
             }
         }
 
+        public void InitES ()
+        {
+            BackgroundCollisionSystem bcs = _entityWorld.SystemManager.GetSystem(typeof(BackgroundCollisionSystem)) as BackgroundCollisionSystem;
+            if (bcs != null)
+                bcs.TileCollisionManager = _tileColManager;
+        }
+
         public void LoadFrame ()
         {
             if (!_loaded) {
@@ -257,6 +288,10 @@ namespace Amphibian
 
         public virtual void Update ()
         {
+            //using (new PerformanceRuler(1, "Dynamic Collision", Color.Orange)) {
+                _colManager.Update();
+            //}
+
             foreach (Component c in _components) {
                 _updating.Add(c);
             }
@@ -266,6 +301,9 @@ namespace Amphibian
             }
 
             _updating.Clear();
+
+            _entityWorld.GameTime = _engine.GameTime;
+            _entityWorld.SystemManager.Update(ExecutionType.Update);
         }
 
         public virtual void Interpolate (double alpha)
@@ -300,6 +338,8 @@ namespace Amphibian
             }
 
             _engine.SpriteBatch.End();
+
+            _entityWorld.SystemManager.Update(ExecutionType.Draw);
         }
 
         public bool TestBackdrop (Mask mask)
@@ -320,6 +360,16 @@ namespace Amphibian
         public bool TestBackdropEdge (FPInt x, FPInt y)
         {
             return _tileColManager.OverlapsEdgeAny(x, y);
+        }
+
+        public bool TestBackdrop (AXLine line)
+        {
+            return _tileColManager.OverlapsAny(line);
+        }
+
+        public bool TestBackdropEdge (AXLine line)
+        {
+            return _tileColManager.OverlapsEdgeAny(line);
         }
     }
 }

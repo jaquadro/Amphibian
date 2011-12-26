@@ -37,7 +37,7 @@ namespace Amphibian
         private GraphicsDevice _graphicsDevice;
         private SpriteBatch _spriteBatch;
         private IServiceContainer _services;
-        private GameTime _gameTime;
+        private AmphibianGameTime _gameTime;
 
         private List<Frame> _frameStack;
         private List<Frame> _sortFrameStack;
@@ -50,6 +50,8 @@ namespace Amphibian
 
         public Engine (IGraphicsDeviceService graphics)
         {
+            _gameTime = new AmphibianGameTime();
+
             _services = new ServiceContainer();
             _services.AddService(typeof(IGraphicsDeviceService), graphics);
             //_services.AddService(typeof(IGraphicsDeviceManager), graphics);
@@ -79,7 +81,7 @@ namespace Amphibian
             get { return _content; }
         }
 
-        public GameTime GameTime
+        public AmphibianGameTime GameTime
         {
             get { return _gameTime; }
         }
@@ -168,9 +170,11 @@ namespace Amphibian
 
             while (_updateAccumulator >= _simulationStep) {
                 simStart.Add(simSpan);
-                GameTime simTime = new GameTime(simStart, simSpan);
 
-                UpdateStep(simTime);
+                _gameTime.TotalGameTime = simStart;
+                _gameTime.ElapsedGameTime = simSpan;
+
+                UpdateStep();
 
                 _updateAccumulator -= _simulationStep;
             }
@@ -183,10 +187,8 @@ namespace Amphibian
             _prevTime = gameTime;
         }
 
-        protected void UpdateStep (GameTime gameTime)
+        protected void UpdateStep ()
         {
-            _gameTime = gameTime;
-
             // Refresh controllers
             foreach (InputController controller in _input.Values) {
                 controller.Refresh();
@@ -233,7 +235,7 @@ namespace Amphibian
 
         public void Draw (GameTime gameTime)
         {
-            _gameTime = gameTime;
+            _gameTime.Copy(gameTime);
 
             for (int i = _frameStack.Count - 1; i >= 0; i--) {
                 _sortFrameStack.Add(_frameStack[i]);

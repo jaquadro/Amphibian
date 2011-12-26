@@ -12,7 +12,7 @@ using Amphibian.Geometry;
 // - Rotation
 // - Other effects?  (e.g. transp)
 
-namespace Amphibian
+namespace Amphibian.Systems.Rendering
 {
     public abstract class Sprite
     {

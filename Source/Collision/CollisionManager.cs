@@ -6,6 +6,8 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Amphibian.Drawing;
 using Amphibian.Geometry;
+using Amphibian.Collision.BroadPhase;
+using Amphibian.Utility;
 
 namespace Amphibian.Collision
 {
@@ -22,9 +24,78 @@ namespace Amphibian.Collision
         bool OverlapsAny (Mask mask);
     }
 
-    class CollisionManager
-    {
+    
 
+    public class CollisionManager
+    {
+        private SelectiveSweep _sweep;
+
+        // XXX: Implement list pool
+        private ResourcePool<List<ICollidable>> _listPool;
+        private Dictionary<ICollidable, List<ICollidable>> _candidatePairs;
+        private List<ICollidable> _empty;
+
+        public CollisionManager ()
+        {
+            _listPool = new ResourcePool<List<ICollidable>>();
+            _candidatePairs = new Dictionary<ICollidable, List<ICollidable>>();
+            _empty = new List<ICollidable>();
+
+            _sweep = new SelectiveSweep();
+            _sweep.Collision += CollisionHandler;
+        }
+
+        public void Update ()
+        {
+            Reset();
+            _sweep.Detect();
+        }
+
+        public void Reset ()
+        {
+            foreach (List<ICollidable> list in _candidatePairs.Values) {
+                list.Clear();
+                _listPool.ReturnResource(list);
+            }
+
+            _candidatePairs.Clear();
+        }
+
+        public void AddObject (ICollidable obj)
+        {
+            _sweep.AddCollidable(obj);
+        }
+
+        public void RemoveObject (ICollidable obj)
+        {
+            _sweep.RemoveCollidable(obj);
+        }
+
+        public List<ICollidable> CandidatePairs (ICollidable obj)
+        {
+            List<ICollidable> list;
+            if (_candidatePairs.TryGetValue(obj, out list))
+                return list;
+
+            return _empty;
+        }
+
+        private void CollisionHandler (ICollidable first, ICollidable second)
+        {
+            AddObjectToList(first, second);
+            AddObjectToList(second, first);
+        }
+
+        private void AddObjectToList (ICollidable first, ICollidable second)
+        {
+            List<ICollidable> list;
+            if (!_candidatePairs.TryGetValue(first, out list)) {
+                list = _listPool.TakeResource();
+                _candidatePairs.Add(first, list);
+            }
+
+            list.Add(second);
+        }
     }
 
     public class TileCollisionManager : ICollisionManager
@@ -175,6 +246,34 @@ namespace Amphibian.Collision
             }
 
             return _grid[txId, tyId].TestOverlapEdge(x, y);
+        }
+
+        public bool OverlapsAny (AXLine line)
+        {
+            int minX = Math.Max(0, (int)(line.Left / _tileWidth));
+            int maxX = Math.Min(_width - 1, (int)(line.Right / _tileWidth));
+            int y = Math.Max(0, Math.Min(_height - 1, (int)(line.Y.Floor / _tileHeight)));
+
+            for (int x = minX; x <= maxX; x++) {
+                if (_grid[x, y] != null && _grid[x, y].TestOverlap(line))
+                    return true;
+            };
+
+            return false;
+        }
+
+        public bool OverlapsEdgeAny (AXLine line)
+        {
+            int minX = Math.Max(0, (int)(line.Left / _tileWidth));
+            int maxX = Math.Min(_width - 1, (int)(line.Right / _tileWidth));
+            int y = Math.Max(0, Math.Min(_height - 1, (int)(line.Y.Floor / _tileHeight)));
+
+            for (int x = minX; x <= maxX; x++) {
+                if (_grid[x, y] != null && _grid[x, y].TestOverlapEdge(line))
+                    return true;
+            };
+
+            return false;
         }
 
         public void Draw (SpriteBatch spriteBatch, Rectangle drawArea)

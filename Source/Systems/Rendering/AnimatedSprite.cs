@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Amphibian.Geometry;
 
-namespace Amphibian
+namespace Amphibian.Systems.Rendering
 {
     [Flags]
     public enum AnimationOptions

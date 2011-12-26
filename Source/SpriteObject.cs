@@ -11,117 +11,6 @@ using Amphibian.Geometry;
 
 namespace Amphibian
 {
-    public class GameObject : Component
-    {
-        protected SharedPointFP _position;
-        protected SharedPointFP _renderAt;
-
-        protected List<Behavior> _behaviors;
-        protected List<InterpBehavior> _interpBehaviors;
-
-        public GameObject ()
-            : base()
-        {
-            _position = new SharedPointFP(0, 0);
-            _behaviors = new List<Behavior>();
-            _interpBehaviors = new List<InterpBehavior>();
-        }
-
-        #region Properties
-
-        public FPInt X
-        {
-            get { return _position.X; }
-            set { _position.X = value; }
-        }
-
-        public FPInt Y
-        {
-            get { return _position.Y; }
-            set { _position.Y = value; }
-        }
-
-        internal SharedPointFP Position
-        {
-            get { return _position; }
-        }
-
-        internal SharedPointFP RenderAt
-        {
-            get { return _renderAt; }
-            set { _renderAt = value; }
-        }
-
-        #endregion
-
-        public void AddBehavior (Behavior behavior)
-        {
-            Type bType = behavior.GetType();
-            foreach (Behavior b in _behaviors) {
-                if (bType == _behaviors.GetType()) {
-                    return;
-                }
-            }
-
-            _behaviors.Add(behavior);
-
-            if (behavior is InterpBehavior) {
-                _interpBehaviors.Add(behavior as InterpBehavior);
-            }
-        }
-
-        public void RemoveBehavior (Behavior behavior)
-        {
-            RemoveBehavior(behavior.GetType());
-        }
-
-        public void RemoveBehavior (InterpBehavior behavior)
-        {
-            RemoveBehavior(behavior.GetType());
-        }
-
-        public void RemoveBehavior (Type behaviorType)
-        {
-            foreach (Behavior b in _behaviors) {
-                if (behaviorType == b.GetType()) {
-                    _behaviors.Remove(b);
-                    return;
-                }
-            }
-
-            foreach (InterpBehavior b in _interpBehaviors) {
-                if (behaviorType == b.GetType()) {
-                    _interpBehaviors.Remove(b);
-                    return;
-                }
-            }
-        }
-
-        public override void Update ()
-        {
-            base.Update();
-
-            foreach (Behavior behavior in _behaviors) {
-                behavior.Execute();
-            }
-        }
-
-        public override void Interpolate (double alpha)
-        {
-            base.Update();
-
-            foreach (InterpBehavior behavior in _interpBehaviors) {
-                behavior.Interpolate(alpha);
-            }
-        }
-
-        public void Offset (FPInt offsetX, FPInt offsetY)
-        {
-            _position.X += offsetX;
-            _position.Y += offsetY;
-        }
-    }
-
     public abstract class SpriteObject : GameObject
     {
         protected SpriteObject ()
@@ -145,7 +34,7 @@ namespace Amphibian
             base.Draw();
 
             if (this.Sprite != null) {
-                this.Sprite.Draw(Parent.Engine.SpriteBatch, _renderAt ?? _position);
+                this.Sprite.Draw(Parent.Engine.SpriteBatch, RenderPosition);
             }
         }
     }
@@ -193,6 +82,11 @@ namespace Amphibian
             {
                 return _sequence.CurrentSprite;
             }
+        }
+
+        public AnimatedSprite SpriteSequence
+        {
+            get { return _sequence; }
         }
 
         #endregion

@@ -6,6 +6,108 @@ using Amphibian.Geometry;
 
 namespace Amphibian.Collision
 {
+    public struct AXLine
+    {
+        private readonly FPInt _y;
+        private readonly FPInt _x1;
+        private readonly FPInt _x2;
+
+        public PointFP LeftPoint
+        {
+            get { return new PointFP(_x1, _y); }
+        }
+
+        public PointFP RightPoint
+        {
+            get { return new PointFP(_x2, _y); }
+        }
+
+        public FPInt Left
+        {
+            get { return _x1; }
+        }
+
+        public FPInt Right
+        {
+            get { return _x2; }
+        }
+
+        public FPInt Y
+        {
+            get { return _y; }
+        }
+
+        public FPInt Width
+        {
+            get { return _x2 - _x1; }
+        }
+
+        public AXLine (PointFP origin, FPInt length)
+        {
+            _y = origin.Y;
+            _x1 = origin.X;
+            _x2 = origin.X + length;
+        }
+
+        internal PointFP ClosestPoint (PointFP p)
+        {
+            if (p.X <= _x1) {
+                return new PointFP(_x1, _y);
+            }
+            else if (p.X >= _x2) {
+                return new PointFP(_x2, _y);
+            }
+
+            return new PointFP(p.X, _y);
+        }
+
+        internal bool IntersectsLine (PointFP c, PointFP d)
+        {
+            // Check that given line is on both sides of AXLine
+            FPLong yf = _x2 - _x1;
+            FPLong t = _y * yf;
+
+            FPLong f1 = yf * c.Y - t;
+            FPLong f2 = yf * d.Y - t;
+
+            if (f1 * f2 >= 0) {
+                return false;
+            }
+
+            // Check that AXLine is on both sides of given line
+            FPLong xf = d.Y - c.Y;
+            t = (d.X - c.X) * _y - (d.X * c.Y - c.X * d.Y);
+
+            f1 = xf * _x1 - t;
+            f2 = xf * _x2 - t;
+
+            return (f1 * f2 < 0);
+        }
+
+        internal bool IntersectsLineEdge (PointFP c, PointFP d)
+        {
+            // Check that given line is on both sides of AXLine
+            FPLong yf = _x2 - _x1;
+            FPLong t = _y * yf;
+
+            FPLong f1 = yf * c.Y - t;
+            FPLong f2 = yf * d.Y - t;
+
+            if (f1 * f2 > 0) {
+                return false;
+            }
+
+            // Check that AXLine is on both sides of given line
+            FPLong xf = d.Y - c.Y;
+            t = (d.X - c.X) * _y - (d.X * c.Y - c.X * d.Y);
+
+            f1 = xf * _x1 - t;
+            f2 = xf * _x2 - t;
+
+            return (f1 * f2 <= 0);
+        }
+    }
+
     public class AXLineMask : Mask
     {
         internal PointFP _p;

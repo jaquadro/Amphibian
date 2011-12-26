@@ -56,7 +56,7 @@ namespace Amphibian.Behaviors
             _current.ObjectX = _object.X;
             _current.ObjectY = _object.Y;
 
-            _object.RenderAt = null;
+            _object.RenderAtPosition();
         }
 
         public override void Interpolate (double alpha)
@@ -64,7 +64,7 @@ namespace Amphibian.Behaviors
             FPInt midx = _current.ObjectX * (FPInt)alpha + _prev.ObjectX * (FPInt)(1.0 - alpha);
             FPInt midy = _current.ObjectY * (FPInt)alpha + _prev.ObjectY * (FPInt)(1.0 - alpha);
 
-            _object.RenderAt = new SharedPointFP(midx, midy);
+            _object.RenderAt(midx, midy);
         }
     }
 }

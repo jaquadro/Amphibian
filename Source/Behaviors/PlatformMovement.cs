@@ -181,7 +181,7 @@ namespace Amphibian.Behaviors
             _current.ObjectX = _object.X;
             _current.ObjectY = _object.Y;
 
-            _object.RenderAt = null;
+            _object.RenderAtPosition();
         }
 
         public override void Interpolate (double alpha)
@@ -196,7 +196,7 @@ namespace Amphibian.Behaviors
                 midy = (FPInt)((double)midy * alpha + (double)_prev.ObjectY * (1.0 - alpha));
             }
 
-            _object.RenderAt = new SharedPointFP(midx, midy);
+            _object.RenderAt(midx, midy);
         }
 
         private void StepPhysics (float time, out FPInt diffPosX, out FPInt diffPosY)
@@ -249,12 +249,14 @@ namespace Amphibian.Behaviors
             _object.Y += distY;
 
             if (distY > 0) {
-                if (_object.Parent.TestBackdropEdge(_detLow)) {
+                AXLine low = new AXLine(new PointFP(_detLow.Bounds.X, _detLow.Bounds.Y), _detLow.Bounds.Width);
+                if (_object.Parent.TestBackdropEdge(low)) {
                     _yVelocity = 0;
 
                     _object.Y = (FPInt)_object.Y.Floor;
-                    while (_object.Parent.TestBackdropEdge(_detLow)) {
+                    while (_object.Parent.TestBackdropEdge(low)) {
                         _object.Y -= 1;
+                        low = new AXLine(new PointFP(low.Left, low.Y - 1), low.Right - low.Left);
                     }
                     _object.Y += 1;
 

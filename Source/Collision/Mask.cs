@@ -52,6 +52,10 @@ namespace Amphibian.Collision
             return TestOverlap(x, y);
         }
 
+        public virtual bool TestOverlap (AXLine line) { return false; }
+
+        public virtual bool TestOverlapEdge (AXLine line) { return false; }
+
         //public abstract TestResult TestOverlapExt (Mask mask);
         
         public SharedPointFP Position
