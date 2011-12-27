@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 //using TiledLib;
 using Treefrog.Runtime;
+using Amphibian.Systems;
 
 namespace Amphibian
 {
@@ -47,7 +48,11 @@ namespace Amphibian
                 //_map.Draw(Parent.Engine.SpriteBatch, Parent.Camera.Bounds, tl);
             //}
 
-            _level.Draw(Parent.Engine.SpriteBatch, Parent.Camera.Bounds);
+            CameraSystem camera = Parent.EntityWorld.SystemManager.GetSystem(typeof(CameraSystem)) as CameraSystem;
+            if (camera == null)
+                return;
+
+            _level.Draw(Parent.Engine.SpriteBatch, camera.Bounds);
         }
     }
 }

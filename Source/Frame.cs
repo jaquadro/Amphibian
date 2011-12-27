@@ -321,7 +321,11 @@ namespace Amphibian
 
         public virtual void Draw ()
         {
-            _engine.SpriteBatch.Begin(SpriteSortMode.Immediate, null, null, null, null, null, _camera.GetTranslationMatrix());
+            CameraSystem cameraSys = _entityWorld.SystemManager.GetSystem(typeof(CameraSystem)) as CameraSystem;
+            if (cameraSys == null)
+                return;
+
+            _engine.SpriteBatch.Begin(SpriteSortMode.Immediate, null, null, null, null, null, cameraSys.GetTranslationMatrix());
             _engine.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
 
             foreach (Component c in _components) {
@@ -334,7 +338,7 @@ namespace Amphibian
             //}
 
             if (ADebug.RenderCollisionGeometry) {
-                _tileColManager.Draw(_engine.SpriteBatch, _camera.Bounds);
+                _tileColManager.Draw(_engine.SpriteBatch, cameraSys.Bounds);
             }
 
             _engine.SpriteBatch.End();

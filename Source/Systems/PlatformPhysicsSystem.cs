@@ -9,7 +9,7 @@ using Amphibian.Collision;
 
 namespace Amphibian.Systems
 {
-    public class PlatformPhysicsSystem : BaseSystem
+    public class PlatformPhysicsSystem : ProcessingSystem
     {
         private BackgroundCollisionSystem _backCollisionSystem;
 
@@ -55,6 +55,7 @@ namespace Amphibian.Systems
             FPInt diffPosX = StepXPhysics(time, physicsCom);
             FPInt diffPosY = StepYPhysics(time, physicsCom);
 
+            MoveHorizontal(diffPosX, diffPosY, positionCom, collisionCom, physicsCom);
             MoveVertical(diffPosX, diffPosY, positionCom, collisionCom, physicsCom);
         }
 
@@ -63,12 +64,12 @@ namespace Amphibian.Systems
             FPInt diffVelX = 0;
 
             switch (physics.AccelStateX) {
-                case PlatformAccelStateC.Accelerate:
+                case PlatformAccelState.Accelerate:
                     diffVelX = (FPInt)((float)physics.AccelX * time);
                     break;
-                case PlatformAccelStateC.Decelerate:
+                case PlatformAccelState.Decelerate:
                     diffVelX = (FPInt)((float)physics.DecelX * time);
-                    if (physics.VelocityY > 0) {
+                    if (physics.VelocityX > 0) {
                         diffVelX = -FPMath.Min(physics.VelocityX, diffVelX);
                     }
                     else {
@@ -89,10 +90,10 @@ namespace Amphibian.Systems
             FPInt diffVelY = 0;
 
             switch (physics.AccelStateY) {
-                case PlatformAccelStateC.Accelerate:
+                case PlatformAccelState.Accelerate:
                     diffVelY = (FPInt)((float)physics.AccelY * time);
                     break;
-                case PlatformAccelStateC.Decelerate:
+                case PlatformAccelState.Decelerate:
                     diffVelY = (FPInt)((float)physics.DecelY * time);
                     if (physics.VelocityY > 0) {
                         diffVelY = -FPMath.Min(physics.VelocityY, diffVelY);
@@ -115,6 +116,11 @@ namespace Amphibian.Systems
             return new AXLine(new PointFP(line.Left + offX, line.Y + offY), line.Width);
         }
 
+        private AYLine OffsetDetector (AYLine line, FPInt offX, FPInt offY)
+        {
+            return new AYLine(new PointFP(line.X + offX, line.Top + offY), line.Height);
+        }
+
         private AXLine LowerDetector (RectangleFP bounds)
         {
             return new AXLine(new PointFP(bounds.Left + 1, bounds.Bottom), bounds.Width - 2);
@@ -123,6 +129,18 @@ namespace Amphibian.Systems
         private AXLine UpperDetector (RectangleFP bounds)
         {
             return new AXLine(new PointFP(bounds.Left + 1, bounds.Top), bounds.Width - 2);
+        }
+
+        private static FPInt _maxSlope = 2;
+
+        private AYLine LeftDetector (RectangleFP bounds)
+        {
+            return new AYLine(new PointFP(bounds.Left, bounds.Top + _maxSlope), bounds.Height - (4 * _maxSlope));
+        }
+
+        private AYLine RightDetector (RectangleFP bounds)
+        {
+            return new AYLine(new PointFP(bounds.Right, bounds.Top + _maxSlope), bounds.Height - (4 * _maxSlope));
         }
 
         private void MoveVertical (FPInt distX, FPInt distY, Position position, Collidable collidable, PlatformPhysics physics)
@@ -173,6 +191,113 @@ namespace Amphibian.Systems
 
             position.Y = posY;
             collidable.Mask.Position.Y = posY;
+        }
+
+        private void MoveHorizontal (FPInt distX, FPInt distY, Position position, Collidable collidable, PlatformPhysics physics)
+        {
+            FPInt posX = position.X;
+            FPInt posY = position.Y;
+            collidable.Mask.Position.X = posX;
+            collidable.Mask.Position.Y = position.Y;
+
+            FPInt offX = 0;
+
+            RectangleFP bounds = collidable.Mask.Bounds;
+
+            if (distX > 0) {
+                offX = distX.Ceil - distX;
+                int offY = 0;
+
+                posX -= offX;
+                distX = (FPInt)distX.Ceil;
+
+                AYLine right = OffsetDetector(RightDetector(bounds), -offX, 0);
+
+                for (; distX > 0; distX -= 1) {
+                    posX += 1;
+                    right = OffsetDetector(right, 1, 0);
+
+                    if (_backCollisionSystem.Test(right)) {
+                        physics.VelocityX = 0;
+
+                        posX = (FPInt)posX.Floor;
+                        right = new AYLine(new PointFP((FPInt)right.X.Floor, right.Top), right.Height);
+                        if (_backCollisionSystem.Test(right)) {
+                            posX -= 1;
+                            right = OffsetDetector(right, -1, 0);
+                        }
+                    }
+
+                    bool test1 = _backCollisionSystem.TestEdge(right.X - bounds.Width, bounds.Bottom + offY);
+                    bool test2 = _backCollisionSystem.TestEdge(right.X - bounds.Width, bounds.Bottom + offY + 1);
+
+                    if (!test1 && test2) {
+                        posY += 1;
+                        offY += 1;
+                    }
+                }
+            }
+            else if (distX < 0) {
+                offX = distX - distX.Floor;
+                int offY = 0;
+
+                posX += offX;
+                distX = (FPInt)distX.Floor;
+
+                AYLine left = OffsetDetector(LeftDetector(bounds), offX, 0);
+
+                for (; distX < 0; distX += 1) {
+                    posX -= 1;
+                    left = OffsetDetector(left, -1, 0);
+
+                    if (_backCollisionSystem.Test(left)) {
+                        physics.VelocityX = 0;
+
+                        posX = (FPInt)posX.Ceil;
+                        left = new AYLine(new PointFP((FPInt)left.X.Ceil, left.Top), left.Height);
+                        if (_backCollisionSystem.Test(left)) {
+                            posX += 1;
+                            left = OffsetDetector(left, 1, 0);
+                        }
+                    }
+
+                    bool test1 = _backCollisionSystem.TestEdge(left.X + bounds.Width, bounds.Bottom + offY);
+                    bool test2 = _backCollisionSystem.TestEdge(left.X + bounds.Width, bounds.Bottom + offY + 1);
+
+                    if (!test1 && test2) {
+                        posY += 1;
+                        offY += 1;
+                    }
+                }
+            }
+
+            position.X = posX;
+            position.Y = posY;
+            collidable.Mask.Position.X = posX;
+            collidable.Mask.Position.Y = posY;
+
+            /*_object.X += dist;
+
+            if (dist > 0) {
+                if (_object.Parent.TestBackdrop(_detRight)) {
+                    _xVelocity = 0;
+
+                    _object.X = (FPInt)_object.X.Floor;
+                    while (_object.Parent.TestBackdrop(_detRight)) {
+                        _object.X -= 1;
+                    }
+                }
+            }
+            else if (dist < 0) {
+                if (_object.Parent.TestBackdrop(_detLeft)) {
+                    _xVelocity = 0;
+
+                    _object.X = (FPInt)_object.X.Floor;
+                    while (_object.Parent.TestBackdrop(_detLeft)) {
+                        _object.X += 1;
+                    }
+                }
+            }*/
         }
 
         private void SystemManager_SystemAdded (BaseSystem system)

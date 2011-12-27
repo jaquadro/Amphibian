@@ -34,7 +34,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <DefineConstants>TRACE;WINDOWS</DefineConstants>
+    <DefineConstants>TRACE;XNA;WINDOWS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoStdLib>true</NoStdLib>
@@ -106,8 +106,8 @@
     <Compile Include="Behavior.cs" />
     <Compile Include="Behaviors\CircleMovement.cs" />
     <Compile Include="Behaviors\PaddleMovement.cs" />
-    <Compile Include="Behaviors\PlatformMovement.cs" />
-    <Compile Include="Behaviors\PlayerPlatformMovement.cs" />
+    <None Include="Behaviors\PlatformMovement.cs" />
+    <None Include="Behaviors\PlayerPlatformMovement.cs" />
     <Compile Include="Camera.cs" />
     <Compile Include="Collision\AABBMask.cs" />
     <Compile Include="Collision\AXLineMask.cs" />
@@ -122,12 +122,16 @@
     <Compile Include="Components\PlatformPhysics.cs" />
     <Compile Include="Components\Position.cs" />
     <Compile Include="Components\Renderable.cs" />
-    <Compile Include="EntitySystem\EntitySystem.cs" />
+    <Compile Include="EntitySystem\BaseSystem.cs" />
     <Compile Include="EntitySystem\EntityWorld.cs" />
+    <Compile Include="EntitySystem\ProcessingSystem.cs" />
     <Compile Include="EntitySystem\SystemManager.cs" />
+    <Compile Include="EntitySystem\TagManager.cs" />
+    <Compile Include="EntitySystem\TagSystem.cs" />
     <Compile Include="Systems\BackgroundCollisionSystem.cs" />
     <Compile Include="Systems\CameraSystem.cs" />
     <Compile Include="Systems\PlatformPhysicsSystem.cs" />
+    <Compile Include="Systems\PlatformControlSystem.cs" />
     <Compile Include="Systems\Rendering\AnimatedSprite.cs" />
     <Compile Include="Systems\Rendering\Spatial.cs" />
     <Compile Include="Systems\Rendering\SpatialManager.cs" />

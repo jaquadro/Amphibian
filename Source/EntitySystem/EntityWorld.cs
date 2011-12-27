@@ -9,6 +9,7 @@ namespace Amphibian.EntitySystem
     {
         private SystemManager _systemManager;
         private EntityManager _entityManager;
+        private TagManager _tagManager;
 
         private AmphibianGameTime _gameTime;
 
@@ -16,6 +17,7 @@ namespace Amphibian.EntitySystem
         {
             _systemManager = new SystemManager(this);
             _entityManager = new EntityManager(this);
+            _tagManager = new TagManager(this);
             _gameTime = new AmphibianGameTime();
         }
 
@@ -27,6 +29,11 @@ namespace Amphibian.EntitySystem
         public EntityManager EntityManager
         {
             get { return _entityManager; }
+        }
+
+        public TagManager TagManager
+        {
+            get { return _tagManager; }
         }
 
         public AmphibianGameTime GameTime

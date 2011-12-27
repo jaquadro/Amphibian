@@ -4,12 +4,15 @@ using System.Linq;
 using System.Text;
 using Amphibian.EntitySystem;
 using Microsoft.Xna.Framework;
+using Amphibian.Components;
 
 namespace Amphibian.Systems
 {
-    public class CameraSystem : BaseSystem
+    public class CameraSystem : TagSystem
     {
         #region Fields
+
+        private static string _tag = "camera_track";
 
         private Rectangle _view;
         private Frame _frame;
@@ -25,7 +28,7 @@ namespace Amphibian.Systems
         #endregion
 
         public CameraSystem (Frame frame, Rectangle view)
-            : base(null)
+            : base(_tag)
         {
             _frame = frame;
             _view = view;
@@ -36,12 +39,27 @@ namespace Amphibian.Systems
         {
         }
 
-        protected override void ProcessEntities (EntityManager.EntityEnumerator entities)
+        public static string Tag
         {
+            get { return _tag; }
+        }
+
+        protected override void ProcessInner ()
+        {
+            base.ProcessInner();
+
             _lastTime = (float)_frame.Engine.GameTime.TotalGameTime.TotalSeconds;
 
             if (_lastTime > _animOriginTime && _lastTime < _animDestTime) {
                 AnimateLine();
+            }
+        }
+
+        public override void Process (Entity entity)
+        {
+            Position positionCom = EntityManager.GetComponent(entity, typeof(Position)) as Position;
+            if (positionCom != null) {
+                ScrollTo(positionCom.X.Floor, positionCom.Y.Floor);
             }
         }
 

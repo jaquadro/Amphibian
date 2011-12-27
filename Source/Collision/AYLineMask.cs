@@ -6,6 +6,108 @@ using Amphibian.Geometry;
 
 namespace Amphibian.Collision
 {
+    public struct AYLine
+    {
+        private readonly FPInt _x;
+        private readonly FPInt _y1;
+        private readonly FPInt _y2;
+
+        public PointFP TopPoint
+        {
+            get { return new PointFP(_x, _y1); }
+        }
+
+        public PointFP BottomPoint
+        {
+            get { return new PointFP(_x, _y2); }
+        }
+
+        public FPInt Top
+        {
+            get { return _y1; }
+        }
+
+        public FPInt Bottom
+        {
+            get { return _y2; }
+        }
+
+        public FPInt X
+        {
+            get { return _x; }
+        }
+
+        public FPInt Height
+        {
+            get { return _y2 - _y1; }
+        }
+
+        public AYLine (PointFP origin, FPInt length)
+        {
+            _x = origin.X;
+            _y1 = origin.Y;
+            _y2 = origin.Y + length;
+        }
+
+        internal PointFP ClosestPoint (PointFP p)
+        {
+            if (p.Y <= _y1) {
+                return new PointFP(_x, _y1);
+            }
+            else if (p.Y >= _y2) {
+                return new PointFP(_x, _y2);
+            }
+
+            return new PointFP(_x, p.Y);
+        }
+
+        internal bool IntersectsLine (PointFP c, PointFP d)
+        {
+            // Check that given line is on both sides of AYLine
+            FPLong xf = _y2 - _y1;
+            FPLong t = _x * xf;
+
+            FPLong f1 = xf * c.X - t;
+            FPLong f2 = xf * d.X - t;
+
+            if (f1 * f2 >= 0) {
+                return false;
+            }
+
+            // Check that AYLine is on both sides of given line
+            FPLong yf = d.X - c.X;
+            t = (d.Y - c.Y) * _x + (d.X * c.Y - c.X * d.Y);
+
+            f1 = yf * _y1 - t;
+            f2 = yf * _y2 - t;
+
+            return (f1 * f2 < 0);
+        }
+
+        internal bool IntersectsLineEdge (PointFP c, PointFP d)
+        {
+            // Check that given line is on both sides of AYLine
+            FPLong xf = _y2 - _y1;
+            FPLong t = _x * xf;
+
+            FPLong f1 = xf * c.X - t;
+            FPLong f2 = xf * d.X - t;
+
+            if (f1 * f2 > 0) {
+                return false;
+            }
+
+            // Check that AYLine is on both sides of given line
+            FPLong yf = d.X - c.X;
+            t = (d.Y - c.Y) * _x + (d.X * c.Y - c.X * d.Y);
+
+            f1 = yf * _y1 - t;
+            f2 = yf * _y2 - t;
+
+            return (f1 * f2 <= 0);
+        }
+    }
+
     public class AYLineMask : Mask
     {
         internal PointFP _p;

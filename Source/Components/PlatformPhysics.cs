@@ -7,7 +7,7 @@ using Amphibian.EntitySystem;
 
 namespace Amphibian.Components
 {
-    public enum PlatformAccelStateC
+    public enum PlatformAccelState
     {
         Fixed,
         Accelerate,
@@ -31,7 +31,7 @@ namespace Amphibian.Components
         public FPInt VelocityX;
         public FPInt VelocityY;
 
-        public PlatformAccelStateC AccelStateX;
-        public PlatformAccelStateC AccelStateY;
+        public PlatformAccelState AccelStateX;
+        public PlatformAccelState AccelStateY;
     }
 }

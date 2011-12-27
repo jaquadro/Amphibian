@@ -124,6 +124,16 @@ namespace Amphibian.Collision
             return Collision.TestOverlapEdge(line, this);
         }
 
+        public override bool TestOverlap (AYLine line)
+        {
+            return Collision.TestOverlap(line, this);
+        }
+
+        public override bool TestOverlapEdge (AYLine line)
+        {
+            return Collision.TestOverlapEdge(line, this);
+        }
+
         /*public override TestResult TestOverlapExt (Mask mask)
         {
             switch (mask._type) {

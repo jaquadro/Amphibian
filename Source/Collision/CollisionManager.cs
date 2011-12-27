@@ -276,6 +276,36 @@ namespace Amphibian.Collision
             return false;
         }
 
+        public bool OverlapsAny (AYLine line)
+        {
+            int x = Math.Max(0, Math.Min(_width - 1, (int)(line.X.Floor / _tileWidth)));
+            int minY = Math.Max(0, (int)(line.Top / _tileHeight));
+            int maxY = Math.Min(_height - 1, (int)(line.Bottom / _tileHeight));
+            
+
+            for (int y = minY; y <= maxY; y++) {
+                if (_grid[x, y] != null && _grid[x, y].TestOverlap(line))
+                    return true;
+            };
+
+            return false;
+        }
+
+        public bool OverlapsEdgeAny (AYLine line)
+        {
+            int x = Math.Max(0, Math.Min(_width - 1, (int)(line.X.Floor / _tileWidth)));
+            int minY = Math.Max(0, (int)(line.Top / _tileHeight));
+            int maxY = Math.Min(_height - 1, (int)(line.Bottom / _tileHeight));
+
+
+            for (int y = minY; y <= maxY; y++) {
+                if (_grid[x, y] != null && _grid[x, y].TestOverlapEdge(line))
+                    return true;
+            };
+
+            return false;
+        }
+
         public void Draw (SpriteBatch spriteBatch, Rectangle drawArea)
         {
             int minX = Math.Max((int)Math.Floor((float)drawArea.Left / _tileWidth), 0);

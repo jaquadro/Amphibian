@@ -11,7 +11,7 @@ using Microsoft.Xna.Framework;
 namespace Amphibian.Systems
 {
 
-    public class RenderSystem : BaseSystem
+    public class RenderSystem : ProcessingSystem
     {
         private SpriteBatch _spriteBatch;
         private SpatialManager _manager;

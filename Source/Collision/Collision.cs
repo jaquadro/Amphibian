@@ -47,6 +47,11 @@ namespace Amphibian.Collision
             return false;
         }
 
+        public static bool TestOverlap (PointMask ptMask, AYLine yl)
+        {
+            return false;
+        }
+
         public static bool TestOverlap (PointMask ptMask, LineMask lnMask)
         {
             return false;
@@ -134,6 +139,17 @@ namespace Amphibian.Collision
             return (r2 < d2);
         }
 
+        public static bool TestOverlap (CircleMask cMask, AYLine yl)
+        {
+            VectorFP c1 = (VectorFP)cMask._pos + cMask._p;
+            VectorFP c2 = yl.ClosestPoint(c1);
+
+            FPInt d2 = VectorFP.DistanceSquared(c1, c2);
+            FPInt r2 = cMask._radius * cMask._radius;
+
+            return (r2 < d2);
+        }
+
         public static bool TestOverlap (CircleMask cMask, LineMask lnMask)
         {
             VectorFP c = (VectorFP)cMask._pos + cMask._p;
@@ -190,6 +206,14 @@ namespace Amphibian.Collision
         }
 
         public static bool TestOverlap (AXLineMask xlMask, AYLineMask ylMask)
+        {
+            VectorFP c = (VectorFP)xlMask._pos + xlMask._p;
+            VectorFP d = c + new VectorFP(xlMask._w, 0);
+
+            return ylMask.IntersectsLine(c, d);
+        }
+
+        public static bool TestOverlap (AXLineMask xlMask, AYLine ylMask)
         {
             VectorFP c = (VectorFP)xlMask._pos + xlMask._p;
             VectorFP d = c + new VectorFP(xlMask._w, 0);
@@ -344,6 +368,57 @@ namespace Amphibian.Collision
 
             return (q.X >= 0 && q.Y >= 0 && (q.X + q.Y) <= 1);
         }
+
+        public static bool TestOverlap (AYLine ylMask, PointMask ptMask)
+        {
+            return TestOverlap(ptMask, ylMask);
+        }
+
+        public static bool TestOverlap (AYLine ylMask, CircleMask cMask)
+        {
+            return TestOverlap(cMask, ylMask);
+        }
+
+        public static bool TestOverlap (AYLine ylMask, AXLineMask xlMask)
+        {
+            return TestOverlap(xlMask, ylMask);
+        }
+
+        public static bool TestOverlap (AYLine ylMask1, AYLineMask ylMask2)
+        {
+            return false;
+        }
+
+        public static bool TestOverlap (AYLine ylMask, LineMask lnMask)
+        {
+            VectorFP c = (VectorFP)lnMask._pos + lnMask._p0;
+            VectorFP d = c + new VectorFP(lnMask._w, lnMask._h);
+
+            return ylMask.IntersectsLine(c, d);
+        }
+
+        public static bool TestOverlap (AYLine ylMask, AABBMask rMask)
+        {
+            VectorFP r1 = (VectorFP)rMask._pos + rMask._point;
+            VectorFP r2 = r1 + new VectorFP(rMask._w, rMask._h);
+
+            return !(ylMask.X >= r2.X || ylMask.X <= r1.X || ylMask.Top >= r2.Y || ylMask.Bottom <= r1.Y);
+        }
+
+        public static bool TestOverlap (AYLine ylMask, TriangleMask triMask)
+        {
+            VectorFP a = (VectorFP)triMask._pos + triMask._p0;
+            VectorFP b = (VectorFP)triMask._pos + triMask._p1;
+            VectorFP c = (VectorFP)triMask._pos + triMask._p2;
+
+            if (ylMask.IntersectsLine(a, b) || ylMask.IntersectsLine(b, c) || ylMask.IntersectsLine(a, c)) {
+                return true;
+            }
+
+            VectorFP q = triMask.Barycentric((VectorFP)ylMask.TopPoint);
+
+            return (q.X >= 0 && q.Y >= 0 && (q.X + q.Y) <= 1);
+        }
         
         // Line -- [____] Collision Tests
 
@@ -368,6 +443,11 @@ namespace Amphibian.Collision
         }
 
         public static bool TestOverlap (LineMask lnMask, AYLineMask ylMask)
+        {
+            return TestOverlap(ylMask, lnMask);
+        }
+
+        public static bool TestOverlap (LineMask lnMask, AYLine ylMask)
         {
             return TestOverlap(ylMask, lnMask);
         }
@@ -433,6 +513,11 @@ namespace Amphibian.Collision
             return TestOverlap(ylMask, rMask);
         }
 
+        public static bool TestOverlap (AABBMask rMask, AYLine ylMask)
+        {
+            return TestOverlap(ylMask, rMask);
+        }
+
         public static bool TestOverlap (AABBMask rMask, LineMask lnMask)
         {
             return TestOverlap(lnMask, rMask);
@@ -494,6 +579,11 @@ namespace Amphibian.Collision
             return TestOverlap(ylMask, triMask);
         }
 
+        public static bool TestOverlap (TriangleMask triMask, AYLine ylMask)
+        {
+            return TestOverlap(ylMask, triMask);
+        }
+
         public static bool TestOverlap (TriangleMask triMask, LineMask lnMask)
         {
             return TestOverlap(lnMask, triMask);
@@ -543,6 +633,22 @@ namespace Amphibian.Collision
 
             foreach (Mask m in comMask._components) {
                 if (m.TestOverlap(xl)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public static bool TestOverlap (AYLine yl, CompositeMask comMask)
+        {
+            RectangleFP comBounds = comMask.Bounds;
+            if (yl.X >= comBounds.Right || yl.X <= comBounds.Left || yl.Bottom <= comBounds.Top || yl.Top >= comBounds.Bottom) {
+                return false;
+            }
+
+            foreach (Mask m in comMask._components) {
+                if (m.TestOverlap(yl)) {
                     return true;
                 }
             }
@@ -659,7 +765,19 @@ namespace Amphibian.Collision
             return (x == p2.X && y >= p2.Y && y <= p2.Y + ylMask._h);
         }
 
+        public static bool TestOverlapEdge (AYLine ylMask, FPInt x, FPInt y)
+        {
+            return (x == ylMask.X && y >= ylMask.Top && y <= ylMask.Bottom);
+        }
+
         public static bool TestOverlapEdge (PointMask ptMask, AYLineMask ylMask)
+        {
+            VectorFP p1 = (VectorFP)ptMask._pos + ptMask._point;
+
+            return TestOverlapEdge(ylMask, p1.X, p1.Y);
+        }
+
+        public static bool TestOverlapEdge (PointMask ptMask, AYLine ylMask)
         {
             VectorFP p1 = (VectorFP)ptMask._pos + ptMask._point;
 
@@ -760,6 +878,31 @@ namespace Amphibian.Collision
             return (q.X >= 0 && q.Y >= 0 && (q.X + q.Y) <= 1);
         }
 
+        // AYLine -- [____] Collision + Edge Tests
+
+        public static bool TestOverlapEdge (AYLine ylMask, AABBMask rMask)
+        {
+            VectorFP r1 = (VectorFP)rMask._pos + rMask._point;
+            VectorFP r2 = r1 + new VectorFP(rMask._w, rMask._h);
+
+            return !(ylMask.Top > r2.Y || ylMask.Bottom < r1.Y || ylMask.X > r2.X || ylMask.X < r1.X);
+        }
+
+        public static bool TestOverlapEdge (AYLine ylMask, TriangleMask triMask)
+        {
+            VectorFP a = (VectorFP)triMask._pos + triMask._p0;
+            VectorFP b = (VectorFP)triMask._pos + triMask._p1;
+            VectorFP c = (VectorFP)triMask._pos + triMask._p2;
+
+            if (ylMask.IntersectsLineEdge(a, b) || ylMask.IntersectsLineEdge(b, c) || ylMask.IntersectsLineEdge(a, c)) {
+                return true;
+            }
+
+            VectorFP q = triMask.Barycentric(ylMask.TopPoint);
+
+            return (q.X >= 0 && q.Y >= 0 && (q.X + q.Y) <= 1);
+        }
+
         // AABB -- [____] Collision Tests
 
         public static bool TestOverlapEdge (AABBMask rMask, AXLineMask xlMask)
@@ -772,6 +915,11 @@ namespace Amphibian.Collision
             return TestOverlapEdge(xlMask, rMask);
         }
 
+        public static bool TestOverlapEdge (AABBMask rMask, AYLine ylMask)
+        {
+            return TestOverlapEdge(ylMask, rMask);
+        }
+
         // Triangle -- [____] Collision Tests
 
         public static bool TestOverlapEdge (TriangleMask triMask, AXLineMask xlMAsk)
@@ -782,6 +930,11 @@ namespace Amphibian.Collision
         public static bool TestOverlapEdge (TriangleMask triMask, AXLine xlMAsk)
         {
             return TestOverlapEdge(xlMAsk, triMask);
+        }
+
+        public static bool TestOverlapEdge (TriangleMask triMask, AYLine ylMAsk)
+        {
+            return TestOverlapEdge(ylMAsk, triMask);
         }
     }
 }

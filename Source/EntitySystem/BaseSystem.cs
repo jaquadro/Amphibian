@@ -12,13 +12,11 @@ namespace Amphibian.EntitySystem
     {
         private bool _enabled = true;
 
-        private Type _primaryKey;
         private EntityManager _entityManager;
         private SystemManager _systemManager;
 
-        public BaseSystem (Type primaryKey)
+        public BaseSystem ()
         {
-            _primaryKey = primaryKey;
         }
 
         public bool Enabled
@@ -47,14 +45,14 @@ namespace Amphibian.EntitySystem
         {
             if (CheckProcessing()) {
                 Begin();
-                ProcessEntities(_entityManager.GetEntities(_primaryKey));
+                ProcessInner();
                 End();
             }
         }
 
-        protected virtual void End () { }
+        protected virtual void ProcessInner () { }
 
-        protected virtual void ProcessEntities (EntityManager.EntityEnumerator entities) { }
+        protected virtual void End () { }
 
         protected virtual bool CheckProcessing ()
         {

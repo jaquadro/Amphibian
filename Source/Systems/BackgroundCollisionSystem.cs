@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Amphibian.Collision;
 using Amphibian.EntitySystem;
+using Amphibian.Geometry;
 
 namespace Amphibian.Systems
 {
@@ -12,7 +13,6 @@ namespace Amphibian.Systems
         private TileCollisionManager _tileMan;
 
         public BackgroundCollisionSystem ()
-            : base(null)
         {
         }
 
@@ -28,6 +28,14 @@ namespace Amphibian.Systems
             set { _tileMan = value; }
         }
 
+        public bool Test (FPInt x, FPInt y)
+        {
+            if (_tileMan == null)
+                return false;
+
+            return _tileMan.OverlapsAny(x, y);
+        }
+
         public bool Test (AXLine line)
         {
             if (_tileMan == null)
@@ -36,7 +44,31 @@ namespace Amphibian.Systems
             return _tileMan.OverlapsAny(line);
         }
 
+        public bool Test (AYLine line)
+        {
+            if (_tileMan == null)
+                return false;
+
+            return _tileMan.OverlapsAny(line);
+        }
+
+        public bool TestEdge (FPInt x, FPInt y)
+        {
+            if (_tileMan == null)
+                return false;
+
+            return _tileMan.OverlapsEdgeAny(x, y);
+        }
+
         public bool TestEdge (AXLine line)
+        {
+            if (_tileMan == null)
+                return false;
+
+            return _tileMan.OverlapsEdgeAny(line);
+        }
+
+        public bool TestEdge (AYLine line)
         {
             if (_tileMan == null)
                 return false;
