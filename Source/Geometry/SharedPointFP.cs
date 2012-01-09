@@ -6,7 +6,6 @@ using Microsoft.Xna.Framework;
 
 namespace Amphibian.Geometry
 {
-    [SerializableAttribute]
     public sealed class SharedPointFP : IEquatable<SharedPointFP>
     {
         public FPInt X;

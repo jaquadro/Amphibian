@@ -19,6 +19,31 @@ namespace Amphibian.Systems
         Action
     }
 
+    public class PlatformActionEquality : IEqualityComparer<PlatformAction>
+    {
+        private static PlatformActionEquality _instance;
+
+        public static PlatformActionEquality Default
+        {
+            get
+            {
+                if (_instance == null)
+                    _instance = new PlatformActionEquality();
+                return _instance;
+            }
+        }
+
+        public bool Equals (PlatformAction val1, PlatformAction val2)
+        {
+            return val1 == val2;
+        }
+
+        public int GetHashCode (PlatformAction val)
+        {
+            return ((int)val).GetHashCode();
+        }
+    }
+
     public class PlatformControlSystem<TActionSet> : TagSystem
         where TActionSet : struct
     {

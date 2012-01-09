@@ -2,7 +2,6 @@
 
 namespace Amphibian.Geometry
 {
-    [SerializableAttribute]
     public struct FPLong
     {
         internal const int ShiftBy = 16; // 65536

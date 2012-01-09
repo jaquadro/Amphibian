@@ -18,7 +18,7 @@ namespace Amphibian.Collision
         Composite
     }
 
-    public abstract class Mask : ICloneable
+    public abstract class Mask
     {
         internal MaskType _type;
         internal SharedPointFP _pos;

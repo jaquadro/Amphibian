@@ -5,22 +5,34 @@ using System.Text;
 
 namespace Amphibian.Utility
 {
-    class UnorderedList<T> : ICollection<T>
+    public class UnorderedList<T> : ICollection<T>
     {
         private const int _maxExpansionIncrement = 512;
 
         private T[] _items;
         private int _index;
+        private IEqualityComparer<T> _comparer;
 
         public UnorderedList ()
-            : this(16)
+            : this(4)
         {
         }
 
         public UnorderedList (int initialCapacity)
+            : this(initialCapacity, EqualityComparer<T>.Default)
+        {
+        }
+
+        public UnorderedList (IEqualityComparer<T> comparer)
+            : this(4, comparer)
+        {
+        }
+
+        public UnorderedList (int initialCapacity, IEqualityComparer<T> comparer)
         {
             _index = 0;
             _items = new T[initialCapacity];
+            _comparer = comparer;
         }
 
         public int Capacity
@@ -32,8 +44,8 @@ namespace Amphibian.Utility
         {
             get
             {
-                if (index < 0 || index >= _index)
-                    throw new IndexOutOfRangeException();
+                //if (index < 0 || index >= _index)
+                //    throw new IndexOutOfRangeException();
                 return _items[index];
             }
         }
@@ -41,7 +53,7 @@ namespace Amphibian.Utility
         public int IndexOf (T item)
         {
             for (int i = 0; i < _index; i++)
-                if (_items[i].Equals(item))
+                if (_comparer.Equals(_items[i], item))
                     return i;
             return -1;
         }
@@ -57,7 +69,7 @@ namespace Amphibian.Utility
             if (index < 0)
                 throw new IndexOutOfRangeException();
             if (index >= _items.Length) {
-                ExpandMin(index);
+                ExpandMin(index + 1);
                 _index = index + 1;
             }
             else if (index >= _index)
@@ -78,7 +90,7 @@ namespace Amphibian.Utility
         public void RemoveAll (T item)
         {
             for (int i = 0; i < _index; i++) {
-                if (_items[i].Equals(item)) {
+                if (_comparer.Equals(_items[i], item)) {
                     _items[i] = _items[_index--];
                     _items[_index] = default(T);
                 }
@@ -121,6 +133,7 @@ namespace Amphibian.Utility
 
             T[] items = new T[newSize];
             Array.Copy(_items, items, _items.Length);
+            _items = items;
         }
 
         #region ICollection<T> Members
@@ -142,7 +155,7 @@ namespace Amphibian.Utility
         public bool Contains (T item)
         {
             for (int i = 0; i < _index; i++)
-                if (_items[i].Equals(item))
+                if (_comparer.Equals(_items[i], item))
                     return true;
             return false;
         }
@@ -165,7 +178,7 @@ namespace Amphibian.Utility
         public bool Remove (T item)
         {
             for (int i = 0; i < _index; i++) {
-                if (_items[i].Equals(item)) {
+                if (_comparer.Equals(_items[i], item)) {
                     _items[i] = _items[_index--];
                     _items[_index] = default(T);
                     return true;

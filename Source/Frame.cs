@@ -38,29 +38,20 @@ namespace Amphibian
 
         private EntityWorld _entityWorld;
 
-        private Camera _camera;
-
-        private List<Component> _components;
-        private List<Component> _updating;
-
         private SamplerState _samplerState;
-
-        private Dictionary<string, List<Component>> _comDict;
 
         // For now, just one collision layer -- could add more later
         private TileCollisionManager _tileColManager;
         private CollisionManager _colManager;
-        //private Map _map;
+
         private Level _level;
         private List<TileLayer> _layers = new List<TileLayer>();
 
         public Frame ()
         {
             _entityWorld = new EntityWorld();
+            _entityWorld.Frame = this;
 
-            _components = new List<Component>();
-            _updating = new List<Component>();
-            _comDict = new Dictionary<string, List<Component>>();
             _colManager = new CollisionManager();
 
             _samplerState = new SamplerState()
@@ -73,8 +64,6 @@ namespace Amphibian
             : this()
         {
             engine.PushFrame(this);
-
-            _camera = new Camera(this, engine.GraphicsDevice.Viewport.Bounds);
         }
 
         #region Properties
@@ -85,9 +74,6 @@ namespace Amphibian
             internal set
             {
                 _engine = value;
-                if (_engine != null && _camera == null) {
-                    _camera = new Camera(this, value.GraphicsDevice.Viewport.Bounds);
-                }
             }
         }
 
@@ -121,27 +107,9 @@ namespace Amphibian
             set { _width = value; }
         }
 
-        public Camera Camera
-        {
-            get { return _camera; }
-        }
-
         public EntityWorld EntityWorld
         {
             get { return _entityWorld; }
-        }
-
-        public Component this[string name]
-        {
-            get
-            {
-                foreach (Component c in _components) {
-                    if (c.Name == name) {
-                        return c;
-                    }
-                }
-                return null;
-            }
         }
 
         public bool Loaded
@@ -155,52 +123,6 @@ namespace Amphibian
         }
 
         #endregion
-
-        public void AddComponent (Component component)
-        {
-            if (!_components.Contains(component)) {
-                _components.Add(component);
-
-                component.Parent = this;
-                component.LoadComponent();
-
-                if (_components.Count >= 2 && component.DrawOrder < _components[_components.Count - 2].DrawOrder) {
-                    OrderComponent(component);
-                }
-
-                if (component is ICollidable) {
-                    _colManager.AddObject(component as ICollidable);
-                }
-            }
-        }
-
-        public void RemoveComponent (string name)
-        {
-            Component c = this[name];
-            RemoveComponent(c);
-        }
-
-        public void RemoveComponent (Component component)
-        {
-            if (component != null && _components.Contains(component)) {
-                _components.Remove(component);
-                component.Parent = null;
-            }
-        }
-
-        internal void OrderComponent (Component component)
-        {
-            if (_components.Remove(component)) {
-                int i = 0;
-                for (; i < _components.Count; i++) {
-                    if (_components[i].DrawOrder >= component.DrawOrder) {
-                        break;
-                    }
-                }
-
-                _components.Insert(i, component);
-            }
-        }
 
         protected virtual void Load ()
         {
@@ -228,29 +150,6 @@ namespace Amphibian
                     }
                 }
             }
-
-            
-
-            // Load map
-            /*_map = _engine.Content.Load<Map>("purple_caves_lev");
-            _layers = new List<TileLayer>();
-            _tileColManager = new TileCollisionManager(_map.Width, _map.Height, _map.TileWidth * 2, _map.TileHeight * 2);
-
-            foreach (Layer layer in _map.Layers) {
-                if (layer is TileLayer) {
-                    Property prop;
-                    if (layer.Properties.TryGetValue("type", out prop) && prop.RawValue == "collision") {
-                        initColMap(layer as TileLayer);
-                    }
-                    //else {
-                        TileLayer tileLayer = layer as TileLayer;
-                        tileLayer.ScaleX = 2f;
-                        tileLayer.ScaleY = 2f;
-
-                        _layers.Add(tileLayer);
-                    //}
-                }
-            }*/
         }
 
         private void initColMap (TileLayer layer)
@@ -292,31 +191,13 @@ namespace Amphibian
                 _colManager.Update();
             //}
 
-            foreach (Component c in _components) {
-                _updating.Add(c);
-            }
-
-            foreach (Component c in _updating) {
-                c.Update();
-            }
-
-            _updating.Clear();
-
             _entityWorld.GameTime = _engine.GameTime;
             _entityWorld.SystemManager.Update(ExecutionType.Update);
         }
 
         public virtual void Interpolate (double alpha)
         {
-            foreach (Component c in _components) {
-                _updating.Add(c);
-            }
 
-            foreach (Component c in _updating) {
-                c.Interpolate(alpha);
-            }
-
-            _updating.Clear();
         }
 
         public virtual void Draw ()
@@ -327,15 +208,6 @@ namespace Amphibian
 
             _engine.SpriteBatch.Begin(SpriteSortMode.Immediate, null, null, null, null, null, cameraSys.GetTranslationMatrix());
             _engine.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
-
-            foreach (Component c in _components) {
-                c.Draw();
-            }
-
-            //_level.Draw(_engine.SpriteBatch, _camera.Bounds);
-            //foreach (TileLayer tl in _layers) {
-            //    _map.Draw(_engine.SpriteBatch, _camera.Bounds, tl);
-            //}
 
             if (ADebug.RenderCollisionGeometry) {
                 _tileColManager.Draw(_engine.SpriteBatch, cameraSys.Bounds);

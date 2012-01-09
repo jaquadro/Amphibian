@@ -24,9 +24,9 @@ namespace Amphibian
             get { return _name; }
             set
             {
-                if (String.IsNullOrWhiteSpace(value)) {
-                    throw new ArgumentException("Component must be assigned a valid name");
-                }
+                //if (String.IsNullOrWhiteSpace(value)) {
+                //    throw new ArgumentException("Component must be assigned a valid name");
+                //}
                 _name = value;
             }
         }

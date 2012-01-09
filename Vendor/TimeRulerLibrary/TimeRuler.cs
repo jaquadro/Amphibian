@@ -126,6 +126,11 @@ namespace TimeRulerLibrary
         /// </summary>
         public int Width { get; set; }
 
+        internal FrameLog Frame
+        {
+            get { return prevLog; }
+        }
+
         #endregion
 
         #region Fields
@@ -135,7 +140,7 @@ namespace TimeRulerLibrary
         /// <summary>
         /// Marker structure.
         /// </summary>
-        private struct Marker
+        internal struct Marker
         {
             public int MarkerId;
             public float BeginTime;
@@ -146,7 +151,7 @@ namespace TimeRulerLibrary
         /// <summary>
         /// Collection of markers.
         /// </summary>
-        private class MarkerCollection
+        internal class MarkerCollection
         {
             // Marker collection.
             public Marker[] Markers = new Marker[MaxSamples];
@@ -160,7 +165,7 @@ namespace TimeRulerLibrary
         /// <summary>
         /// Frame logging information.
         /// </summary>
-        private class FrameLog
+        internal class FrameLog
         {
             public MarkerCollection[] Bars;
 
@@ -807,6 +812,5 @@ namespace TimeRulerLibrary
         }
 
         #endregion
-
     }
 }

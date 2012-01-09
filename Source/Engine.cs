@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Amphibian.Input;
 using Amphibian.Drawing;
+using Amphibian.Debug;
 
 namespace Amphibian
 {
@@ -36,7 +36,7 @@ namespace Amphibian
         private ContentManager _content;
         private GraphicsDevice _graphicsDevice;
         private SpriteBatch _spriteBatch;
-        private IServiceContainer _services;
+        private GameServiceContainer _services;
         private AmphibianGameTime _gameTime;
 
         private List<Frame> _frameStack;
@@ -52,7 +52,7 @@ namespace Amphibian
         {
             _gameTime = new AmphibianGameTime();
 
-            _services = new ServiceContainer();
+            _services = new GameServiceContainer();
             _services.AddService(typeof(IGraphicsDeviceService), graphics);
             //_services.AddService(typeof(IGraphicsDeviceManager), graphics);
 
@@ -91,7 +91,7 @@ namespace Amphibian
             get { return _graphicsDevice; }
         }
 
-        public IServiceContainer Services
+        public GameServiceContainer Services
         {
             get { return _services; }
         }
@@ -192,6 +192,13 @@ namespace Amphibian
             // Refresh controllers
             foreach (InputController controller in _input.Values) {
                 controller.Refresh();
+            }
+
+            GamePadController<GamePadInput> c = GetController("gamepad") as GamePadController<GamePadInput>;
+            if (c != null) {
+                if (c.ButtonPressed(GamePadInput.RightShoulder)) {
+                    Performance.AdvanceOutputState();
+                }
             }
 
             // Determine update depth of frame stack

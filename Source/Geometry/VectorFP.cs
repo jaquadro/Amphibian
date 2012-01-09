@@ -6,7 +6,6 @@ using Microsoft.Xna.Framework;
 
 namespace Amphibian.Geometry
 {
-    [SerializableAttribute]
     public struct VectorFP : IEquatable<VectorFP>
     {
         public FPInt X;

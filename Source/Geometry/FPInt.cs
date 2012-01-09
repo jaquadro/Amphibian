@@ -2,7 +2,6 @@
 
 namespace Amphibian.Geometry
 {
-    [SerializableAttribute]
     public struct FPInt
     {
         internal const int ShiftBy = 8; // 256
@@ -67,81 +66,97 @@ namespace Amphibian.Geometry
 
         #region Arithmetic Operators
 
+        [Inline]
         public static FPInt operator + (FPInt v1, FPInt v2)
         {
             return new FPInt() { _raw = v1._raw + v2._raw };
         }
 
+        [Inline]
         public static FPInt operator + (FPInt v1, int v2)
         {
             return new FPInt() { _raw = v1._raw + (v2 << ShiftBy) };
         }
 
+        [Inline]
         public static FPInt operator + (int v1, FPInt v2)
         {
             return new FPInt() { _raw = (v1 << ShiftBy) + v2._raw };
         }
 
+        [Inline]
         public static FPInt operator - (FPInt v1, FPInt v2)
         {
             return new FPInt() { _raw = v1._raw - v2._raw };
         }
 
+        [Inline]
         public static FPInt operator - (FPInt v1, int v2)
         {
             return new FPInt() { _raw = v1._raw - (v2 << ShiftBy) };
         }
 
+        [Inline]
         public static FPInt operator - (int v1, FPInt v2)
         {
             return new FPInt() { _raw = (v1 << ShiftBy) - v2._raw };
         }
 
+        [Inline]
         public static FPInt operator * (FPInt v1, FPInt v2)
         {
             return new FPInt() { _raw = (int)(((long)v1._raw * (long)v2._raw) >> ShiftBy) };
         }
 
+        [Inline]
         public static FPInt operator * (FPInt v1, int v2)
         {
             return new FPInt() { _raw = v1._raw * v2 };
         }
 
+        [Inline]
         public static FPInt operator * (int v1, FPInt v2)
         {
             return new FPInt() { _raw = v1 * v2._raw };
         }
 
+        [Inline]
         public static FPInt operator / (FPInt v1, FPInt v2)
         {
             return new FPInt() { _raw = (int)(((long)v1._raw << ShiftBy) / v2._raw) };
         }
 
+        [Inline]
         public static FPInt operator / (FPInt v1, int v2)
         {
             return new FPInt() { _raw = v1._raw / v2 };
         }
 
+        [Inline]
         public static FPInt operator / (int v1, FPInt v2)
         {
             return new FPInt() { _raw = (int)((long)v1 << (ShiftBy * 2)) / v2._raw };
         }
 
+        [Inline]
         public static FPInt operator % (FPInt v1, FPInt v2)
         {
             return new FPInt() { _raw = v1._raw % v2._raw };
         }
 
+        [Inline]
         public static FPInt operator % (FPInt v1, int v2)
         {
             return new FPInt() { _raw = v1._raw % (v2 << ShiftBy) };
         }
 
+        [Inline]
         public static FPInt operator % (int v1, FPInt v2)
         {
             return new FPInt() { _raw = (v1 << ShiftBy) % v2._raw };
         }
 
+        [Inline]
         public static FPInt operator - (FPInt value)
         {
             return new FPInt() { _raw = -value._raw };
@@ -151,91 +166,109 @@ namespace Amphibian.Geometry
 
         #region Comparison Operators
 
+        [Inline]
         public static bool operator == (FPInt v1, FPInt v2)
         {
             return v1._raw == v2._raw;
         }
 
+        [Inline]
         public static bool operator == (FPInt v1, int v2)
         {
             return v1._raw == (v2 << ShiftBy);
         }
 
+        [Inline]
         public static bool operator == (int v1, FPInt v2)
         {
             return (v1 << ShiftBy) == v2._raw;
         }
 
+        [Inline]
         public static bool operator != (FPInt v1, FPInt v2)
         {
             return v1._raw != v2._raw;
         }
 
+        [Inline]
         public static bool operator != (FPInt v1, int v2)
         {
             return v1._raw != (v2 << ShiftBy);
         }
 
+        [Inline]
         public static bool operator != (int v1, FPInt v2)
         {
             return (v1 << ShiftBy) != v2._raw;
         }
 
+        [Inline]
         public static bool operator >= (FPInt v1, FPInt v2)
         {
             return v1._raw >= v2._raw;
         }
 
+        [Inline]
         public static bool operator >= (FPInt v1, int v2)
         {
             return v1._raw >= (v2 << ShiftBy);
         }
 
+        [Inline]
         public static bool operator >= (int v1, FPInt v2)
         {
             return (v1 << ShiftBy) >= v2._raw;
         }
 
+        [Inline]
         public static bool operator <= (FPInt v1, FPInt v2)
         {
             return v1._raw <= v2._raw;
         }
 
+        [Inline]
         public static bool operator <= (FPInt v1, int v2)
         {
             return v1._raw <= (v2 << ShiftBy);
         }
 
+        [Inline]
         public static bool operator <= (int v1, FPInt v2)
         {
             return (v1 << ShiftBy) <= v2._raw;
         }
 
+        [Inline]
         public static bool operator > (FPInt v1, FPInt v2)
         {
             return v1._raw > v2._raw;
         }
 
+        [Inline]
         public static bool operator > (FPInt v1, int v2)
         {
             return v1._raw > (v2 << ShiftBy);
         }
 
+        [Inline]
         public static bool operator > (int v1, FPInt v2)
         {
             return (v1 << ShiftBy) > v2._raw;
         }
 
+        [Inline]
         public static bool operator < (FPInt v1, FPInt v2)
         {
             return v1._raw < v2._raw;
         }
 
+        [Inline]
         public static bool operator < (FPInt v1, int v2)
         {
             return v1._raw < (v2 << ShiftBy);
         }
 
+        [Inline]
         public static bool operator < (int v1, FPInt v2)
         {
             return (v1 << ShiftBy) < v2._raw;
@@ -245,11 +278,13 @@ namespace Amphibian.Geometry
 
         #region Bit Operators
 
+        [Inline]
         public static FPInt operator << (FPInt v, int amount)
         {
             return new FPInt() { _raw = v._raw << amount };
         }
 
+        [Inline]
         public static FPInt operator >> (FPInt v, int amount)
         {
             return new FPInt() { _raw = v._raw >> amount };
@@ -259,11 +294,13 @@ namespace Amphibian.Geometry
 
         #region Implicit Conversions
 
+        [Inline]
         public static implicit operator FPInt (byte src)
         {
             return new FPInt() { _raw = (int)src << ShiftBy };
         }
 
+        [Inline]
         public static implicit operator FPInt (short src)
         {
             return new FPInt() { _raw = (int)src << ShiftBy };
@@ -273,36 +310,43 @@ namespace Amphibian.Geometry
 
         #region Explicit Conversions
 
+        [Inline]
         public static explicit operator int (FPInt src)
         {
             return (int)(src._raw >> ShiftBy);
         }
 
+        [Inline]
         public static explicit operator float (FPInt src)
         {
             return (float)src._raw / (float)OneL;
         }
 
+        [Inline]
         public static explicit operator double (FPInt src)
         {
             return (double)src._raw / (double)OneL;
         }
 
+        [Inline]
         public static explicit operator FPInt (int src)
         {
             return new FPInt() { _raw = src << ShiftBy };
         }
 
+        [Inline]
         public static explicit operator FPInt (long src)
         {
             return new FPInt() { _raw = (int)src << ShiftBy };
         }
 
+        [Inline]
         public static explicit operator FPInt (float src)
         {
             return new FPInt() { _raw = (int)(src * OneL) };
         }
 
+        [Inline]
         public static explicit operator FPInt (double src)
         {
             return new FPInt() { _raw = (int)(src * OneL) };

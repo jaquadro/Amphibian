@@ -95,7 +95,7 @@ namespace Amphibian.EntitySystem
                     for (int j = 0; j < entList.Count; j++) {
                         if (entity.Id == entList[j].Id) {
                             entList.Set(j, new Entity());
-                            _freeEntListIndexes[i].Push(j);
+                            _freeEntListIndexes[ctype.Index].Push(j);
                             break;
                         }
                     }

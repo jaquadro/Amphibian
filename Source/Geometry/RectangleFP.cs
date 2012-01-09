@@ -6,7 +6,6 @@ using Microsoft.Xna.Framework;
 
 namespace Amphibian.Geometry
 {
-    [SerializableAttribute]
     public struct RectangleFP : IEquatable<RectangleFP>
     {
         public FPInt Height;
@@ -56,6 +55,7 @@ namespace Amphibian.Geometry
             get { return this == Empty; }
         }
 
+        [Inline]
         public FPInt Left
         {
             get { return X; }
@@ -76,6 +76,7 @@ namespace Amphibian.Geometry
             get { return X + Width; }
         }
 
+        [Inline]
         public FPInt Top
         {
             get { return Y; }

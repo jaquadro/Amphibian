@@ -6,6 +6,8 @@ using Amphibian.Geometry;
 
 namespace Amphibian.Systems.Rendering
 {
+    
+
     [Flags]
     public enum AnimationOptions
     {
@@ -36,9 +38,10 @@ namespace Amphibian.Systems.Rendering
         private int _restartAt;
         private int _loopCount;
         private int _loopLimit = 1;
+        private int _delay;
 
         private float _timeAccum;
-        private ReferenceClock _refClock;
+        private RefClock _refClock;
 
         public AnimatedSprite ()
             : base()
@@ -137,11 +140,11 @@ namespace Amphibian.Systems.Rendering
             set { _loopLimit = value; }
         }
 
-        public ReferenceClock ReferenceClock
+        public RefClock ReferenceClock
         {
             get { return _refClock; }
-            set
-            {
+            set { _refClock = value; }
+            /*{
                 if (_refClock != null) {
                     _refClock.Tick -= ReferenceClock_Tick;
                 }
@@ -150,7 +153,7 @@ namespace Amphibian.Systems.Rendering
                 if (_refClock != null) {
                     _refClock.Tick += ReferenceClock_Tick;
                 }
-            }
+            }*/
         }
 
         #endregion
@@ -171,10 +174,17 @@ namespace Amphibian.Systems.Rendering
         public override void Update (AmphibianGameTime gameTime)
         {
             if (_refClock != null) {
-                return;
+                if (_refClock.Triggered) {
+                    if (_delay == 0)
+                        AdvanceFrame();
+                    else {
+                        _delay--;
+                        if (_delay == 0)
+                            Start();
+                    }
+                }
             }
-
-            if (IsAnimating) {
+            else if (IsAnimating) {
                 _timeAccum += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
                 if (_timeAccum > _frames[_index].Duration) {
@@ -184,10 +194,10 @@ namespace Amphibian.Systems.Rendering
             }
         }
 
-        private void ReferenceClock_Tick (object sender, EventArgs e)
+        /*private void ReferenceClock_Tick (object sender, EventArgs e)
         {
             AdvanceFrame();
-        }
+        }*/
 
         internal void AdvanceFrame ()
         {
@@ -221,6 +231,11 @@ namespace Amphibian.Systems.Rendering
             if (!RepeatIndefinitely && _loopCount == _loopLimit) {
                 Restart();
             }
+        }
+
+        public void DelayStart (int delay)
+        {
+            _delay = delay;
         }
 
         public void Restart ()

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Amphibian.EntitySystem
 {
-    public struct Entity
+    public struct Entity : IEquatable<Entity>
     {
         internal readonly int Id;
         internal readonly int Index;
@@ -14,6 +14,11 @@ namespace Amphibian.EntitySystem
         {
             Id = id;
             Index = index;
+        }
+
+        public bool Equals (Entity other)
+        {
+            return Id == other.Id && Index == other.Index;
         }
 
         public override string ToString ()

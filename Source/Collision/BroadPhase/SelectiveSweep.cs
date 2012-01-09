@@ -137,9 +137,18 @@ namespace Amphibian.Collision.BroadPhase
 
         public void RemoveCollidable (ICollidable obj)
         {
-            _elements.RemoveAll(v => v.cObject == obj);
-            _xMarkers.RemoveAll(v => v.element.cObject == obj);
-            _yMarkers.RemoveAll(v => v.element.cObject == obj);
+            for (int i = 0; i < _elements.Count; i++)
+                if (_elements[i].cObject == obj)
+                    _elements.RemoveAt(i--);
+            for (int i = 0; i < _xMarkers.Count; i++)
+                if (_xMarkers[i].element.cObject == obj)
+                    _xMarkers.RemoveAt(i--);
+            for (int i = 0; i < _yMarkers.Count; i++)
+                if (_yMarkers[i].element.cObject == obj)
+                    _yMarkers.RemoveAt(i--);
+            //_elements.RemoveAll(v => v.cObject == obj);
+            //_xMarkers.RemoveAll(v => v.element.cObject == obj);
+            //_yMarkers.RemoveAll(v => v.element.cObject == obj);
         }
 
         public void Clear ()

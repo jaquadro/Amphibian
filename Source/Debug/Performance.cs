@@ -13,7 +13,11 @@ namespace Amphibian.Debug
         private static DebugManager _debugManager;
         private static DebugCommandUI _debugCommandUI;
         private static FpsCounter _fpsCounter;
+        private static MemoryTracker _memTracker;
+        private static TimeHistory _timeHistory;
         private static bool _firstFrame = true;
+
+        private static DebugOutputState _state = DebugOutputState.Basic;
 
         public static TimeRuler TimeRuler
         {
@@ -37,8 +41,14 @@ namespace Amphibian.Debug
             _fpsCounter = new FpsCounter(g);
             g.Components.Add(_fpsCounter);
 
+            _memTracker = new MemoryTracker(g);
+            g.Components.Add(_memTracker);
+
             _currentRuler = new TimeRuler(g);
             g.Components.Add(_currentRuler);
+
+            _timeHistory = new TimeHistory(g, _currentRuler);
+            g.Components.Add(_timeHistory);
         }
 
         public static void StartFrame ()
@@ -47,9 +57,48 @@ namespace Amphibian.Debug
                 _firstFrame = false;
                 _debugCommandUI.ExecuteCommand("tr on log:on");
                 _debugCommandUI.ExecuteCommand("fps on");
+                _debugCommandUI.ExecuteCommand("memory on");
             }
             _currentRuler.StartFrame();
+            _currentRuler.Update(null);
         }
+
+        public static void AdvanceOutputState ()
+        {
+            switch (_state) {
+                case DebugOutputState.None:
+                    _debugCommandUI.ExecuteCommand("tr on log:on");
+                    _debugCommandUI.ExecuteCommand("fps on");
+                    _debugCommandUI.ExecuteCommand("memory on");
+
+                    _state = DebugOutputState.Basic;
+                    break;
+
+                case DebugOutputState.Basic:
+                    _debugCommandUI.ExecuteCommand("fps off");
+                    _debugCommandUI.ExecuteCommand("memory off");
+                    _debugCommandUI.ExecuteCommand("th on");
+
+                    _state = DebugOutputState.TimeHistory;
+                    break;
+
+                case DebugOutputState.TimeHistory:
+                    _debugCommandUI.ExecuteCommand("tr on log:on");
+                    _debugCommandUI.ExecuteCommand("fps off");
+                    _debugCommandUI.ExecuteCommand("memory off");
+                    _debugCommandUI.ExecuteCommand("th off");
+
+                    _state = DebugOutputState.None;
+                    break;
+            }
+        }
+    }
+
+    public enum DebugOutputState
+    {
+        None,
+        Basic,
+        TimeHistory,
     }
 
     public struct PerformanceRuler : IDisposable
