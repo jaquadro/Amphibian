@@ -6,6 +6,7 @@ using Amphibian.EntitySystem;
 using Amphibian.Input;
 using Amphibian.Components;
 using Amphibian.Geometry;
+using Amphibian.Utility;
 
 namespace Amphibian.Systems
 {
@@ -48,11 +49,21 @@ namespace Amphibian.Systems
         where TActionSet : struct
     {
         private static string _tag = "platform_control";
+        private static Dictionary<PlatformAction, PlatformAction> _identityMap;
 
         private string _controllerName;
 
         private ButtonController<TActionSet> _controller;
         private Dictionary<PlatformAction, TActionSet> _inputMap;
+
+        static PlatformControlSystem ()
+        {
+            _identityMap = new Dictionary<PlatformAction, PlatformAction>(PlatformActionEquality.Default);
+
+            foreach (PlatformAction action in EnumHelper.GetValues<PlatformAction>()) {
+                _identityMap[action] = action;
+            }
+        }
 
         public PlatformControlSystem (ButtonController<TActionSet> buttonController, Dictionary<PlatformAction, TActionSet> controlMap)
             : base(_tag)
@@ -75,6 +86,11 @@ namespace Amphibian.Systems
         public static string Tag
         {
             get { return _tag; }
+        }
+
+        public static Dictionary<PlatformAction, PlatformAction> IdentityMap
+        {
+            get { return _identityMap; }
         }
 
         public override void Process (Entity entity)

@@ -70,6 +70,7 @@ namespace Amphibian.Input
         private Dictionary<TActionSet, bool> _pressed;
         private Dictionary<TActionSet, bool> _released;
 
+        private PlayerIndex _player;
         private float _stickTolerance = 0.10f;
 
         static GamePadController ()
@@ -81,13 +82,14 @@ namespace Amphibian.Input
             }
         }
 
-        public GamePadController (Dictionary<TActionSet, GamePadInput> map)
+        public GamePadController (Dictionary<TActionSet, GamePadInput> map, PlayerIndex player)
         {
             if (!typeof(TActionSet).IsSubclassOf(typeof(Enum))) {
                 throw new InvalidOperationException("GamePadController must be parameterized with an Enum type");
             }
 
-            _state = GamePad.GetState(PlayerIndex.One);
+            _state = GamePad.GetState(player);
+            _player = player;
 
             _keymap = map;
             _held = new Dictionary<TActionSet, bool>(map.Comparer);
@@ -108,7 +110,7 @@ namespace Amphibian.Input
 
         public override void Refresh ()
         {
-            _state = GamePad.GetState(PlayerIndex.One);
+            _state = GamePad.GetState(_player);
 
             foreach (KeyValuePair<TActionSet, GamePadInput> button in _keymap) {
                 bool keystate = GetButtonState(button.Value) == ButtonState.Pressed;
