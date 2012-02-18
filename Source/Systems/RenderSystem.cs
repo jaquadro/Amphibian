@@ -34,7 +34,7 @@ namespace Amphibian.Systems
 
             SystemManager.SystemAdded += SystemManager_SystemAdded;
 
-            LevelIndex index = SystemManager.World.Frame.Engine.Content.Load<LevelIndex>("pcaves");
+            LevelIndex index = SystemManager.World.Frame.Engine.Content.Load<LevelIndex>("proto1");
             _level = SystemManager.World.Frame.Engine.Content.Load<Level>(index.ByName("Level 1").Asset);
             _level.ScaleX = 2f;
             _level.ScaleY = 2f;

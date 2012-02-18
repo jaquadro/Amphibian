@@ -14,6 +14,7 @@ namespace Amphibian.Components
             Mask = mask;
         }
 
-        public Mask Mask { get; set; } 
+        public Mask Mask { get; set; }
+        public bool BackgroundObstacle { get; set; }
     }
 }

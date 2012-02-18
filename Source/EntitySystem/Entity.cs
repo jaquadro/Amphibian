@@ -21,9 +21,37 @@ namespace Amphibian.EntitySystem
             return Id == other.Id && Index == other.Index;
         }
 
+        public static Entity None
+        {
+            get { return new Entity(0, 0); }
+        }
+
+        public static bool operator == (Entity left, Entity right)
+        {
+            return left.Id == right.Id && left.Index == right.Index;
+        }
+
+        public static bool operator != (Entity left, Entity right)
+        {
+            return left.Id != right.Id || left.Index != right.Index;
+        }
+
+        public override bool Equals (object obj)
+        {
+            return Equals((Entity)obj);
+        }
+
         public override string ToString ()
         {
             return "Entity [" + Id + "]";
+        }
+
+        public override int GetHashCode ()
+        {
+            int hash = 23;
+            hash = hash * 37 + Id;
+            hash = hash * 37 + Index;
+            return hash;
         }
     }
 }

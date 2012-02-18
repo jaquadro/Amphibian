@@ -232,5 +232,7 @@ namespace Amphibian.Collision.BroadPhase
 
             _currentElems.Clear();
         }
+
+
     }
 }

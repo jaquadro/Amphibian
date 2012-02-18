@@ -83,7 +83,7 @@ namespace Amphibian.Debug
                     break;
 
                 case DebugOutputState.TimeHistory:
-                    _debugCommandUI.ExecuteCommand("tr on log:on");
+                    _debugCommandUI.ExecuteCommand("tr off log:off");
                     _debugCommandUI.ExecuteCommand("fps off");
                     _debugCommandUI.ExecuteCommand("memory off");
                     _debugCommandUI.ExecuteCommand("th off");

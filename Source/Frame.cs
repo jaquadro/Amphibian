@@ -126,7 +126,7 @@ namespace Amphibian
 
         protected virtual void Load ()
         {
-            LevelIndex index = _engine.Content.Load<LevelIndex>("pcaves");
+            LevelIndex index = _engine.Content.Load<LevelIndex>("proto1");
             _level = _engine.Content.Load<Level>(index.ByName("Level 1").Asset);
             _level.ScaleX = 2f;
             _level.ScaleY = 2f;
