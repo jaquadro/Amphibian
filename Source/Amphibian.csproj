@@ -168,7 +168,6 @@
     <Compile Include="Systems\Rendering\StaticSprite.cs" />
     <Compile Include="Systems\RenderSystem.cs" />
     <Compile Include="Templates\DebugCue.cs" />
-    <Compile Include="Utility\CircularList.cs" />
     <Compile Include="Utility\EnumHelper.cs" />
     <Compile Include="Utility\ResourcePool.cs" />
     <None Include="Collision\CollisionTR.cs" />

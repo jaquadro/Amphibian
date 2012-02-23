@@ -25,7 +25,7 @@ namespace Amphibian.Systems
             }
 
             while (_purgeQueue.Count > 0) {
-                EntityManager.Remove(_purgeQueue.Dequeue());
+                EntityManager.Destroy(_purgeQueue.Dequeue());
             }
         }
 
