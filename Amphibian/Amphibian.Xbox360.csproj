@@ -160,7 +160,7 @@
       <Project>{7bd86d91-37fd-42e2-abe8-6658bb1ffa89}</Project>
       <Name>Treefrog.Runtime.Xbox360</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Vendor\TimeRulerLibrary\GameDebugTools.Xbox360.csproj">
+    <ProjectReference Include="..\GameDebugTools\GameDebugTools.Xbox360.csproj">
       <Project>{8c941c8d-23e3-4193-90a8-c093e52711f7}</Project>
       <Name>GameDebugTools.Xbox360</Name>
     </ProjectReference>

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ProjectGuid>{E0C66FEA-3843-458D-AAF7-779EBBE6BBBB}</ProjectGuid>
@@ -28,8 +28,8 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <PlatformTarget>x86</PlatformTarget>
     <XnaCompressContent>false</XnaCompressContent>
-    <IntermediateOutputPath>..\obj\Amphibian\x86\Debug\</IntermediateOutputPath>
-    <OutputPath>..\bin\Amphibian\x86\Debug\</OutputPath>
+    <IntermediateOutputPath>obj\x86\Debug\</IntermediateOutputPath>
+    <OutputPath>bin\x86\Debug\</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugType>pdbonly</DebugType>
@@ -41,8 +41,8 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <PlatformTarget>x86</PlatformTarget>
     <XnaCompressContent>true</XnaCompressContent>
-    <IntermediateOutputPath>..\obj\Amphibian\x86\Release\</IntermediateOutputPath>
-    <OutputPath>..\bin\Amphibian\x86\Release\</OutputPath>
+    <IntermediateOutputPath>obj\x86\Release\</IntermediateOutputPath>
+    <OutputPath>bin\x86\Release\</OutputPath>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>false</SignAssembly>
@@ -208,13 +208,12 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Editor\Treefrog.Runtime\Treefrog.Runtime.csproj">
-      <Project>{A84CB117-B552-479F-956A-55EF1A827B1C}</Project>
-      <Name>Treefrog.Runtime</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Vendor\TimeRulerLibrary\GameDebugTools.csproj">
+    <ProjectReference Include="..\GameDebugTools\GameDebugTools.csproj">
       <Project>{BDE38033-0722-470B-9F63-E3C9486A4B33}</Project>
       <Name>GameDebugTools</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..Treefrog\Treefrog.Runtime\Treefrog.Runtime.csproj">
+      <Name>Treefrog.Runtime</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />
