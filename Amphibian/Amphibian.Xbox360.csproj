@@ -156,7 +156,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Editor\Treefrog.Runtime\Treefrog.Runtime.Xbox360.csproj">
+    <ProjectReference Include="..\..\Treefrog\Treefrog.Runtime\Treefrog.Runtime.Xbox360.csproj">
       <Project>{7bd86d91-37fd-42e2-abe8-6658bb1ffa89}</Project>
       <Name>Treefrog.Runtime.Xbox360</Name>
     </ProjectReference>
