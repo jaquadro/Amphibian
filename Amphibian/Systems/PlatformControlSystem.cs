@@ -48,13 +48,17 @@ namespace Amphibian.Systems
     public class PlatformControlSystem<TActionSet> : TagSystem
         where TActionSet : struct
     {
+        private class ControllerInfo
+        {
+            public string ControllerName { get; set; }
+            public ButtonController<TActionSet> Controller { get; set; }
+            public Dictionary<PlatformAction, TActionSet> InputMap { get; set; }
+        }
+
         private static string _tag = "platform_control";
         private static Dictionary<PlatformAction, PlatformAction> _identityMap;
 
-        private string _controllerName;
-
-        private ButtonController<TActionSet> _controller;
-        private Dictionary<PlatformAction, TActionSet> _inputMap;
+        private List<ControllerInfo> _controllers;
 
         static PlatformControlSystem ()
         {
@@ -65,22 +69,10 @@ namespace Amphibian.Systems
             }
         }
 
-        public PlatformControlSystem (ButtonController<TActionSet> buttonController, Dictionary<PlatformAction, TActionSet> controlMap)
+        public PlatformControlSystem ()
             : base(_tag)
         {
-            _controller = buttonController;
-            _inputMap = controlMap;
-        }
-
-        public PlatformControlSystem (Engine engine, string buttonControllerName, Dictionary<PlatformAction, TActionSet> controlMap)
-            : base(_tag)
-        {
-            _controllerName = buttonControllerName;
-            _controller = engine.GetController(buttonControllerName) as ButtonController<TActionSet>;
-            _inputMap = controlMap;
-
-            engine.ControllerAdded += HandleControllerAdded;
-            engine.ControllerRemoved += HandleControllerRemoved;
+            _controllers = new List<ControllerInfo>();
         }
 
         public static string Tag
@@ -93,8 +85,42 @@ namespace Amphibian.Systems
             get { return _identityMap; }
         }
 
+        public void AddController (string buttonControllerName, Dictionary<PlatformAction, TActionSet> controlMap)
+        {
+            Engine engine = this.SystemManager.World.Frame.Engine;
+
+            ControllerInfo info = new ControllerInfo()
+            {
+                ControllerName = buttonControllerName,
+                Controller = engine.GetController(buttonControllerName) as ButtonController<TActionSet>,
+                InputMap = controlMap,
+            };
+
+            _controllers.Add(info);
+        }
+
+        public void RemoveController (string buttonControllerName)
+        {
+            foreach (ControllerInfo info in _controllers) {
+                if (info.ControllerName == buttonControllerName) {
+                    _controllers.Remove(info);
+                    break;
+                }
+            }
+        }
+
+        protected internal override void Initialize ()
+        {
+            Engine engine = this.SystemManager.World.Frame.Engine;
+            engine.ControllerAdded += HandleControllerAdded;
+            engine.ControllerRemoved += HandleControllerRemoved;
+        }
+
         public override void Process (Entity entity)
         {
+            if (_controllers.Count == 0)
+                return;
+
             PlatformPhysics physicsCom = null;
 
             foreach (IComponent com in EntityManager.GetComponents(entity)) {
@@ -107,42 +133,51 @@ namespace Amphibian.Systems
             if (physicsCom == null)
                 return;
 
-            if (_controller == null)
-                return;
-
             HandleInput(physicsCom);
         }
 
         private void HandleInput (PlatformPhysics physics)
         {
-            if (_controller.ButtonHeld(_inputMap[PlatformAction.Left])) {
-                physics.AccelX = -FPMath.Abs(physics.AccelX);
-                physics.AccelStateX = PlatformAccelState.Accelerate;
-            }
-            else if (_controller.ButtonHeld(_inputMap[PlatformAction.Right])) {
-                physics.AccelX = FPMath.Abs(physics.AccelX);
-                physics.AccelStateX = PlatformAccelState.Accelerate;
-            }
-            else {
-                physics.AccelStateX = PlatformAccelState.Decelerate;
+            foreach (ControllerInfo info in _controllers) {
+                if (info.Controller.ButtonHeld(info.InputMap[PlatformAction.Left])) {
+                    physics.AccelX = -FPMath.Abs(physics.AccelX);
+                    physics.AccelStateX = PlatformAccelState.Accelerate;
+                    break;
+                }
+                else if (info.Controller.ButtonHeld(info.InputMap[PlatformAction.Right])) {
+                    physics.AccelX = FPMath.Abs(physics.AccelX);
+                    physics.AccelStateX = PlatformAccelState.Accelerate;
+                    break;
+                }
+                else {
+                    physics.AccelStateX = PlatformAccelState.Decelerate;
+                }
             }
 
-            if (_controller.ButtonPressed(_inputMap[PlatformAction.Jump])) {
-                physics.VelocityY = -12;
+            foreach (ControllerInfo info in _controllers) {
+                if (info.Controller.ButtonPressed(info.InputMap[PlatformAction.Jump])) {
+                    physics.VelocityY = -12;
+                    break;
+                }
             }
         }
 
         private void HandleControllerAdded (Object sender, ControllerEventArgs e)
         {
-            if (_controllerName == e.Name) {
-                _controller = e.Controller as ButtonController<TActionSet>;
+            foreach (ControllerInfo info in _controllers) {
+                if (info.ControllerName == e.Name) {
+                    info.Controller = e.Controller as ButtonController<TActionSet>;
+                }
             }
         }
 
         private void HandleControllerRemoved (Object sender, ControllerEventArgs e)
         {
-            if (_controllerName == e.Name) {
-                _controller = null;
+            foreach (ControllerInfo info in _controllers) {
+                if (info.ControllerName == e.Name) {
+                    _controllers.Remove(info);
+                    break;
+                }
             }
         }
     }
