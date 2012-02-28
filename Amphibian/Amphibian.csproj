@@ -191,7 +191,6 @@
     <Compile Include="EntitySystem\ComponentTypeManager.cs" />
     <Compile Include="EntitySystem\Entity.cs" />
     <Compile Include="EntitySystem\EntityManager.cs" />
-    <None Include="EntitySystem\MetaEntity.cs" />
     <Compile Include="Utility\UnorderedList.cs" />
     <Compile Include="Geometry\FPInt.cs" />
     <Compile Include="Frame.cs" />

@@ -24,7 +24,7 @@ namespace Amphibian
     /// <summary>
     /// Represents a full frame (level)
     /// </summary>
-    public class Frame
+    public abstract class Frame
     {
         private Engine _engine;
         private bool _loaded;
@@ -36,24 +36,10 @@ namespace Amphibian
         private int _width;
         private int _height;
 
-        private EntityWorld _entityWorld;
-
         private SamplerState _samplerState;
-
-        // For now, just one collision layer -- could add more later
-        private TileCollisionManager _tileColManager;
-        private CollisionManager _colManager;
-
-        private Level _level;
-        private List<TileLayer> _layers = new List<TileLayer>();
 
         public Frame ()
         {
-            _entityWorld = new EntityWorld();
-            _entityWorld.Frame = this;
-
-            _colManager = new CollisionManager();
-
             _samplerState = new SamplerState()
             {
                 Filter = TextureFilter.Point
@@ -107,74 +93,12 @@ namespace Amphibian
             set { _width = value; }
         }
 
-        public EntityWorld EntityWorld
-        {
-            get { return _entityWorld; }
-        }
-
         public bool Loaded
         {
             get { return _loaded; }
         }
 
-        public CollisionManager CollisionManager
-        {
-            get { return _colManager; }
-        }
-
         #endregion
-
-        protected virtual void Load ()
-        {
-            LevelIndex index = _engine.Content.Load<LevelIndex>("proto1");
-            _level = _engine.Content.Load<Level>(index.ByName("Level 1").Asset);
-            _level.ScaleX = 2f;
-            _level.ScaleY = 2f;
-
-            _width = _level.Width * 2;
-            _height = _level.Height * 2;
-
-            foreach (Layer layer in _level.Layers) {
-                TileLayer tileLayer = layer as TileLayer;
-                if (tileLayer != null) {
-                    _tileColManager = new TileCollisionManager(tileLayer.Width, tileLayer.Height, tileLayer.TileWidth * 2, tileLayer.TileHeight * 2);
-                    break;
-                }
-            }
-
-            foreach (Layer layer in _level.Layers) {
-                if (layer.Properties["type"] != null && layer.Properties["type"].Value == "collision") {
-                    TileLayer tileLayer = layer as TileLayer;
-                    if (tileLayer != null) {
-                        initColMap(tileLayer);
-                    }
-                }
-            }
-        }
-
-        private void initColMap (TileLayer layer)
-        {
-            for (int x = 0; x < layer.Width; x++) {
-                for (int y = 0; y < layer.Height; y++) {
-                    if (layer.Tiles[x, y] != null) {
-                        foreach (Tile tile in layer.Tiles[x, y]) {
-                            Property poolType = tile.Tileset.Properties["type"];
-                            Property tileTid = tile.Properties["tid"];
-                            if (poolType != null && poolType.Value == "collision" && tileTid != null) {
-                                _tileColManager.AddObject((int)tileTid, x, y);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        public void InitES ()
-        {
-            BackgroundCollisionSystem bcs = _entityWorld.SystemManager.GetSystem(typeof(BackgroundCollisionSystem)) as BackgroundCollisionSystem;
-            if (bcs != null)
-                bcs.TileCollisionManager = _tileColManager;
-        }
 
         public void LoadFrame ()
         {
@@ -185,67 +109,47 @@ namespace Amphibian
             _loaded = true;
         }
 
-        public virtual void Update ()
-        {
-            //using (new PerformanceRuler(1, "Dynamic Collision", Color.Orange)) {
-                _colManager.Update();
-            //}
+        protected virtual void Load () { }
 
-            _entityWorld.GameTime = _engine.GameTime;
+        public abstract void Update ();
+
+        public virtual void Interpolate (double alpha) { }
+
+        public abstract void Draw ();
+    }
+
+    public class EntityFrame : Frame
+    {
+        private EntityWorld _entityWorld;
+
+        public EntityFrame ()
+            : base()
+        {
+            _entityWorld = new EntityWorld();
+            _entityWorld.Frame = this;
+        }
+
+        public EntityFrame (Engine engine)
+            : base(engine)
+        {
+            _entityWorld = new EntityWorld();
+            _entityWorld.Frame = this;
+        }
+
+        public EntityWorld EntityWorld
+        {
+            get { return _entityWorld; }
+        }
+
+        public override void Update ()
+        {
+            _entityWorld.GameTime = Engine.GameTime;
             _entityWorld.SystemManager.Update(ExecutionType.Update);
         }
 
-        public virtual void Interpolate (double alpha)
+        public override void Draw ()
         {
-
-        }
-
-        public virtual void Draw ()
-        {
-            CameraSystem cameraSys = _entityWorld.SystemManager.GetSystem(typeof(CameraSystem)) as CameraSystem;
-            if (cameraSys == null)
-                return;
-
-            _engine.SpriteBatch.Begin(SpriteSortMode.Immediate, null, null, null, null, null, cameraSys.GetTranslationMatrix());
-            _engine.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
-
-            if (ADebug.RenderCollisionGeometry) {
-                _tileColManager.Draw(_engine.SpriteBatch, cameraSys.Bounds);
-            }
-
-            _engine.SpriteBatch.End();
-
             _entityWorld.SystemManager.Update(ExecutionType.Draw);
-        }
-
-        public bool TestBackdrop (Mask mask)
-        {
-            return _tileColManager.OverlapsAny(mask);
-        }
-
-        public bool TestBackdropEdge (Mask mask)
-        {
-            return _tileColManager.OverlapsEdgeAny(mask);
-        }
-
-        public bool TestBackdrop (FPInt x, FPInt y)
-        {
-            return _tileColManager.OverlapsAny(x, y);
-        }
-
-        public bool TestBackdropEdge (FPInt x, FPInt y)
-        {
-            return _tileColManager.OverlapsEdgeAny(x, y);
-        }
-
-        public bool TestBackdrop (AXLine line)
-        {
-            return _tileColManager.OverlapsAny(line);
-        }
-
-        public bool TestBackdropEdge (AXLine line)
-        {
-            return _tileColManager.OverlapsEdgeAny(line);
         }
     }
 }

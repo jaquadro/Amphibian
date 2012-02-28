@@ -50,7 +50,7 @@ namespace Amphibian.EntitySystem
         private List<BaseSystem> _drawSystems;
         private List<BaseSystem> _updateSystems;
 
-        public static event Action<BaseSystem> SystemAdded;
+        public event Action<BaseSystem> SystemAdded;
 
         public SystemManager (EntityWorld world)
         {
@@ -127,7 +127,7 @@ namespace Amphibian.EntitySystem
             }
         }
 
-        private static void OnSystemAdded (BaseSystem type)
+        private void OnSystemAdded (BaseSystem type)
         {
             if (SystemAdded != null) {
                 SystemAdded(type);
