@@ -7,10 +7,41 @@ using TimeRulerLibrary;
 
 namespace Amphibian.Debug
 {
+    public enum DebugAction
+    {
+        Exit,
+        CycleView
+    }
+
+    public class DebugActionEquality : IEqualityComparer<DebugAction>
+    {
+        private static DebugActionEquality _instance;
+
+        public static DebugActionEquality Default
+        {
+            get
+            {
+                if (_instance == null)
+                    _instance = new DebugActionEquality();
+                return _instance;
+            }
+        }
+
+        public bool Equals (DebugAction val1, DebugAction val2)
+        {
+            return val1 == val2;
+        }
+
+        public int GetHashCode (DebugAction val)
+        {
+            return ((int)val).GetHashCode();
+        }
+    }
+
     public static class ADebug
     {
         public static bool RenderCollisionGeometry { get; private set; }
-
+        
         public static void Initialize (Game g)
         {
             IDebugCommandHost host = g.Services.GetService(typeof(IDebugCommandHost)) as IDebugCommandHost;

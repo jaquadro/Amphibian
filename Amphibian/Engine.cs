@@ -194,9 +194,9 @@ namespace Amphibian
                 controller.Refresh();
             }
 
-            GamePadController<GamePadInput> c = GetController("gamepad") as GamePadController<GamePadInput>;
+            ButtonController<DebugAction> c = GetController("debug") as ButtonController<DebugAction>;
             if (c != null) {
-                if (c.ButtonPressed(GamePadInput.RightShoulder)) {
+                if (c.ButtonPressed(DebugAction.CycleView)) {
                     Performance.AdvanceOutputState();
                 }
             }

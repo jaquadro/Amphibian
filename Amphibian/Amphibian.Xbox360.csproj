@@ -100,6 +100,7 @@
     <Compile Include="EntitySystem\TagManager.cs" />
     <Compile Include="EntitySystem\TagSystem.cs" />
     <Compile Include="IL.cs" />
+    <Compile Include="Input\ButtonControllerGroup.cs" />
     <Compile Include="Input\GamePadController.cs" />
     <Compile Include="Systems\AnimationSystem.cs" />
     <Compile Include="Systems\BackgroundCollisionSystem.cs" />
