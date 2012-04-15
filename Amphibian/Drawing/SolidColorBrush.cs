@@ -19,5 +19,10 @@ namespace Amphibian.Drawing
             Texture = new Texture2D(device, 1, 1, false, SurfaceFormat.Color);
             Texture.SetData(new Color[] { color });
         }
+
+        protected override void DisposeManaged ()
+        {
+            Texture.Dispose();
+        }
     }
 }

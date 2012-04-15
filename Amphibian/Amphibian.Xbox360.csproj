@@ -93,6 +93,7 @@
     <Compile Include="Components\Renderable.cs" />
     <Compile Include="Debug\MemoryTracker.cs" />
     <Compile Include="Debug\TimeHistory.cs" />
+    <Compile Include="Drawing\PatternBrush.cs" />
     <Compile Include="EntitySystem\BaseSystem.cs" />
     <Compile Include="EntitySystem\EntityWorld.cs" />
     <Compile Include="EntitySystem\ProcessingSystem.cs" />
