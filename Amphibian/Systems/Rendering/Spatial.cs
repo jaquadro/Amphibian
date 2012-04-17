@@ -29,6 +29,6 @@ namespace Amphibian.Systems.Rendering
 
         public virtual void Update () { }
 
-        public abstract void Render (SpriteBatch spriteBatch, Renderable position);
+        public abstract void Render (SpriteBatch spriteBatch, Entity entity, Renderable position);
     }
 }

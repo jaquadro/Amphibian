@@ -39,7 +39,7 @@ namespace Amphibian.Templates
                 _opacity -= 0.05f;
         }
 
-        public override void Render (SpriteBatch spriteBatch, Renderable position)
+        public override void Render (SpriteBatch spriteBatch, Entity entity, Renderable position)
         {
             Rectangle area = new Rectangle((int)position.RenderX - (int)_radius, (int)position.RenderY - (int)_radius, (int)_radius * 2, (int)_radius * 2);
             Drawing.Draw2D.DrawRectangle(spriteBatch, area, _pen);

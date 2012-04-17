@@ -97,7 +97,7 @@ namespace Amphibian.Systems
             //    renderCom.RenderY = positionCom.Y;
             //}
 
-            sp.Render(_spriteBatch, renderCom);
+            sp.Render(_spriteBatch, entity, renderCom);
         }
 
         private void SystemManager_SystemAdded (BaseSystem system)
