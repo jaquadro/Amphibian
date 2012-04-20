@@ -25,7 +25,7 @@ namespace Amphibian.Systems.Rendering
             get { return _world; }
         }
 
-        public abstract void Initialize (ContentManager contentManager);
+        public virtual void Initialize (ContentManager contentManager) { }
 
         public virtual void Update () { }
 
