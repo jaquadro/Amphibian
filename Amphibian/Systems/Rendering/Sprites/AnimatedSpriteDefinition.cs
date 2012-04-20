@@ -40,16 +40,21 @@ namespace Amphibian.Systems.Rendering.Sprites
             get { return _frames; }
         }
 
-        public int RestartAt
-        {
-            get { return _restartAt; }
-            set { _restartAt = value; }
-        }
-
-        public int LoopLimit
+        public int RepeatLimit
         {
             get { return _loopLimit; }
             set { _loopLimit = value; }
+        }
+
+        public int RepeatIndex
+        {
+            get { return _restartAt; }
+            set
+            {
+                if (value >= 0 && value < _frames.Count) {
+                    _restartAt = value;
+                }
+            }
         }
 
         public bool RepeatIndefinitely

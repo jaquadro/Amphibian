@@ -13,6 +13,12 @@ namespace Amphibian.Systems.Rendering.Sprites
             _definition = definition;
         }
 
+        public StaticSprite (StaticSpriteDefinition definition, SpriteInfo spriteInfo)
+            : base(spriteInfo)
+        {
+            _definition = definition;
+        }
+
         #region Properties
 
         public StaticSpriteDefinition Definition
@@ -44,7 +50,7 @@ namespace Amphibian.Systems.Rendering.Sprites
 
         public override void Draw (SpriteBatch spriteBatch, PointFP position)
         {
-            _definition.Draw(spriteBatch, position, SpriteData);
+            _definition.Draw(spriteBatch, position, SpriteInfo);
         }
     }
 }

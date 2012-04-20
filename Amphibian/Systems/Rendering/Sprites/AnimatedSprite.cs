@@ -15,6 +15,19 @@ namespace Amphibian.Systems.Rendering.Sprites
             _animData = new AnimationInfo();
         }
 
+        public AnimatedSprite (AnimatedSpriteDefinition definition, SpriteInfo spriteInfo)
+            : base(spriteInfo)
+        {
+            _definition = definition;
+            _animData = new AnimationInfo();
+        }
+
+        public AnimatedSprite (AnimatedSpriteDefinition definition, SpriteInfo spriteInfo, AnimationInfo animInfo)
+            : base(spriteInfo)
+        {
+            _definition = definition;
+        }
+
         #region Properties
 
         public AnimatedSpriteDefinition Definition
@@ -53,7 +66,7 @@ namespace Amphibian.Systems.Rendering.Sprites
         }
 
         // Relevant?
-        public StaticSpriteDefinition CurrentSprite
+        /*public StaticSpriteDefinition CurrentSprite
         {
             get
             {
@@ -62,36 +75,21 @@ namespace Amphibian.Systems.Rendering.Sprites
                 }
                 return _definition.Frames[_animData.CurrentFrameIndex].Frame;
             }
-        }
+        }*/
 
         public bool IsAnimating
         {
             get { return (_animData.Options & AnimationOptions.Animating) == AnimationOptions.Animating; }
         }
 
-        // Push to Definition
-        public int RepeatIndex
-        {
-            get { return _definition.RestartAt; }
-            set
-            {
-                if (value >= 0 && value < _definition.Frames.Count) {
-                    _definition.RestartAt = value;
-                }
-            }
-        }
+        
 
         public int RepeatCount
         {
             get { return _animData.LoopCount; }
         }
 
-        // Push to Definition
-        public int RepeatLimit
-        {
-            get { return _definition.LoopLimit; }
-            set { _definition.LoopLimit = value; }
-        }
+        
 
         public RefClock ReferenceClock
         {
@@ -132,8 +130,8 @@ namespace Amphibian.Systems.Rendering.Sprites
                 if (_animData.CurrentFrameIndex >= _definition.Frames.Count) {
                     _animData.LoopCount++;
 
-                    if (_definition.RepeatIndefinitely || _animData.LoopCount < _definition.LoopLimit) {
-                        _animData.CurrentFrameIndex = _definition.RestartAt;
+                    if (_definition.RepeatIndefinitely || _animData.LoopCount < _definition.RepeatLimit) {
+                        _animData.CurrentFrameIndex = _definition.RepeatIndex;
                     }
                     else {
                         _animData.CurrentFrameIndex--;
@@ -145,13 +143,13 @@ namespace Amphibian.Systems.Rendering.Sprites
 
         public override void Draw (SpriteBatch spriteBatch, PointFP position)
         {
-            _definition.Draw(spriteBatch, position, _animData, SpriteData);
+            _definition.Draw(spriteBatch, position, _animData, SpriteInfo);
         }
 
         public void Start ()
         {
             _animData.Options |= AnimationOptions.Animating;
-            if (!_definition.RepeatIndefinitely && _animData.LoopCount == _definition.LoopLimit) {
+            if (!_definition.RepeatIndefinitely && _animData.LoopCount == _definition.RepeatLimit) {
                 Restart();
             }
         }
