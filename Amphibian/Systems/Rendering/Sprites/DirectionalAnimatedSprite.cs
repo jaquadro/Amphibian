@@ -10,7 +10,8 @@ namespace Amphibian.Systems.Rendering.Sprites
         private AnimatedSprite[] _anims;
         private Direction _currentDirection;
 
-        public DirectionalAnimatedSprite (DirectionalAnimatedSpriteDefinition definition)
+        public DirectionalAnimatedSprite (DirectionalAnimatedSpriteDefinition definition, SpriteInfo spriteInfo)
+            : base(spriteInfo)
         {
             _definition = definition;
 
@@ -18,6 +19,11 @@ namespace Amphibian.Systems.Rendering.Sprites
             for (int i = 0; i < 16; i++)
                 if (_definition[(Direction)i] != null)
                     _anims[i] = new AnimatedSprite(_definition[(Direction)i], SpriteInfo);
+        }
+
+        public DirectionalAnimatedSprite (DirectionalAnimatedSpriteDefinition definition)
+            : this(definition, new SpriteInfo())
+        {
         }
 
         public override float Left
@@ -45,6 +51,11 @@ namespace Amphibian.Systems.Rendering.Sprites
             get { return _anims[(int)direction]; }
         }
 
+        public AnimatedSprite CurrentSequence
+        {
+            get { return _anims[(int)_currentDirection]; }
+        }
+
         public Direction CurrentDirection
         {
             get { return _currentDirection; }
@@ -61,4 +72,6 @@ namespace Amphibian.Systems.Rendering.Sprites
             _anims[(int)_currentDirection].Update(gameTime);
         }
     }
+
+    
 }

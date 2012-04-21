@@ -9,5 +9,10 @@ namespace Amphibian.Systems.Rendering.Sprites
         public float Rotation { get; set; }
         public float Opacity { get; set; }
         public SpriteEffects Effects { get; set; }
+
+        public SpriteInfo ()
+        {
+            Opacity = 1f;
+        }
     }
 }
