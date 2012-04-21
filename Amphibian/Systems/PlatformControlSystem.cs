@@ -98,36 +98,57 @@ namespace Amphibian.Systems
                 return;
 
             PlatformPhysics physicsCom = null;
+            DirectionComponent directionCom = null;
+            ActivityComponent activityCom = null;
 
             foreach (IComponent com in EntityManager.GetComponents(entity)) {
-                if (com is PlatformPhysics) {
+                if (com is PlatformPhysics)
                     physicsCom = com as PlatformPhysics;
-                    break;
-                }
+                else if (com is DirectionComponent)
+                    directionCom = com as DirectionComponent;
+                else if (com is ActivityComponent)
+                    activityCom = com as ActivityComponent;
             }
 
             if (physicsCom == null)
                 return;
 
-            HandleInput(physicsCom);
+            HandleInput(physicsCom, directionCom);
+
+            if (activityCom != null) {
+                if (physicsCom.VelocityY == 0) {
+                    if (physicsCom.VelocityX == 0)
+                        activityCom.Activity = "Standing";
+                    else
+                        activityCom.Activity = "Walking";
+                }
+                else if (physicsCom.VelocityY > 0)
+                    activityCom.Activity = "Jumping";
+                else if (physicsCom.VelocityY < 0)
+                    activityCom.Activity = "Falling";
+            }
         }
 
-        private void HandleInput (PlatformPhysics physics)
+        private void HandleInput (PlatformPhysics physicsCom, DirectionComponent directionCom)
         {
             if (_controller.ButtonHeld(PlatformAction.Left)) {
-                physics.AccelX = -FPMath.Abs(physics.AccelX);
-                physics.AccelStateX = PlatformAccelState.Accelerate;
+                physicsCom.AccelX = -FPMath.Abs(physicsCom.AccelX);
+                physicsCom.AccelStateX = PlatformAccelState.Accelerate;
+                if (directionCom != null)
+                    directionCom.Direction = Rendering.Sprites.Direction.West;
             }
             else if (_controller.ButtonHeld(PlatformAction.Right)) {
-                physics.AccelX = FPMath.Abs(physics.AccelX);
-                physics.AccelStateX = PlatformAccelState.Accelerate;
+                physicsCom.AccelX = FPMath.Abs(physicsCom.AccelX);
+                physicsCom.AccelStateX = PlatformAccelState.Accelerate;
+                if (directionCom != null)
+                    directionCom.Direction = Rendering.Sprites.Direction.East;
             }
             else {
-                physics.AccelStateX = PlatformAccelState.Decelerate;
+                physicsCom.AccelStateX = PlatformAccelState.Decelerate;
             }
 
             if (_controller.ButtonPressed(PlatformAction.Jump)) {
-                physics.VelocityY = -12;
+                physicsCom.VelocityY = -12;
             }
         }
 

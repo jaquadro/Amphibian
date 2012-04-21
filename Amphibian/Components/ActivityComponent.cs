@@ -6,9 +6,8 @@ using Amphibian.EntitySystem;
 
 namespace Amphibian.Components
 {
-    public sealed class Animation : IComponent
+    public sealed class ActivityComponent : IComponent
     {
-        public int Index;
-        public int LoopCount;
+        public String Activity;
     }
 }

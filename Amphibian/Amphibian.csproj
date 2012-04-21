@@ -135,8 +135,9 @@
     <Compile Include="Collision\Collision.cs" />
     <Compile Include="Collision\CollisionManager.cs" />
     <Compile Include="Collision\CollisionTileMapper.cs" />
-    <Compile Include="Components\Animation.cs" />
+    <Compile Include="Components\ActivityComponent.cs" />
     <Compile Include="Components\Collidable.cs" />
+    <Compile Include="Components\DirectionComponent.cs" />
     <Compile Include="Components\ParallaxCom.cs" />
     <Compile Include="Components\PlatformPhysics.cs" />
     <Compile Include="Components\PlatformPushable.cs" />
@@ -171,6 +172,8 @@
     <Compile Include="Systems\Rendering\Sprites\AnimationInfo.cs" />
     <Compile Include="Systems\Rendering\Sprites\AnimationOptions.cs" />
     <Compile Include="Systems\Rendering\Sprites\Direction.cs" />
+    <Compile Include="Systems\Rendering\Sprites\DirectionalAnimatedSprite.cs" />
+    <Compile Include="Systems\Rendering\Sprites\DirectionalAnimatedSpriteDefinition.cs" />
     <Compile Include="Systems\Rendering\Sprites\Sprite.cs" />
     <Compile Include="Systems\Rendering\Sprites\SpriteInfo.cs" />
     <Compile Include="Systems\Rendering\Sprites\StaticSprite.cs" />
