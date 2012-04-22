@@ -174,10 +174,13 @@
     <Compile Include="Systems\Rendering\Sprites\Direction.cs" />
     <Compile Include="Systems\Rendering\Sprites\DirectionalAnimatedSprite.cs" />
     <Compile Include="Systems\Rendering\Sprites\DirectionalAnimatedSpriteDefinition.cs" />
+    <Compile Include="Systems\Rendering\Sprites\DirectionalAnimationSet.cs" />
+    <Compile Include="Systems\Rendering\Sprites\DirectionalAnimationSetDefinition.cs" />
     <Compile Include="Systems\Rendering\Sprites\Sprite.cs" />
     <Compile Include="Systems\Rendering\Sprites\SpriteInfo.cs" />
     <Compile Include="Systems\Rendering\Sprites\StaticSprite.cs" />
     <Compile Include="Systems\Rendering\Sprites\StaticSpriteDefinition.cs" />
+    <Compile Include="Systems\Rendering\Sprites\Xml\SpriteElement.cs" />
     <Compile Include="Systems\RenderSystem.cs" />
     <Compile Include="Templates\DebugCue.cs" />
     <Compile Include="Utility\EnumHelper.cs" />

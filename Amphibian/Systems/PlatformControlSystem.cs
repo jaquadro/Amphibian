@@ -122,9 +122,9 @@ namespace Amphibian.Systems
                     else
                         activityCom.Activity = "Walking";
                 }
-                else if (physicsCom.VelocityY > 0)
-                    activityCom.Activity = "Jumping";
                 else if (physicsCom.VelocityY < 0)
+                    activityCom.Activity = "Jumping";
+                else if (physicsCom.VelocityY > 0)
                     activityCom.Activity = "Falling";
             }
         }
