@@ -167,6 +167,9 @@
     <Compile Include="Systems\Rendering\Spatial.cs" />
     <Compile Include="Systems\Rendering\SpatialManager.cs" />
     <Compile Include="Systems\Rendering\SpatialRef.cs" />
+    <Compile Include="Systems\Rendering\Spatials\AnimatedSpriteSpatial.cs" />
+    <Compile Include="Systems\Rendering\Spatials\DirectionalAnimatedSpriteSpatial.cs" />
+    <Compile Include="Systems\Rendering\Spatials\DirectionalAnimationSetSpatial.cs" />
     <Compile Include="Systems\Rendering\Sprites\AnimatedSprite.cs" />
     <Compile Include="Systems\Rendering\Sprites\AnimatedSpriteDefinition.cs" />
     <Compile Include="Systems\Rendering\Sprites\AnimationInfo.cs" />
@@ -180,7 +183,10 @@
     <Compile Include="Systems\Rendering\Sprites\SpriteInfo.cs" />
     <Compile Include="Systems\Rendering\Sprites\StaticSprite.cs" />
     <Compile Include="Systems\Rendering\Sprites\StaticSpriteDefinition.cs" />
-    <Compile Include="Systems\Rendering\Sprites\Xml\SpriteElement.cs" />
+    <Compile Include="Systems\Rendering\Sprites\Xml\AnimatedSpriteXml.cs" />
+    <Compile Include="Systems\Rendering\Sprites\Xml\DirectionalAnimatedSpriteXml.cs" />
+    <Compile Include="Systems\Rendering\Sprites\Xml\DirectionalAnimationSetXml.cs" />
+    <Compile Include="Systems\Rendering\Sprites\Xml\CommonXml.cs" />
     <Compile Include="Systems\RenderSystem.cs" />
     <Compile Include="Templates\DebugCue.cs" />
     <Compile Include="Utility\EnumHelper.cs" />
@@ -231,6 +237,7 @@
       <Name>GameDebugTools</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
   <!--
