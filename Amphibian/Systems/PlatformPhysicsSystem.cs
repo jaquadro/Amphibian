@@ -518,6 +518,10 @@ namespace Amphibian.Systems
                             targetPP.Pushable.SourceEntity = Entity.None;
                         }
                     }
+                    else if (reqDiffX == 0) {
+                        physics.Pusher.TargetEntity = Entity.None;
+                        targetPP.Pushable.SourceEntity = Entity.None;
+                    }
 
                     if (actDiffY < -3 || actDiffY > 3) {
                         physics.Pusher.TargetEntity = Entity.None;

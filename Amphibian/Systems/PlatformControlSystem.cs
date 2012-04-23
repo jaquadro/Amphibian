@@ -126,6 +126,9 @@ namespace Amphibian.Systems
                     activityCom.Activity = "Jumping";
                 else if (physicsCom.VelocityY > 0)
                     activityCom.Activity = "Falling";
+
+                if (physicsCom.Pusher.TargetEntity != Entity.None)
+                    activityCom.Activity = "Pushing";
             }
         }
 
