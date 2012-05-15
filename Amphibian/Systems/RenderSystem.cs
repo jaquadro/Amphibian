@@ -8,12 +8,25 @@ using Amphibian.Systems.Rendering;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using Treefrog.Runtime;
+using Amphibian.Utility;
 
 namespace Amphibian.Systems
 {
 
     public class RenderSystem : ProcessingSystem
     {
+        private struct EntityRenderRecord
+        {
+            public Entity Entity;
+            public Renderable RenderCom;
+
+            public EntityRenderRecord (Entity entity, Renderable renderCom)
+            {
+                Entity = entity;
+                RenderCom = renderCom;
+            }
+        }
+
         private SpriteBatch _spriteBatch;
         private SpatialManager _manager;
 
@@ -21,11 +34,14 @@ namespace Amphibian.Systems
 
         private Level _level;
 
+        private Dictionary<int, UnorderedList<EntityRenderRecord>> _separator;
+
         public RenderSystem (SpriteBatch spriteBatch)
             : base(typeof(Renderable))
         {
             _manager = new SpatialManager();
             _spriteBatch = spriteBatch;
+            _separator = new Dictionary<int, UnorderedList<EntityRenderRecord>>();
         }
 
         protected internal override void Initialize ()
@@ -34,7 +50,7 @@ namespace Amphibian.Systems
 
             SystemManager.SystemAdded += SystemManager_SystemAdded;
 
-            LevelIndex index = SystemManager.World.Frame.Engine.Content.Load<LevelIndex>("proto1");
+            LevelIndex index = SystemManager.World.Frame.Engine.Content.Load<LevelIndex>("proto3");
             _level = SystemManager.World.Frame.Engine.Content.Load<Level>(index.ByName("Level 1").Asset);
             _level.ScaleX = 2f;
             _level.ScaleY = 2f;
@@ -53,12 +69,29 @@ namespace Amphibian.Systems
 
             _spriteBatch.Begin(SpriteSortMode.Immediate, null, null, null, null, null, matrix);
             _spriteBatch.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
+
+            foreach (UnorderedList<EntityRenderRecord> record in _separator.Values)
+                record.Clear();
         }
 
         protected override void End ()
         {
-            if (_cameraSystem != null)
-                _level.Draw(_spriteBatch, _cameraSystem.Bounds);
+            if (_cameraSystem != null) {
+                foreach (Layer layer in _level.Layers) {
+                    layer.Draw(_spriteBatch, _cameraSystem.Bounds);
+
+                    if (_separator.ContainsKey(layer.Id)) {
+                        foreach (EntityRenderRecord record in _separator[layer.Id]) {
+                            Spatial sp = _manager.GetSpatial(record.RenderCom.SpatialRef);
+                            if (sp == null)
+                                return;
+
+                            sp.Render(_spriteBatch, record.Entity, record.RenderCom);
+                        }
+                    }
+                }
+            }
+                //_level.Draw(_spriteBatch, _cameraSystem.Bounds);
 
             _spriteBatch.End();
         }
@@ -66,11 +99,34 @@ namespace Amphibian.Systems
         protected override void ProcessEntities (EntityManager.EntityEnumerator entities)
         {
             foreach (Entity entity in entities) {
-                Process(entity);
+                //Process(entity);
+                Separate(entity);
             }
         }
 
-        private void Process (Entity entity)
+        private void Separate (Entity entity)
+        {
+            Renderable renderCom = null;
+            foreach (IComponent com in EntityManager.GetComponents(entity)) {
+                if (com is Renderable) {
+                    renderCom = com as Renderable;
+                    break;
+                }
+            }
+
+            if (renderCom == null)
+                return;
+
+            if (!_manager.IsValid(renderCom.SpatialRef))
+                return;
+
+            if (!_separator.ContainsKey(renderCom.LayerIndex))
+                _separator.Add(renderCom.LayerIndex, new UnorderedList<EntityRenderRecord>());
+
+            _separator[renderCom.LayerIndex].Add(new EntityRenderRecord(entity, renderCom));
+        }
+
+        /*private void Process (Entity entity)
         {
             Renderable renderCom = null;
             //Position positionCom = null;
@@ -98,7 +154,7 @@ namespace Amphibian.Systems
             //}
 
             sp.Render(_spriteBatch, entity, renderCom);
-        }
+        }*/
 
         private void SystemManager_SystemAdded (BaseSystem system)
         {

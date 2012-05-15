@@ -1,7 +1,6 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Amphibian.Utility
 {
@@ -44,8 +43,6 @@ namespace Amphibian.Utility
         {
             get
             {
-                //if (index < 0 || index >= _index)
-                //    throw new IndexOutOfRangeException();
                 return _items[index];
             }
         }
@@ -190,23 +187,76 @@ namespace Amphibian.Utility
 
         #endregion
 
+        public Enumerator GetEnumerator ()
+        {
+            return new Enumerator(this);
+        }
+
         #region IEnumerable<T> Members
 
-        public IEnumerator<T> GetEnumerator ()
+        IEnumerator<T> System.Collections.Generic.IEnumerable<T>.GetEnumerator ()
         {
-            for (int i = 0; i < _index; i++)
-                yield return _items[i];
+            return new Enumerator(this);
         }
 
         #endregion
 
         #region IEnumerable Members
 
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator ()
+        IEnumerator System.Collections.IEnumerable.GetEnumerator ()
         {
-            return GetEnumerator();
+            return new Enumerator(this);
         }
 
         #endregion
+
+        public struct Enumerator : IEnumerator<T>
+        {
+            private static UnorderedList<T> _emptyList = new UnorderedList<T>();
+
+            private UnorderedList<T> _list;
+            private int _index;
+
+            internal static Enumerator Empty
+            {
+                get { return new Enumerator(_emptyList); }
+            }
+
+            internal Enumerator (UnorderedList<T> entityList)
+            {
+                _index = -1;
+                _list = entityList;
+            }
+
+            public T Current
+            {
+                get { return _list[_index]; }
+            }
+
+            object IEnumerator.Current
+            {
+                get { return _list[_index]; }
+            }
+
+            public void Dispose ()
+            {
+            }
+
+            public bool MoveNext ()
+            {
+                _index++;
+                return _index < _list.Count;
+            }
+
+            public void Reset ()
+            {
+                _index = -1;
+            }
+
+            public Enumerator GetEnumerator ()
+            {
+                return this;
+            }
+        }
     }
 }

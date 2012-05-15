@@ -11,6 +11,7 @@ namespace Amphibian.Components
 {
     public class Renderable : IComponent
     {
+        public int LayerIndex = 1000;
         public FPInt RenderX;
         public FPInt RenderY;
         public SpatialRef SpatialRef;
