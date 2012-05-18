@@ -8,6 +8,7 @@ using Amphibian.Drawing;
 using Amphibian.Geometry;
 using Amphibian.Collision.BroadPhase;
 using Amphibian.Utility;
+using Amphibian.EntitySystem;
 
 namespace Amphibian.Collision
 {
@@ -24,7 +25,145 @@ namespace Amphibian.Collision
         bool OverlapsAny (Mask mask);
     }
 
-    
+    /*public class EntityCollisionManager : CollisionManager
+    {
+        //private Dictionary<ICollidable, Entity> _entityMap;
+        private Dictionary<Entity, ICollidable> _collidableMap;
+
+
+
+        public EntityCollisionManager ()
+        {
+            _entityMap = new Dictionary<ICollidable, Entity>();
+            _collidableMap = new Dictionary<Entity, ICollidable>();
+        }
+
+        public void AddObject (Entity entity, ICollidable collidable)
+        {
+            _entityMap.Add(collidable, entity);
+            _collidableMap.Add(entity, collidable);
+
+            AddObject(collidable);
+        }
+
+        public void RemoveObject (Entity entity)
+        {
+            ICollidable collidable;
+            if (_collidableMap.TryGetValue(entity, out collidable)) {
+                _entityMap.Remove(collidable);
+                RemoveObject(collidable);
+            }
+
+            _collidableMap.Remove(entity);
+        }
+
+        public Entity LookupEntity (ICollidable collidable)
+        {
+            Entity ent;
+            if (_entityMap.TryGetValue(collidable, out ent))
+                return ent;
+            else
+                return Entity.None;
+        }
+    }*/
+
+    public class EntityCollisionManager
+    {
+        private SelectiveSweep _sweep;
+        private Dictionary<Entity, ICollidable> _collidableMap;
+        private Dictionary<ICollidable, Entity> _entityMap;
+
+        // XXX: Implement list pool
+        private ResourcePool<List<Entity>> _listPool;
+        private Dictionary<Entity, List<Entity>> _candidatePairs;
+        private List<Entity> _empty;
+
+        public EntityCollisionManager ()
+        {
+            _collidableMap = new Dictionary<Entity, ICollidable>();
+            _entityMap = new Dictionary<ICollidable, Entity>();
+
+            _listPool = new ResourcePool<List<Entity>>();
+            _candidatePairs = new Dictionary<Entity, List<Entity>>();
+            _empty = new List<Entity>();
+
+            _sweep = new SelectiveSweep();
+            _sweep.Collision += CollisionHandler;
+        }
+
+        public void Update ()
+        {
+            Reset();
+            _sweep.Detect();
+        }
+
+        public void Reset ()
+        {
+            foreach (List<Entity> list in _candidatePairs.Values) {
+                list.Clear();
+                _listPool.ReturnResource(list);
+            }
+
+            _candidatePairs.Clear();
+        }
+
+        public void AddObject (Entity entity, ICollidable collidable)
+        {
+            _collidableMap.Add(entity, collidable);
+            _entityMap.Add(collidable, entity);
+            _sweep.AddCollidable(collidable);
+        }
+
+        public void RemoveObject (Entity entity)
+        {
+            ICollidable collidable;
+            if (_collidableMap.TryGetValue(entity, out collidable)) {
+                _collidableMap.Remove(entity);
+                _entityMap.Remove(collidable);
+                _sweep.RemoveCollidable(collidable);
+
+                List<Entity> list;
+                if (_candidatePairs.TryGetValue(entity, out list)) {
+                    _candidatePairs.Remove(entity);
+                    _listPool.ReturnResource(list);
+                }
+            }
+        }
+
+        public List<Entity> CandidatePairs (Entity entity)
+        {
+            List<Entity> list;
+            if (_candidatePairs.TryGetValue(entity, out list))
+                return list;
+
+            return _empty;
+        }
+
+        private void CollisionHandler (ICollidable first, ICollidable second)
+        {
+            Entity entFirst;
+            if (!_entityMap.TryGetValue(first, out entFirst))
+                return;
+
+            Entity entSecond;
+            if (!_entityMap.TryGetValue(second, out entSecond))
+                return;
+
+            AddObjectToList(entFirst, entSecond);
+            AddObjectToList(entSecond, entFirst);
+        }
+
+        private void AddObjectToList (Entity first, Entity second)
+        {
+            List<Entity> list;
+            if (!_candidatePairs.TryGetValue(first, out list)) {
+                list = _listPool.TakeResource();
+                _candidatePairs.Add(first, list);
+            }
+
+            list.Add(second);
+        }
+    }
 
     public class CollisionManager
     {

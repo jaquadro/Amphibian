@@ -7,14 +7,14 @@ using Amphibian.EntitySystem;
 
 namespace Amphibian.Components
 {
-    public sealed class Collidable : IComponent
+    public sealed class Collidable : IComponent, ICollidable
     {
         public Collidable (Mask mask)
         {
-            Mask = mask;
+            CollisionMask = mask;
         }
 
-        public Mask Mask { get; set; }
+        public Mask CollisionMask { get; set; }
         public bool BackgroundObstacle { get; set; }
     }
 }

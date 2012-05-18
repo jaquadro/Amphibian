@@ -255,7 +255,7 @@ namespace Amphibian.Systems
                 if (comCollision == null || comCollision == collidable)
                     continue;
 
-                if (comCollision.Mask.TestOverlapEdge(line)) {
+                if (comCollision.CollisionMask.TestOverlapEdge(line)) {
                     _testBuffer.Add(entity);
                     return true;
                 }
@@ -281,7 +281,7 @@ namespace Amphibian.Systems
                 if (comCollision == null || comCollision == collidable)
                     continue;
 
-                if (comCollision.Mask.TestOverlapEdge(line)) {
+                if (comCollision.CollisionMask.TestOverlapEdge(line)) {
                     _testBuffer.Add(entity);
                     return true;
                 }
@@ -296,12 +296,20 @@ namespace Amphibian.Systems
 
         private void MoveVertical (Entity entity, FPInt distX, FPInt distY, Position position, Collidable collidable, PlatformPhysics physics)
         {
+            if (physics.State == PlatformState.NonSolid) {
+                position.X = position.X + distX;
+                position.Y = position.Y + distY;
+                collidable.CollisionMask.Position.X = position.X + distX;
+                collidable.CollisionMask.Position.Y = position.Y + distY;
+                return;
+            }
+
             FPInt posY = position.Y + distY;
-            collidable.Mask.Position.X = position.X;
-            collidable.Mask.Position.Y = posY;
+            collidable.CollisionMask.Position.X = position.X;
+            collidable.CollisionMask.Position.Y = posY;
 
             if (distY > 0) {
-                AXLine low = LowerDetector(collidable.Mask.Bounds);
+                AXLine low = LowerDetector(collidable.CollisionMask.Bounds);
 
                 if (TestCollisionEdge(collidable, low)) {
                     physics.VelocityY = 0;
@@ -327,7 +335,7 @@ namespace Amphibian.Systems
                 }
             }
             else if (distY < 0) {
-                AXLine high = UpperDetector(collidable.Mask.Bounds);
+                AXLine high = UpperDetector(collidable.CollisionMask.Bounds);
 
                 if (TestCollisionEdge(collidable, high)) {
                     physics.VelocityY = 0;
@@ -341,19 +349,27 @@ namespace Amphibian.Systems
             }
 
             position.Y = posY;
-            collidable.Mask.Position.Y = posY;
+            collidable.CollisionMask.Position.Y = posY;
         }
 
         private void MoveHorizontal (Entity entity, FPInt distX, FPInt distY, Position position, Collidable collidable, PlatformPhysics physics)
         {
+            if (physics.State == PlatformState.NonSolid) {
+                position.X = position.X + distX;
+                position.Y = position.Y + distY;
+                collidable.CollisionMask.Position.X = position.X + distX;
+                collidable.CollisionMask.Position.Y = position.Y + distY;
+                return;
+            }
+
             FPInt posX = position.X;
             FPInt posY = position.Y;
-            collidable.Mask.Position.X = posX;
-            collidable.Mask.Position.Y = position.Y;
+            collidable.CollisionMask.Position.X = posX;
+            collidable.CollisionMask.Position.Y = position.Y;
 
             FPInt offX = 0;
             FPInt dirX = distX;
-            RectangleFP bounds = collidable.Mask.Bounds;
+            RectangleFP bounds = collidable.CollisionMask.Bounds;
 
             if (distX > 0) {
                 offX = distX.Ceil - distX;
@@ -453,8 +469,8 @@ namespace Amphibian.Systems
 
             position.X = posX;
             position.Y = posY;
-            collidable.Mask.Position.X = posX;
-            collidable.Mask.Position.Y = posY;
+            collidable.CollisionMask.Position.X = posX;
+            collidable.CollisionMask.Position.Y = posY;
 
             /*_object.X += dist;
 

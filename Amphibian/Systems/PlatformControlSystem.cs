@@ -151,7 +151,7 @@ namespace Amphibian.Systems
             }
 
             if (_controller.ButtonPressed(PlatformAction.Jump)) {
-                physicsCom.VelocityY = -12;
+                physicsCom.VelocityY = -8;
             }
         }
 

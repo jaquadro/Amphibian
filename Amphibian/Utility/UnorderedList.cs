@@ -80,7 +80,7 @@ namespace Amphibian.Utility
             if (index < 0 || index >= _index)
                 throw new ArgumentOutOfRangeException("index");
 
-            _items[index] = _items[_index--];
+            _items[index] = _items[--_index];
             _items[_index] = default(T);
         }
 
@@ -88,7 +88,7 @@ namespace Amphibian.Utility
         {
             for (int i = 0; i < _index; i++) {
                 if (_comparer.Equals(_items[i], item)) {
-                    _items[i] = _items[_index--];
+                    _items[i] = _items[--_index];
                     _items[_index] = default(T);
                 }
             }
