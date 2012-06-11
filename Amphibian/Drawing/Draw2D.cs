@@ -195,13 +195,18 @@ namespace Amphibian.Drawing
         public static void DrawLine (SpriteBatch spriteBatch, Point location, int length, float angle, Pen pen)
         {
             int pwh = pen.Width >> 1;
+            float unitW = pen.Brush.Texture.Width / (float)(length + pen.Width);
+            float unitH = pen.Brush.Texture.Height / (float)pen.Width;
+
+            float originX = unitW * pwh;
+            float originY = unitH * pwh;
 
             spriteBatch.Draw(pen.Brush.Texture,
-                new Rectangle(location.X - pwh, location.Y - pwh, length + pwh * 2, pen.Width),
+                new Rectangle(location.X, location.Y, length + pwh * 2, pen.Width),
                 null,
                 Color.White * pen.Brush.Alpha,
                 angle,
-                new Vector2(pwh, pwh),
+                new Vector2(originX, originY),
                 SpriteEffects.None,
                 0);
         }
