@@ -146,7 +146,7 @@
     <Compile Include="Components\Renderable.cs" />
     <Compile Include="Debug\TimeHistory.cs" />
     <Compile Include="Debug\MemoryTracker.cs" />
-    <Compile Include="Drawing\PatternBrush.cs" />
+    <None Include="Drawing\PatternBrush.cs" />
     <Compile Include="EntitySystem\BaseSystem.cs" />
     <Compile Include="EntitySystem\EntityWorld.cs" />
     <Compile Include="EntitySystem\ProcessingSystem.cs" />
@@ -201,13 +201,13 @@
     <Compile Include="Collision\TriangleMask.cs" />
     <Compile Include="Debug\ADebug.cs" />
     <Compile Include="Debug\Performance.cs" />
-    <Compile Include="Drawing\Brush.cs" />
-    <Compile Include="Drawing\Brushes.cs" />
-    <Compile Include="Drawing\Draw2D.cs" />
-    <Compile Include="Drawing\Pen.cs" />
-    <Compile Include="Drawing\Pens.cs" />
+    <None Include="Drawing\Brush.cs" />
+    <None Include="Drawing\Brushes.cs" />
+    <None Include="Drawing\Draw2D.cs" />
+    <None Include="Drawing\Pen.cs" />
+    <None Include="Drawing\Pens.cs" />
     <None Include="Drawing\Primitives2D.cs" />
-    <Compile Include="Drawing\SolidColorBrush.cs" />
+    <None Include="Drawing\SolidColorBrush.cs" />
     <Compile Include="Engine.cs" />
     <Compile Include="EntitySystem\Component.cs" />
     <Compile Include="EntitySystem\ComponentType.cs" />
@@ -233,6 +233,10 @@
     <ProjectReference Include="..\..\Treefrog\Treefrog.Runtime\Treefrog.Runtime.csproj">
       <Project>{A84CB117-B552-479F-956A-55EF1A827B1C}</Project>
       <Name>Treefrog.Runtime</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Amphibian.Drawing\Amphibian.Drawing.csproj">
+      <Project>{E5A1D7A8-0CDF-4FAD-8A0D-16C2BB69DEFA}</Project>
+      <Name>Amphibian.Drawing</Name>
     </ProjectReference>
     <ProjectReference Include="..\GameDebugTools\GameDebugTools.csproj">
       <Project>{BDE38033-0722-470B-9F63-E3C9486A4B33}</Project>
