@@ -168,6 +168,7 @@
     <Compile Include="Systems\Rendering\SpatialManager.cs" />
     <Compile Include="Systems\Rendering\SpatialRef.cs" />
     <Compile Include="Systems\Rendering\Spatials\AnimatedSpriteSpatial.cs" />
+    <Compile Include="Systems\Rendering\Spatials\BackdropSpatial.cs" />
     <Compile Include="Systems\Rendering\Spatials\DirectionalAnimatedSpriteSpatial.cs" />
     <Compile Include="Systems\Rendering\Spatials\DirectionalAnimationSetSpatial.cs" />
     <Compile Include="Systems\Rendering\Spatials\StaticSpriteSpatial.cs" />
@@ -226,7 +227,7 @@
     <Compile Include="Input\InputController.cs" />
     <Compile Include="Input\KeyboardController.cs" />
     <Compile Include="Geometry\FPLong.cs" />
-    <Compile Include="Parallax.cs" />
+    <None Include="Parallax.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

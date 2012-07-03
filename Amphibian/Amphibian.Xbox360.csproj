@@ -116,6 +116,7 @@
     <Compile Include="Systems\Rendering\SpatialManager.cs" />
     <Compile Include="Systems\Rendering\SpatialRef.cs" />
     <Compile Include="Systems\Rendering\Spatials\AnimatedSpriteSpatial.cs" />
+    <Compile Include="Systems\Rendering\Spatials\BackdropSpatial.cs" />
     <Compile Include="Systems\Rendering\Spatials\DirectionalAnimatedSpriteSpatial.cs" />
     <Compile Include="Systems\Rendering\Spatials\DirectionalAnimationSetSpatial.cs" />
     <Compile Include="Systems\Rendering\Spatials\StaticSpriteSpatial.cs" />
