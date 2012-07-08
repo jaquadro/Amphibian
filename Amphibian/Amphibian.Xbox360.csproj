@@ -139,6 +139,7 @@
     <Compile Include="Systems\Rendering\Sprites\Xml\DirectionalAnimationSetXml.cs" />
     <Compile Include="Systems\Rendering\Sprites\Xml\StaticSpriteXml.cs" />
     <Compile Include="Systems\RenderSystem.cs" />
+    <Compile Include="Systems\RenderTransformSystem.cs" />
     <Compile Include="Templates\DebugCue.cs" />
     <Compile Include="Utility\EnumHelper.cs" />
     <Compile Include="Utility\ResourcePool.cs" />
@@ -175,7 +176,6 @@
     <Compile Include="Input\InputController.cs" />
     <Compile Include="Input\KeyboardController.cs" />
     <Compile Include="Geometry\FPLong.cs" />
-    <Compile Include="Parallax.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

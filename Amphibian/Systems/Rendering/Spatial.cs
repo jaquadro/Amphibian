@@ -30,5 +30,10 @@ namespace Amphibian.Systems.Rendering
         public virtual void Update () { }
 
         public abstract void Render (SpriteBatch spriteBatch, Entity entity, Renderable position);
+
+        public virtual bool InBounds (Rectangle bounds)
+        {
+            return true;
+        }
     }
 }

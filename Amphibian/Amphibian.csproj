@@ -191,6 +191,7 @@
     <Compile Include="Systems\Rendering\Sprites\Xml\CommonXml.cs" />
     <Compile Include="Systems\Rendering\Sprites\Xml\StaticSpriteXml.cs" />
     <Compile Include="Systems\RenderSystem.cs" />
+    <Compile Include="Systems\RenderTransformSystem.cs" />
     <Compile Include="Templates\DebugCue.cs" />
     <Compile Include="Utility\EnumHelper.cs" />
     <Compile Include="Utility\ResourcePool.cs" />
@@ -227,14 +228,9 @@
     <Compile Include="Input\InputController.cs" />
     <Compile Include="Input\KeyboardController.cs" />
     <Compile Include="Geometry\FPLong.cs" />
-    <None Include="Parallax.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Treefrog\Treefrog.Runtime\Treefrog.Runtime.csproj">
-      <Project>{A84CB117-B552-479F-956A-55EF1A827B1C}</Project>
-      <Name>Treefrog.Runtime</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Amphibian.Drawing\Amphibian.Drawing.csproj">
       <Project>{E5A1D7A8-0CDF-4FAD-8A0D-16C2BB69DEFA}</Project>
       <Name>Amphibian.Drawing</Name>

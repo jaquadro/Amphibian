@@ -172,7 +172,7 @@ namespace Amphibian.EntitySystem
 
         public bool IsValid (Entity entity)
         {
-            return entity.Id == _active[entity.Index].Id;
+            return entity.Id == _active[entity.Index].Id && entity.Id != 0;
         }
 
         public void AddComponent (Entity entity, IComponent component)

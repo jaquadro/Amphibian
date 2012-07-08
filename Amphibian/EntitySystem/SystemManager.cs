@@ -45,8 +45,6 @@ namespace Amphibian.EntitySystem
 
         private Dictionary<Type, BaseSystem> _systems;
 
-        //private SortedList<SystemGroupKey, BaseSystem> _drawSystems;
-        //private SortedList<SystemGroupKey, BaseSystem> _updateSystems;
         private List<BaseSystem> _drawSystems;
         private List<BaseSystem> _updateSystems;
 
@@ -57,8 +55,8 @@ namespace Amphibian.EntitySystem
             _world = world;
 
             _systems = new Dictionary<Type, BaseSystem>();
-            _drawSystems = new List<BaseSystem>(); // new SortedList<SystemGroupKey, BaseSystem>();
-            _updateSystems = new List<BaseSystem>(); // SortedList<SystemGroupKey, BaseSystem>();
+            _drawSystems = new List<BaseSystem>();
+            _updateSystems = new List<BaseSystem>();
         }
 
         public EntityWorld World
@@ -68,27 +66,40 @@ namespace Amphibian.EntitySystem
 
         public void AddSystem (BaseSystem system, ExecutionType execType)
         {
-            AddSystem(system, execType, 0);
+            AddSystem(system.GetType(), system, execType, 0);
+        }
+
+        public void AddSystem<T> (BaseSystem system, ExecutionType execType)
+        {
+            AddSystem(typeof(T), system, execType, 0);
         }
 
         public void AddSystem (BaseSystem system, ExecutionType execType, int priority)
         {
-            if (_systems.ContainsKey(system.GetType())) {
+            AddSystem(system.GetType(), system, execType, priority);
+        }
+
+        public void AddSystem<T> (BaseSystem system, ExecutionType execType, int priority)
+        {
+            AddSystem(typeof(T), system, execType, priority);
+        }
+
+        private void AddSystem (Type systemType, BaseSystem system, ExecutionType execType, int priority)
+        {
+            if (_systems.ContainsKey(systemType)) {
                 return;
             }
 
             system.SystemManager = this;
             system.EntityManager = _world.EntityManager;
 
-            _systems.Add(system.GetType(), system);
+            _systems.Add(systemType, system);
             switch (execType) {
                 case ExecutionType.Draw:
-                    //_drawSystems.Add(new SystemGroupKey(priority), system);
                     _drawSystems.Add(system);
                     break;
 
                 case ExecutionType.Update:
-                    //_updateSystems.Add(new SystemGroupKey(priority), system);
                     _updateSystems.Add(system);
                     break;
             }
@@ -108,18 +119,12 @@ namespace Amphibian.EntitySystem
         {
             switch (execType) {
                 case ExecutionType.Draw:
-                    //for (int i = 0; i < _drawSystems.Values.Count; i++) {
-                    //    _drawSystems.Values[i].Process();
-                    //}
                     for (int i = 0; i < _drawSystems.Count; i++) {
                         _drawSystems[i].Process();
                     }
                     break;
 
                 case ExecutionType.Update:
-                    //for (int i = 0; i < _updateSystems.Values.Count; i++) {
-                    //    _updateSystems.Values[i].Process();
-                    //}
                     for (int i = 0; i < _updateSystems.Count; i++) {
                         _updateSystems[i].Process();
                     }

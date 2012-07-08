@@ -125,6 +125,7 @@ namespace Amphibian.Systems.Rendering.Spatials
             {
                 Clamp = DimClamp.FrameNeg;
                 ClampOffset = 0;
+                Scale = 1;
             }
 
             public int Origin (int winPos, int winLength, int frameLength)
