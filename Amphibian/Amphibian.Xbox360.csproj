@@ -138,6 +138,10 @@
     <Compile Include="Systems\Rendering\Sprites\Xml\DirectionalAnimatedSpriteXml.cs" />
     <Compile Include="Systems\Rendering\Sprites\Xml\DirectionalAnimationSetXml.cs" />
     <Compile Include="Systems\Rendering\Sprites\Xml\StaticSpriteXml.cs" />
+    <Compile Include="Systems\Rendering\Sprites\Xml\XmlActivityElement.cs" />
+    <Compile Include="Systems\Rendering\Sprites\Xml\XmlSpriteElement.cs" />
+    <Compile Include="Systems\Rendering\Sprites\Xml\XmlSpriteListElement.cs" />
+    <Compile Include="Systems\Rendering\Sprites\Xml\XmlTransformElement.cs" />
     <Compile Include="Systems\RenderSystem.cs" />
     <Compile Include="Systems\RenderTransformSystem.cs" />
     <Compile Include="Templates\DebugCue.cs" />

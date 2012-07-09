@@ -275,7 +275,11 @@ namespace Amphibian
 
         public InputController GetController (string name)
         {
-            return _input[name];
+            InputController controller;
+            if (_input.TryGetValue(name, out controller))
+                return controller;
+            else
+                return null;
         }
     }
 }

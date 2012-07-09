@@ -12,13 +12,13 @@ namespace Amphibian.Systems.Rendering.Sprites.Xml
         public StaticSpriteInstance Instance { get; set; }
 
         [XmlElement]
-        public SpritesElement Sprites { get; set; }
+        public XmlSpriteListElement Sprites { get; set; }
 
         public StaticSpriteDefinition BuildDefinition (ContentManager contentManager)
         {
             StaticSpriteDefinition definition = new StaticSpriteDefinition();
 
-            SpriteElement sprite = Sprites.Sprites[0];
+            XmlSpriteElement sprite = Sprites.Sprites[0] as XmlSpriteElement;
             definition.Load(contentManager, Sprites.Source, new Rectangle(
                     sprite.X, sprite.Y, sprite.Width, sprite.Height));
             definition.Origin = new Vector2(sprite.OriginX, sprite.OriginY);
@@ -31,6 +31,6 @@ namespace Amphibian.Systems.Rendering.Sprites.Xml
     public class StaticSpriteInstance
     {
         [XmlElement]
-        public TransformElement Transform { get; set; }
+        public XmlTransformElement Transform { get; set; }
     }
 }

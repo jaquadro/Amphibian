@@ -13,7 +13,7 @@ namespace Amphibian.Systems.Rendering.Sprites.Xml
         public DirectionalAnimatedSpriteInstance Instance { get; set; }
 
         [XmlElement]
-        public SpritesElement Sprites { get; set; }
+        public XmlSpriteListElement Sprites { get; set; }
 
         [XmlArray]
         [XmlArrayItem("Direction")]
@@ -24,7 +24,7 @@ namespace Amphibian.Systems.Rendering.Sprites.Xml
             DirectionalAnimatedSpriteDefinition definition = new DirectionalAnimatedSpriteDefinition();
 
             Dictionary<String, StaticSpriteDefinition> spriteDefs = new Dictionary<string, StaticSpriteDefinition>();
-            foreach (SpriteElement sprite in Sprites.Sprites) {
+            foreach (XmlSpriteElement sprite in Sprites.Sprites) {
                 StaticSpriteDefinition spriteDef = new StaticSpriteDefinition();
                 spriteDef.Load(contentManager, Sprites.Source, new Rectangle(
                     sprite.X, sprite.Y, sprite.Width, sprite.Height));
@@ -59,6 +59,6 @@ namespace Amphibian.Systems.Rendering.Sprites.Xml
         public String InitialDirection { get; set; }
 
         [XmlElement]
-        public TransformElement Transform { get; set; }
+        public XmlTransformElement Transform { get; set; }
     }
 }
