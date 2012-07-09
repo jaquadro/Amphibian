@@ -146,6 +146,8 @@
     <Compile Include="Components\Renderable.cs" />
     <Compile Include="Debug\TimeHistory.cs" />
     <Compile Include="Debug\MemoryTracker.cs" />
+    <Compile Include="Systems\Rendering\Sprites\Elements.cs" />
+    <Compile Include="Xna\ColorExt.cs" />
     <None Include="Drawing\PatternBrush.cs" />
     <Compile Include="EntitySystem\BaseSystem.cs" />
     <Compile Include="EntitySystem\EntityWorld.cs" />
@@ -188,8 +190,12 @@
     <Compile Include="Systems\Rendering\Sprites\Xml\AnimatedSpriteXml.cs" />
     <Compile Include="Systems\Rendering\Sprites\Xml\DirectionalAnimatedSpriteXml.cs" />
     <Compile Include="Systems\Rendering\Sprites\Xml\DirectionalAnimationSetXml.cs" />
-    <Compile Include="Systems\Rendering\Sprites\Xml\CommonXml.cs" />
     <Compile Include="Systems\Rendering\Sprites\Xml\XmlActivityElement.cs" />
+    <Compile Include="Systems\Rendering\Sprites\Xml\XmlActivityMapElement.cs" />
+    <Compile Include="Systems\Rendering\Sprites\Xml\XmlAnimationElement.cs" />
+    <Compile Include="Systems\Rendering\Sprites\Xml\XmlAnimationSetElement.cs" />
+    <Compile Include="Systems\Rendering\Sprites\Xml\XmlDirectionElement.cs" />
+    <Compile Include="Systems\Rendering\Sprites\Xml\XmlFrameElement.cs" />
     <Compile Include="Systems\Rendering\Sprites\Xml\XmlSpriteElement.cs" />
     <Compile Include="Systems\Rendering\Sprites\Xml\StaticSpriteXml.cs" />
     <Compile Include="Systems\Rendering\Sprites\Xml\XmlSpriteListElement.cs" />

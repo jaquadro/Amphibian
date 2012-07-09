@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
+using Amphibian.Xna;
 using Microsoft.Xna.Framework;
 
 namespace Amphibian.Systems.Rendering.Sprites.Xml

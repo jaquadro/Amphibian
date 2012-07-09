@@ -16,7 +16,7 @@ namespace Amphibian.Systems.Rendering.Sprites.Xml
         public XmlSpriteListElement Sprites { get; set; }
 
         [XmlElement]
-        public AnimationElement Animation { get; set; }
+        public XmlAnimationElement Animation { get; set; }
 
         public AnimatedSpriteDefinition BuildDefinition (ContentManager contentManager)
         {
@@ -32,7 +32,7 @@ namespace Amphibian.Systems.Rendering.Sprites.Xml
                 spriteDefs[sprite.Name] = spriteDef;
             }
 
-            foreach (FrameElement frame in Animation.Frames) {
+            foreach (XmlFrameElement frame in Animation.Frames) {
                 if (spriteDefs.ContainsKey(frame.Sprite))
                     definition.AddSprite(spriteDefs[frame.Sprite], frame.Duration);
             }

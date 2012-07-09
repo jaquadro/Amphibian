@@ -17,7 +17,7 @@ namespace Amphibian.Systems.Rendering.Sprites.Xml
 
         [XmlArray]
         [XmlArrayItem("Direction")]
-        public DirectionElement[] Directions { get; set; }
+        public XmlDirectionElement[] Directions { get; set; }
 
         public DirectionalAnimatedSpriteDefinition BuildDefinition (ContentManager contentManager)
         {
@@ -33,9 +33,9 @@ namespace Amphibian.Systems.Rendering.Sprites.Xml
                 spriteDefs[sprite.Name] = spriteDef;
             }
 
-            foreach (DirectionElement direction in Directions) {
+            foreach (XmlDirectionElement direction in Directions) {
                 AnimatedSpriteDefinition animDef = new AnimatedSpriteDefinition();
-                foreach (FrameElement frame in direction.Animation.Frames) {
+                foreach (XmlFrameElement frame in direction.Animation.Frames) {
                     if (spriteDefs.ContainsKey(frame.Sprite))
                         animDef.AddSprite(spriteDefs[frame.Sprite], frame.Duration);
                 }

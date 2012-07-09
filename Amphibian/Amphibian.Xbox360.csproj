@@ -134,11 +134,16 @@
     <Compile Include="Systems\Rendering\Sprites\StaticSprite.cs" />
     <Compile Include="Systems\Rendering\Sprites\StaticSpriteDefinition.cs" />
     <Compile Include="Systems\Rendering\Sprites\Xml\AnimatedSpriteXml.cs" />
-    <Compile Include="Systems\Rendering\Sprites\Xml\CommonXml.cs" />
+    <Compile Include="Systems\Rendering\Sprites\Elements.cs" />
     <Compile Include="Systems\Rendering\Sprites\Xml\DirectionalAnimatedSpriteXml.cs" />
     <Compile Include="Systems\Rendering\Sprites\Xml\DirectionalAnimationSetXml.cs" />
     <Compile Include="Systems\Rendering\Sprites\Xml\StaticSpriteXml.cs" />
     <Compile Include="Systems\Rendering\Sprites\Xml\XmlActivityElement.cs" />
+    <Compile Include="Systems\Rendering\Sprites\Xml\XmlActivityMapElement.cs" />
+    <Compile Include="Systems\Rendering\Sprites\Xml\XmlAnimationElement.cs" />
+    <Compile Include="Systems\Rendering\Sprites\Xml\XmlAnimationSetElement.cs" />
+    <Compile Include="Systems\Rendering\Sprites\Xml\XmlDirectionElement.cs" />
+    <Compile Include="Systems\Rendering\Sprites\Xml\XmlFrameElement.cs" />
     <Compile Include="Systems\Rendering\Sprites\Xml\XmlSpriteElement.cs" />
     <Compile Include="Systems\Rendering\Sprites\Xml\XmlSpriteListElement.cs" />
     <Compile Include="Systems\Rendering\Sprites\Xml\XmlTransformElement.cs" />
@@ -147,6 +152,7 @@
     <Compile Include="Templates\DebugCue.cs" />
     <Compile Include="Utility\EnumHelper.cs" />
     <Compile Include="Utility\ResourcePool.cs" />
+    <Compile Include="Xna\ColorExt.cs" />
     <None Include="Collision\CollisionTR.cs" />
     <Compile Include="Collision\CompositeMask.cs" />
     <Compile Include="Collision\LineMask.cs" />
