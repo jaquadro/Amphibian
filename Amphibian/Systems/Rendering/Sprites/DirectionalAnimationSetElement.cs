@@ -1,33 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 
-namespace Amphibian.Systems.Rendering.Sprites.Xml
+namespace Amphibian.Systems.Rendering.Sprites
 {
-    [XmlType("DirectionalAnimationSet")]
     public class DirectionalAnimationSetElement
     {
-        [XmlElement]
-        public DirectionalAnimationSetInstance Instance { get; set; }
+        public IDirectionalAnimationSetInstance Instance { get; set; }
 
-        [XmlElement]
-        public XmlSpriteListElement Sprites { get; set; }
+        public ISpriteListElement Sprites { get; set; }
 
-        [XmlArray]
-        [XmlArrayItem("AnimationSet")]
-        public XmlAnimationSetElement[] AnimationSets { get; set; }
+        public IList<IAnimationSetElement> AnimationSets { get; set; }
 
-        [XmlElement]
-        public XmlActivityMapElement ActivityMap { get; set; }
+        public IActivityMapElement ActivityMap { get; set; }
 
         public DirectionalAnimationSetDefinition BuildDefinition (ContentManager contentManager)
         {
             DirectionalAnimationSetDefinition definition = new DirectionalAnimationSetDefinition();
 
             Dictionary<String, StaticSpriteDefinition> spriteDefs = new Dictionary<string, StaticSpriteDefinition>();
-            foreach (XmlSpriteElement sprite in Sprites.Sprites) {
+            foreach (ISpriteElement sprite in Sprites.Sprites) {
                 StaticSpriteDefinition spriteDef = new StaticSpriteDefinition();
                 spriteDef.Load(contentManager, Sprites.Source, new Rectangle(
                     sprite.X, sprite.Y, sprite.Width, sprite.Height));
@@ -36,12 +29,12 @@ namespace Amphibian.Systems.Rendering.Sprites.Xml
                 spriteDefs[sprite.Name] = spriteDef;
             }
 
-            foreach (XmlAnimationSetElement animSet in AnimationSets) {
+            foreach (IAnimationSetElement animSet in AnimationSets) {
                 definition[animSet.Name] = new DirectionalAnimatedSpriteDefinition();
 
-                foreach (XmlDirectionElement direction in animSet.Directions) {
+                foreach (IDirectionElement direction in animSet.Directions) {
                     AnimatedSpriteDefinition animDef = new AnimatedSpriteDefinition();
-                    foreach (XmlFrameElement frame in direction.Animation.Frames) {
+                    foreach (IFrameElement frame in direction.Animation.Frames) {
                         if (spriteDefs.ContainsKey(frame.Sprite))
                             animDef.AddSprite(spriteDefs[frame.Sprite], frame.Duration);
                     }
@@ -62,7 +55,7 @@ namespace Amphibian.Systems.Rendering.Sprites.Xml
         {
             Dictionary<String, String> map = new Dictionary<string, string>();
 
-            foreach (XmlActivityElement activity in ActivityMap.Activities) {
+            foreach (IActivityElement activity in ActivityMap.Activities) {
                 map[activity.Name] = activity.Animation;
             }
 
@@ -70,16 +63,10 @@ namespace Amphibian.Systems.Rendering.Sprites.Xml
         }
     }
 
-    [XmlType("Instance")]
-    public class DirectionalAnimationSetInstance
+    public interface IDirectionalAnimationSetInstance
     {
-        [XmlAttribute]
-        public String InitialAnimationSet { get; set; }
-
-        [XmlAttribute]
-        public String InitialDirection { get; set; }
-
-        [XmlElement]
-        public XmlTransformElement Transform { get; set; }
+        string InitialAnimationSet { get; set; }
+        string InitialDirection { get; set; }
+        ITransformElement Transform { get; set; }
     }
 }

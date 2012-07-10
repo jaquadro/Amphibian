@@ -1,29 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 
-namespace Amphibian.Systems.Rendering.Sprites.Xml
+namespace Amphibian.Systems.Rendering.Sprites
 {
-    [XmlType("AnimatedSprite")]
-    public class AnimatedSpriteElement
+    public abstract class AnimatedSpriteElement
     {
-        [XmlElement]
-        public AnimatedSpriteInstance Instance { get; set; }
+        public IAnimatedSpriteInstance Instance { get; set; }
 
-        [XmlElement]
-        public XmlSpriteListElement Sprites { get; set; }
+        public ISpriteListElement Sprites { get; set; }
 
-        [XmlElement]
-        public XmlAnimationElement Animation { get; set; }
+        public IAnimationElement Animation { get; set; }
 
         public AnimatedSpriteDefinition BuildDefinition (ContentManager contentManager)
         {
             AnimatedSpriteDefinition definition = new AnimatedSpriteDefinition();
 
             Dictionary<String, StaticSpriteDefinition> spriteDefs = new Dictionary<string, StaticSpriteDefinition>();
-            foreach (XmlSpriteElement sprite in Sprites.Sprites) {
+            foreach (ISpriteElement sprite in Sprites.Sprites) {
                 StaticSpriteDefinition spriteDef = new StaticSpriteDefinition();
                 spriteDef.Load(contentManager, Sprites.Source, new Rectangle(
                     sprite.X, sprite.Y, sprite.Width, sprite.Height));
@@ -32,7 +27,7 @@ namespace Amphibian.Systems.Rendering.Sprites.Xml
                 spriteDefs[sprite.Name] = spriteDef;
             }
 
-            foreach (XmlFrameElement frame in Animation.Frames) {
+            foreach (IFrameElement frame in Animation.Frames) {
                 if (spriteDefs.ContainsKey(frame.Sprite))
                     definition.AddSprite(spriteDefs[frame.Sprite], frame.Duration);
             }
@@ -46,10 +41,8 @@ namespace Amphibian.Systems.Rendering.Sprites.Xml
         }
     }
 
-    [XmlType("Instance")]
-    public class AnimatedSpriteInstance
+    public interface IAnimatedSpriteInstance
     {
-        [XmlElement]
-        public XmlTransformElement Transform { get; set; }
+        ITransformElement Transform { get; set; }
     }
 }

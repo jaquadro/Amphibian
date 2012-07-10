@@ -5,26 +5,20 @@ using System.Xml.Serialization;
 
 namespace Amphibian.Systems.Rendering.Sprites.Xml
 {
-    public class XmlAnimationSetElement : IAnimationSetElement, IXmlSerializable
+    public class XmlDirectionalAnimatedSpriteElement : DirectionalAnimatedSpriteElement, IXmlSerializable
     {
-        #region IAnimationSetElement
-
-        public string Name { get; set; }
-        public IList<IDirectionElement> Directions { get; set; }
-
-        #endregion
-
-        public XmlAnimationSetElement ()
+        public XmlDirectionalAnimatedSpriteElement ()
         {
             Directions = new List<IDirectionElement>();
         }
 
-        public XmlAnimationSetElement (IAnimationSetElement animationSetElement)
+        public XmlDirectionalAnimatedSpriteElement (DirectionalAnimatedSpriteElement spriteElement)
         {
-            if (animationSetElement != null) {
-                Name = animationSetElement.Name;
+            if (spriteElement != null) {
+                Instance = new XmlDirectionalAnimatedSpriteInstance(spriteElement.Instance);
+                Sprites = new XmlSpriteListElement(spriteElement.Sprites);
 
-                foreach (IDirectionElement directionElement in animationSetElement.Directions) {
+                foreach (IDirectionElement directionElement in spriteElement.Directions) {
                     Directions.Add(new XmlDirectionElement(directionElement));
                 }
             }
@@ -38,9 +32,6 @@ namespace Amphibian.Systems.Rendering.Sprites.Xml
         public void ReadXml (XmlReader reader)
         {
             reader.MoveToContent();
-
-            Name = reader["Name"];
-
             if (reader.IsEmptyElement) {
                 reader.ReadStartElement();
                 return;
@@ -50,6 +41,18 @@ namespace Amphibian.Systems.Rendering.Sprites.Xml
             while (!reader.EOF) {
                 if (reader.IsStartElement()) {
                     switch (reader.Name) {
+                        case "Instance":
+                            XmlDirectionalAnimatedSpriteInstance instance = new XmlDirectionalAnimatedSpriteInstance();
+                            instance.ReadXml(reader);
+                            Instance = instance;
+                            break;
+
+                        case "Sprites":
+                            XmlSpriteListElement sprites = new XmlSpriteListElement();
+                            sprites.ReadXml(reader);
+                            Sprites = sprites;
+                            break;
+
                         case "Directions":
                             ReadDirectionsXml(reader);
                             break;
@@ -102,21 +105,41 @@ namespace Amphibian.Systems.Rendering.Sprites.Xml
 
         public void WriteXml (XmlWriter writer)
         {
-            writer.WriteAttributeString("Name", Name);
-
-            writer.WriteStartElement("Directions");
-
-            foreach (IDirectionElement direction in Directions) {
-                XmlDirectionElement elem = direction as XmlDirectionElement;
+            if (Instance != null) {
+                XmlDirectionalAnimatedSpriteInstance elem = Instance as XmlDirectionalAnimatedSpriteInstance;
                 if (elem == null)
-                    elem = new XmlDirectionElement(direction);
+                    elem = new XmlDirectionalAnimatedSpriteInstance(Instance);
 
-                writer.WriteStartElement("Direction");
+                writer.WriteStartElement("Instance");
                 elem.WriteXml(writer);
                 writer.WriteEndElement();
             }
 
-            writer.WriteEndElement();
+            if (Sprites != null) {
+                XmlSpriteListElement elem = Sprites as XmlSpriteListElement;
+                if (elem == null)
+                    elem = new XmlSpriteListElement(Sprites);
+
+                writer.WriteStartElement("Sprites");
+                elem.WriteXml(writer);
+                writer.WriteEndElement();
+            }
+
+            if (Directions != null) {
+                writer.WriteStartElement("Directions");
+
+                foreach (IDirectionElement direction in Directions) {
+                    XmlDirectionElement elem = direction as XmlDirectionElement;
+                    if (elem == null)
+                        elem = new XmlDirectionElement(direction);
+
+                    writer.WriteStartElement("Direction");
+                    elem.WriteXml(writer);
+                    writer.WriteEndElement();
+                }
+
+                writer.WriteEndElement();
+            }
         }
     }
 }

@@ -1,30 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Xml.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 
-namespace Amphibian.Systems.Rendering.Sprites.Xml
+namespace Amphibian.Systems.Rendering.Sprites
 {
-    [XmlType("DirectionalAnimatedSprite")]
     public class DirectionalAnimatedSpriteElement
     {
-        [XmlElement]
-        public DirectionalAnimatedSpriteInstance Instance { get; set; }
+        public IDirectionalAnimatedSpriteInstance Instance { get; set; }
 
-        [XmlElement]
-        public XmlSpriteListElement Sprites { get; set; }
+        public ISpriteListElement Sprites { get; set; }
 
-        [XmlArray]
-        [XmlArrayItem("Direction")]
-        public XmlDirectionElement[] Directions { get; set; }
+        public IList<IDirectionElement> Directions { get; set; }
 
         public DirectionalAnimatedSpriteDefinition BuildDefinition (ContentManager contentManager)
         {
             DirectionalAnimatedSpriteDefinition definition = new DirectionalAnimatedSpriteDefinition();
 
             Dictionary<String, StaticSpriteDefinition> spriteDefs = new Dictionary<string, StaticSpriteDefinition>();
-            foreach (XmlSpriteElement sprite in Sprites.Sprites) {
+            foreach (ISpriteElement sprite in Sprites.Sprites) {
                 StaticSpriteDefinition spriteDef = new StaticSpriteDefinition();
                 spriteDef.Load(contentManager, Sprites.Source, new Rectangle(
                     sprite.X, sprite.Y, sprite.Width, sprite.Height));
@@ -33,9 +27,9 @@ namespace Amphibian.Systems.Rendering.Sprites.Xml
                 spriteDefs[sprite.Name] = spriteDef;
             }
 
-            foreach (XmlDirectionElement direction in Directions) {
+            foreach (IDirectionElement direction in Directions) {
                 AnimatedSpriteDefinition animDef = new AnimatedSpriteDefinition();
-                foreach (XmlFrameElement frame in direction.Animation.Frames) {
+                foreach (IFrameElement frame in direction.Animation.Frames) {
                     if (spriteDefs.ContainsKey(frame.Sprite))
                         animDef.AddSprite(spriteDefs[frame.Sprite], frame.Duration);
                 }
@@ -52,13 +46,9 @@ namespace Amphibian.Systems.Rendering.Sprites.Xml
         }
     }
 
-    [XmlType("Instance")]
-    public class DirectionalAnimatedSpriteInstance
+    public interface IDirectionalAnimatedSpriteInstance
     {
-        [XmlAttribute]
-        public String InitialDirection { get; set; }
-
-        [XmlElement]
-        public XmlTransformElement Transform { get; set; }
+        string InitialDirection { get; set; }
+        ITransformElement Transform { get; set; }
     }
 }
