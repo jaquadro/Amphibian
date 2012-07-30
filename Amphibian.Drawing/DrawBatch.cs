@@ -32,6 +32,11 @@ namespace Amphibian.Drawing
 
         private Triangulator _triangulator;
 
+        private BlendState _blendState;
+        private SamplerState _samplerState;
+        private DepthStencilState _depthStencilState;
+        private RasterizerState _rasterizerState;
+
         private static BasicEffect _effect;
 
         public DrawBatch (GraphicsDevice device)
@@ -54,7 +59,20 @@ namespace Amphibian.Drawing
 
         public void Begin ()
         {
+            Begin(null, null, null, null);
+        }
+
+        public void Begin (BlendState blendState, SamplerState samplerState, DepthStencilState depthStencilState, RasterizerState rasterizerState)
+        {
+            if (_inDraw)
+                throw new InvalidOperationException("DrawBatch already inside Begin/End pair");
+
             _inDraw = true;
+
+            _blendState = blendState;
+            _samplerState = samplerState;
+            _depthStencilState = depthStencilState;
+            _rasterizerState = rasterizerState;
 
             _infoBufferIndex = 0;
             _indexBufferIndex = 0;
@@ -223,11 +241,17 @@ namespace Amphibian.Drawing
 
         private void SetRenderState ()
         {
-            _device.BlendState = BlendState.AlphaBlend;
-            _device.DepthStencilState = DepthStencilState.None;
-            _device.RasterizerState = RasterizerState.CullCounterClockwise;
-            //_device.RasterizerState = new RasterizerState() { FillMode = Microsoft.Xna.Framework.Graphics.FillMode.WireFrame };
-            _device.SamplerStates[0] = SamplerState.PointWrap;
+            _device.BlendState = (_blendState != null)
+                ? _blendState : BlendState.AlphaBlend;
+
+            _device.DepthStencilState = (_depthStencilState != null)
+                ? _depthStencilState : DepthStencilState.None;
+
+            _device.RasterizerState = (_rasterizerState != null)
+                ? _rasterizerState : RasterizerState.CullCounterClockwise;
+
+            _device.SamplerStates[0] = (_samplerState != null)
+                ? _samplerState : SamplerState.PointWrap;
 
             _effect.Projection = Matrix.CreateOrthographicOffCenter(0, _device.Viewport.Width, _device.Viewport.Height, 0, -1, 1);
             _effect.CurrentTechnique.Passes[0].Apply();
