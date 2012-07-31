@@ -31,9 +31,12 @@ namespace Amphibian.Systems.Rendering.Spatials
                 _record = Load(contentPath, contentManager);
 
             _sprite = _record.Definition.CreateSprite();
-            _sprite.Scale = _record.InstanceDefaults.Transform.Scale;
-            _sprite.Rotation = _record.InstanceDefaults.Transform.Rotation;
-            _sprite.Opacity = _record.InstanceDefaults.Transform.Opacity;
+
+            if (_record.InstanceDefaults != null && _record.InstanceDefaults.Transform != null) {
+                _sprite.Scale = _record.InstanceDefaults.Transform.Scale;
+                _sprite.Rotation = _record.InstanceDefaults.Transform.Rotation;
+                _sprite.Opacity = _record.InstanceDefaults.Transform.Opacity;
+            }
         }
 
         private SpatialTypeRecord Load (String contentPath, ContentManager contentManager)

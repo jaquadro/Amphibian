@@ -12,6 +12,8 @@ namespace Amphibian.Systems.Rendering.Sprites
 
         public SpriteInfo ()
         {
+            Scale = 1f;
+            Rotation = 0f;
             Opacity = 1f;
         }
     }
