@@ -144,10 +144,12 @@
     <Compile Include="Components\Position.cs" />
     <Compile Include="Components\RemovalTimeout.cs" />
     <Compile Include="Components\Renderable.cs" />
+    <Compile Include="Components\ScriptedComponent.cs" />
     <Compile Include="Debug\TimeHistory.cs" />
     <Compile Include="Debug\MemoryTracker.cs" />
     <Compile Include="Input\CursorController.cs" />
     <Compile Include="Input\MouseController.cs" />
+    <Compile Include="Systems\BehaviorSystem.cs" />
     <Compile Include="Systems\Rendering\Sprites\AnimatedSpriteElement.cs" />
     <Compile Include="Systems\Rendering\Sprites\DirectionalAnimatedSpriteElement.cs" />
     <Compile Include="Systems\Rendering\Sprites\DirectionalAnimationSetElement.cs" />

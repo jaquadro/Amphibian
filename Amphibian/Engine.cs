@@ -281,5 +281,11 @@ namespace Amphibian
             else
                 return null;
         }
+
+        public T GetController<T>(string name)
+            where T : InputController
+        {
+            return GetController(name) as T;
+        }
     }
 }
