@@ -251,9 +251,20 @@ namespace Amphibian.EntitySystem
             return null;
         }
 
+        public T GetComponent<T>(Entity entity)
+            where T : IComponent
+        {
+            return (T)GetComponent(entity, typeof(T));
+        }
+
         public bool HasComponent (Entity entity, Type componentType)
         {
             return GetComponent(entity, componentType) != null;
+        }
+
+        public bool HasComponent<T>(Entity entity)
+        {
+            return HasComponent(entity, typeof(T));
         }
 
         public ComponentEnumerator GetComponents (Entity entity)

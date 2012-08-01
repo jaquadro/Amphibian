@@ -115,6 +115,12 @@ namespace Amphibian.EntitySystem
             return system;
         }
 
+        public T GetSystem<T>()
+            where T : BaseSystem
+        {
+            return GetSystem(typeof(T)) as T;
+        }
+
         public void Update (ExecutionType execType)
         {
             switch (execType) {
