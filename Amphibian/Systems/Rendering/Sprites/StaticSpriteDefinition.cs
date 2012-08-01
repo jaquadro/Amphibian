@@ -96,12 +96,7 @@ namespace Amphibian.Systems.Rendering.Sprites
         {
             Vector2 p = new Vector2(position.X.Floor, position.Y.Floor);
             spriteBatch.Draw(_texture, p, _source,
-                MakeBlendColor(spriteData.Opacity), spriteData.Rotation, Origin, spriteData.Scale, spriteData.Effects, 0);
-        }
-
-        private Color MakeBlendColor (float opacity)
-        {
-            return new Color(opacity, opacity, opacity, opacity);
+                spriteData.BlendColor * spriteData.Opacity, spriteData.Rotation, Origin, spriteData.Scale, spriteData.Effects, 0);
         }
     }
 }

@@ -150,6 +150,7 @@
     <Compile Include="Input\CursorController.cs" />
     <Compile Include="Input\MouseController.cs" />
     <Compile Include="Systems\BehaviorSystem.cs" />
+    <Compile Include="Systems\Rendering\Spatials\RenderEffects.cs" />
     <Compile Include="Systems\Rendering\Sprites\AnimatedSpriteElement.cs" />
     <Compile Include="Systems\Rendering\Sprites\DirectionalAnimatedSpriteElement.cs" />
     <Compile Include="Systems\Rendering\Sprites\DirectionalAnimationSetElement.cs" />

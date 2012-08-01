@@ -8,10 +8,11 @@ using Amphibian.Systems.Rendering.Sprites;
 using Amphibian.Systems.Rendering.Sprites.Xml;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework;
 
 namespace Amphibian.Systems.Rendering.Spatials
 {
-    public class StaticSpriteSpatial : Spatial
+    public class StaticSpriteSpatial : Spatial, IRenderEffects
     {
         private class SpatialTypeRecord
         {
@@ -59,5 +60,33 @@ namespace Amphibian.Systems.Rendering.Spatials
         {
             _sprite.Draw(spriteBatch, new PointFP(position.RenderX, position.RenderY));
         }
+
+        #region IRenderEffects
+
+        public float Scale
+        {
+            get { return _sprite.Scale; }
+            set { _sprite.Scale = value; }
+        }
+
+        public float Rotation
+        {
+            get { return _sprite.Rotation; }
+            set { _sprite.Rotation = value; }
+        }
+
+        public float Opacity
+        {
+            get { return _sprite.Opacity; }
+            set { _sprite.Opacity = value; }
+        }
+
+        public Color BlendColor
+        {
+            get { return _sprite.BlendColor; }
+            set { _sprite.BlendColor = value; }
+        }
+
+        #endregion
     }
 }

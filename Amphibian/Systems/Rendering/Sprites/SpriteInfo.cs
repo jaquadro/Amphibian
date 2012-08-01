@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework;
 
 namespace Amphibian.Systems.Rendering.Sprites
 {
@@ -8,6 +9,7 @@ namespace Amphibian.Systems.Rendering.Sprites
         public float Scale { get; set; }
         public float Rotation { get; set; }
         public float Opacity { get; set; }
+        public Color BlendColor { get; set; }
         public SpriteEffects Effects { get; set; }
 
         public SpriteInfo ()
@@ -15,6 +17,7 @@ namespace Amphibian.Systems.Rendering.Sprites
             Scale = 1f;
             Rotation = 0f;
             Opacity = 1f;
+            BlendColor = Color.White;
         }
     }
 }

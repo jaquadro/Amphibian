@@ -50,6 +50,12 @@ namespace Amphibian.Systems.Rendering.Sprites
             set { _spriteInfo.Opacity = MathHelper.Clamp(value, 0f, 1f); }
         }
 
+        public virtual Color BlendColor
+        {
+            get { return _spriteInfo.BlendColor; }
+            set { _spriteInfo.BlendColor = value; }
+        }
+
         protected SpriteEffects Effects
         {
             get { return _spriteInfo.Effects; }
