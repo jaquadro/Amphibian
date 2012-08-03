@@ -91,6 +91,9 @@ namespace Amphibian.Collision
             _sweep.Collision += CollisionHandler;
         }
 
+        public event Action<Entity, Entity> CoarseCollision;
+        public event Action<Entity, Entity> FineCollision;
+
         public void Update ()
         {
             Reset();
@@ -149,8 +152,18 @@ namespace Amphibian.Collision
             if (!_entityMap.TryGetValue(second, out entSecond))
                 return;
 
-            AddObjectToList(entFirst, entSecond);
-            AddObjectToList(entSecond, entFirst);
+            if (CoarseCollision != null) {
+                CoarseCollision(entFirst, entSecond);
+            }
+
+            if (FineCollision != null) {
+                if (first.CollisionMask.TestOverlap(second.CollisionMask)) {
+                    FineCollision(entFirst, entSecond);
+                }
+            }
+
+            //AddObjectToList(entFirst, entSecond);
+            //AddObjectToList(entSecond, entFirst);
         }
 
         private void AddObjectToList (Entity first, Entity second)
