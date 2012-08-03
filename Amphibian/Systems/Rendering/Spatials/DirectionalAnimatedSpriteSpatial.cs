@@ -36,7 +36,7 @@ namespace Amphibian.Systems.Rendering.Spatials
             _sprite.Rotation = _record.InstanceDefaults.Transform.Rotation;
             _sprite.Opacity = _record.InstanceDefaults.Transform.Opacity;
 
-            _sprite.CurrentDirection = (Direction)Enum.Parse(typeof(Direction), _record.InstanceDefaults.InitialDirection);
+            _sprite.CurrentDirection = (Direction)Enum.Parse(typeof(Direction), _record.InstanceDefaults.InitialDirection, false);
             _sprite.CurrentSequence.Start();
         }
 

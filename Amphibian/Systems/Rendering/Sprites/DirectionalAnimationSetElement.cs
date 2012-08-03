@@ -44,7 +44,7 @@ namespace Amphibian.Systems.Rendering.Sprites
                     else
                         animDef.RepeatLimit = direction.Animation.Repeat;
 
-                    definition[animSet.Name][(Direction)Enum.Parse(typeof(Direction), direction.Value)] = animDef;
+                    definition[animSet.Name][(Direction)Enum.Parse(typeof(Direction), direction.Value, false)] = animDef;
                 }
             }
 

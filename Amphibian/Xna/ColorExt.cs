@@ -37,7 +37,7 @@ namespace Amphibian.Xna
                     B = b
                 };
             }
-            catch (FormatException e) {
+            catch (FormatException) {
                 throw new ArgumentException("Invalid ARGB hex string.", "hex");
             }
         }

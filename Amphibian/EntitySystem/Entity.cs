@@ -36,6 +36,16 @@ namespace Amphibian.EntitySystem
             return left.Id != right.Id || left.Index != right.Index;
         }
 
+        public static bool operator < (Entity left, Entity right)
+        {
+            return left.Id < right.Id || (left.Id == right.Id && left.Index < right.Index);
+        }
+
+        public static bool operator > (Entity left, Entity right)
+        {
+            return left.Id > right.Id || (left.Id == right.Id && left.Index > right.Index);
+        }
+
         public override bool Equals (object obj)
         {
             return Equals((Entity)obj);
