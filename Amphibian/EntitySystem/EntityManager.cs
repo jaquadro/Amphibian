@@ -15,6 +15,10 @@ namespace Amphibian.EntitySystem
         // Tradeoff optimizes cache use for system processing, but may require an extra E*C lookup table to maintain
         // fast lookup of components by entity.  Probably not worth it.
 
+        // NB: Enforcing an ordering on components in the component list and adding generic entity enumerators that also
+        // request components on that entity, it may be possible to fetch the requested components without repeatedly
+        // iterating over the component list.  Sorting of the request only needs to be paid once per system request.
+
         #region Fields
 
         private EntityWorld _world;

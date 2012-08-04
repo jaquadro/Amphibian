@@ -144,5 +144,15 @@ namespace Amphibian.EntitySystem
                 SystemAdded(type);
             }
         }
+
+        public IEnumerable<BaseSystem> Systems
+        {
+            get
+            {
+                foreach (BaseSystem system in _systems.Values) {
+                    yield return system;
+                }
+            }
+        }
     }
 }
