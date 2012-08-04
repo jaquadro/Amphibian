@@ -9,7 +9,7 @@ using Amphibian.Utility;
 
 namespace Amphibian.Systems
 {
-    public class DynamicCollisionSystem : BaseSystem
+    public class DynamicCollisionSystem : ProcessingSystem
     {
         private EntityCollisionManager _manager;
 
@@ -18,6 +18,7 @@ namespace Amphibian.Systems
         private Dictionary<Entity, List<Entity>> _curPairs;
 
         public DynamicCollisionSystem ()
+            : base(typeof(Collidable))
         {
             _manager = new EntityCollisionManager();
             _manager.FineCollision += FineCollisionHandler;
@@ -39,7 +40,7 @@ namespace Amphibian.Systems
         public bool CollisionStarted (Entity e1, Entity e2)
         {
             List<Entity> list;
-            if (!_prevPairs.TryGetValue(e1, out list) || list.Contains(e2))
+            if (_prevPairs.TryGetValue(e1, out list) && list.Contains(e2))
                 return false;
 
             if (!_curPairs.TryGetValue(e1, out list) || !list.Contains(e2))
@@ -66,7 +67,7 @@ namespace Amphibian.Systems
             if (!_prevPairs.TryGetValue(e1, out list) || !list.Contains(e2))
                 return false;
 
-            if (!_curPairs.TryGetValue(e1, out list) || list.Contains(e2))
+            if (_curPairs.TryGetValue(e1, out list) && list.Contains(e2))
                 return false;
 
             return true;
@@ -78,7 +79,35 @@ namespace Amphibian.Systems
             EntityManager.RemovedComponent += ComponentDetachHandler;
         }
 
-        protected override void ProcessInner ()
+        protected override void ProcessEntities (EntityManager.EntityEnumerator entities)
+        {
+            foreach (Entity entity in entities) {
+                Process(entity);
+            }
+        }
+
+        private void Process (Entity entity)
+        {
+            Position comPosition = null;
+            Collidable comCollidable = null;
+
+            foreach (IComponent com in EntityManager.GetComponents(entity)) {
+                if (com is Position) {
+                    comPosition = com as Position;
+                }
+                else if (com is Collidable) {
+                    comCollidable = com as Collidable;
+                }
+            }
+
+            if (comPosition == null || comCollidable == null)
+                return;
+
+            comCollidable.CollisionMask.Position.X = comPosition.X;
+            comCollidable.CollisionMask.Position.Y = comPosition.Y;
+        }
+
+        protected override void End ()
         {
             Reset();
             _manager.Update();
