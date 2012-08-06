@@ -39,6 +39,8 @@ namespace Amphibian.Drawing
 
         private static BasicEffect _effect;
 
+        private Texture2D _defaultTexture;
+
         public DrawBatch (GraphicsDevice device)
         {
             if (device == null)
@@ -55,6 +57,9 @@ namespace Amphibian.Drawing
             _effect = new BasicEffect(device);
             _effect.TextureEnabled = true;
             _effect.VertexColorEnabled = true;
+
+            _defaultTexture = new Texture2D(device, 1, 1);
+            _defaultTexture.SetData<Color>(new Color[] { Color.White * .6f });
         }
 
         public void Begin ()
@@ -283,7 +288,7 @@ namespace Amphibian.Drawing
 
         private void AddInfo (int vertexCount, int indexCount, Brush brush)
         {
-            _infoBuffer[_infoBufferIndex].Texture = brush != null ? brush.Texture : null;
+            _infoBuffer[_infoBufferIndex].Texture = brush != null ? brush.Texture : _defaultTexture;
             _infoBuffer[_infoBufferIndex].IndexCount = indexCount;
             _infoBuffer[_infoBufferIndex].VertexCount = vertexCount;
             _infoBufferIndex++;
@@ -291,7 +296,7 @@ namespace Amphibian.Drawing
 
         private void AddInfo (int vertexCount, int indexCount, Texture2D texture)
         {
-            _infoBuffer[_infoBufferIndex].Texture = texture;
+            _infoBuffer[_infoBufferIndex].Texture = texture ?? _defaultTexture;
             _infoBuffer[_infoBufferIndex].IndexCount = indexCount;
             _infoBuffer[_infoBufferIndex].VertexCount = vertexCount;
             _infoBufferIndex++;
@@ -328,6 +333,9 @@ namespace Amphibian.Drawing
             if (pen.Brush != null && pen.Brush.Texture != null) {
                 Texture2D tex = pen.Brush.Texture;
                 vertex.TextureCoordinate = new Vector2(position.X / tex.Width, position.Y / tex.Height);
+            }
+            else {
+                vertex.TextureCoordinate = new Vector2(position.X, position.Y);
             }
 
             _vertexBuffer[_vertexBufferIndex++] = vertex;
