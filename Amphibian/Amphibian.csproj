@@ -166,6 +166,7 @@
     <Compile Include="Systems\Rendering\Sprites\Xml\XmlStaticSpriteElement.cs" />
     <Compile Include="Systems\Rendering\Sprites\Xml\XmlStaticSpriteInstance.cs" />
     <Compile Include="Utility\IntPair.cs" />
+    <Compile Include="Utility\Pair.cs" />
     <Compile Include="Xna\ColorExt.cs" />
     <None Include="Drawing\PatternBrush.cs" />
     <Compile Include="EntitySystem\BaseSystem.cs" />
