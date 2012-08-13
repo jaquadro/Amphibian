@@ -22,26 +22,38 @@ namespace Amphibian.Systems
             }
         }
 
-        private SpriteBatch _spriteBatch;
         private SpatialManager _manager;
-        private SamplerState _samplerState;
-
         private CameraSystem _cameraSystem;
 
         private List<int> _layerIndexes;
+        private Dictionary<int, RenderLayer> _layers;
 
         private Dictionary<int, UnorderedList<EntityRenderRecord>> _separator;
 
-        public RenderSystem (SpriteBatch spriteBatch)
+        public RenderSystem ()
             : base(typeof(Renderable))
         {
             _manager = new SpatialManager();
-            _spriteBatch = spriteBatch;
-            _samplerState = SamplerState.PointClamp;
             _separator = new Dictionary<int, UnorderedList<EntityRenderRecord>>();
 
             _layerIndexes = new List<int>();
-            _layerIndexes.Add(0);
+            _layers = new Dictionary<int, RenderLayer>();
+        }
+
+        public RenderSystem (SpriteBatch spriteBatch)
+            : this()
+        {
+            SetLayer(0, new SpriteRenderLayer(spriteBatch));
+        }
+
+        public void SetLayer (int index, RenderLayer layer)
+        {
+            _layers[index] = layer;
+
+            if (!_layerIndexes.Contains(index)) {
+                _layerIndexes.Add(index);
+                _layerIndexes.Sort();
+            }
         }
 
         protected internal override void Initialize ()
@@ -56,25 +68,11 @@ namespace Amphibian.Systems
             get { return _manager; }
         }
 
-        public IList<int> LayerIndexes
-        {
-            get { return _layerIndexes; }
-        }
-
-        public SamplerState SamplerState
-        {
-            get { return _samplerState; }
-            set { _samplerState = value; }
-        }
-
         protected override void Begin ()
         {
             Matrix matrix = _cameraSystem != null 
                 ? _cameraSystem.GetTranslationMatrix()
                 : Matrix.Identity;
-
-            _spriteBatch.Begin(SpriteSortMode.Deferred, null, _samplerState, null, null, null, matrix);
-            _spriteBatch.GraphicsDevice.SamplerStates[0] = _samplerState;
 
             foreach (UnorderedList<EntityRenderRecord> record in _separator.Values)
                 record.Clear();
@@ -83,7 +81,11 @@ namespace Amphibian.Systems
         protected override void End ()
         {
             if (_cameraSystem != null) {
+                Matrix matrix = _cameraSystem.GetTranslationMatrix();
+
                 foreach (int layerIndex in _layerIndexes) {
+                    RenderLayer renderLayer = _layers[layerIndex];
+                    renderLayer.Begin(matrix);
                     BeginRenderLayer(layerIndex);
 
                     if (_separator.ContainsKey(layerIndex)) {
@@ -93,15 +95,14 @@ namespace Amphibian.Systems
                                 return;
 
                             if (sp.InBounds(_cameraSystem.Bounds))
-                                sp.Render(_spriteBatch, record.Entity, record.RenderCom);
+                                sp.Render(renderLayer.RenderManager, record.Entity, record.RenderCom);
                         }
                     }
 
                     EndRenderLayer(layerIndex);
+                    renderLayer.End();
                 }
             }
-
-            _spriteBatch.End();
         }
 
         protected virtual void BeginRenderLayer (int layerIndex)

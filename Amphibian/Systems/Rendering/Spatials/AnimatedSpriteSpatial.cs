@@ -12,7 +12,7 @@ using Microsoft.Xna.Framework;
 
 namespace Amphibian.Systems.Rendering.Spatials
 {
-    public class AnimatedSpriteSpatial : Spatial, IRenderEffects
+    public class AnimatedSpriteSpatial : SpriteSpatial, IRenderEffects
     {
         private class SpatialTypeRecord
         {

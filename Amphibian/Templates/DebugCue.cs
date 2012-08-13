@@ -14,7 +14,7 @@ using Microsoft.Xna.Framework.Content;
 
 namespace Amphibian.Templates
 {
-    public class DebugCueSpatial : Spatial
+    public class DebugCueSpatial : SpriteSpatial
     {
         private float _radius;
         private float _opacity;

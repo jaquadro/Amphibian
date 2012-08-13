@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using Amphibian.Components;
 using Amphibian.EntitySystem;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework;
-using Amphibian.Components;
-using Amphibian.Geometry;
+using Microsoft.Xna.Framework.Content;
 
 namespace Amphibian.Systems.Rendering
 {
@@ -29,7 +23,7 @@ namespace Amphibian.Systems.Rendering
 
         public virtual void Update () { }
 
-        public abstract void Render (SpriteBatch spriteBatch, Entity entity, Renderable position);
+        public abstract void Render (IRenderManager renderManager, Entity entity, Renderable position);
 
         public virtual bool InBounds (Rectangle bounds)
         {

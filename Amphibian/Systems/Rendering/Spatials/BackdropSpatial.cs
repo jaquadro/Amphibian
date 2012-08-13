@@ -30,7 +30,7 @@ namespace Amphibian.Systems.Rendering.Spatials
         WindowBoth
     }
 
-    public class BackdropSpatial : Spatial
+    public class BackdropSpatial : SpriteSpatial
     {
         #region Property Data
 

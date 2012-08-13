@@ -151,6 +151,7 @@
     <Compile Include="Input\MouseController.cs" />
     <Compile Include="Systems\BehaviorSystem.cs" />
     <Compile Include="Systems\DynamicCollisionSystem.cs" />
+    <Compile Include="Systems\Rendering\RenderManager.cs" />
     <Compile Include="Systems\Rendering\Spatials\RenderEffects.cs" />
     <Compile Include="Systems\Rendering\Sprites\AnimatedSpriteElement.cs" />
     <Compile Include="Systems\Rendering\Sprites\DirectionalAnimatedSpriteElement.cs" />

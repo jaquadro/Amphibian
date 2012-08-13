@@ -66,6 +66,12 @@ namespace Amphibian.Systems.Rendering
             return null;
         }
 
+        public T GetSpatial<T> (SpatialRef sref)
+            where T : Spatial
+        {
+            return GetSpatial(sref) as T;
+        }
+
         private int NextId ()
         {
             return _nextId++;
