@@ -65,7 +65,8 @@ namespace Amphibian.Systems.Particle
     {
         private int _maxParticles;
 
-        private UnorderedList<int> _activeIndexes;
+        private bool[] _active;
+        private List<int> _stagedIndexes;
         private Stack<int> _freeIndexes;
 
         private float _spawnRate = 0.33f;
@@ -77,7 +78,9 @@ namespace Amphibian.Systems.Particle
         {
             _maxParticles = maxParticles;
 
-            _activeIndexes = new UnorderedList<int>(maxParticles);
+            _active = new bool[maxParticles];
+            _stagedIndexes = new List<int>(maxParticles);
+
             _freeIndexes = new Stack<int>(maxParticles);
 
             for (int i = 0; i < maxParticles; i++) {
@@ -89,9 +92,9 @@ namespace Amphibian.Systems.Particle
             _color = new Color[maxParticles];
             _lifetime = new float[maxParticles];
 
+            Lifetime = 3;
             StartColor = Color.White;
             EndColor = Color.Transparent;
-
             StartColorVariance = Color.White;
         }
 
@@ -105,6 +108,8 @@ namespace Amphibian.Systems.Particle
             float elapsed = time.ElapsedGameTime.Milliseconds / 1000f;
 
             SpawnParticles(elapsed);
+
+            StageUpdate();
 
             UpdateParticleLifetime(elapsed);
             UpdateParticlePosition(elapsed);
@@ -130,7 +135,7 @@ namespace Amphibian.Systems.Particle
                 return;
 
             int index = _freeIndexes.Pop();
-            _activeIndexes.Add(index);
+            _active[index] = true;
 
             _lifetime[index] = 1f;
 
@@ -140,12 +145,22 @@ namespace Amphibian.Systems.Particle
 
         private void ExpireParticles ()
         {
-            for (int i = 0; i < _activeIndexes.Count; i++) {
-                int index = _activeIndexes[i];
+            for (int i = 0; i < _stagedIndexes.Count; i++) {
+                int index = _stagedIndexes[i];
                 if (_lifetime[index] <= 0) {
                     _freeIndexes.Push(index);
-                    _activeIndexes.RemoveAt(i);
+                    _active[index] = false;
                 }
+            }
+        }
+
+        private void StageUpdate ()
+        {
+            _stagedIndexes.Clear();
+
+            for (int i = 0; i < _maxParticles; i++) {
+                if (_active[i])
+                    _stagedIndexes.Add(i);
             }
         }
 
@@ -189,12 +204,12 @@ namespace Amphibian.Systems.Particle
         {
             if (_varianceLifetime == 0) {
                 float drain = (1f / _baseLifetime) * elapsed;
-                foreach (int index in _activeIndexes) {
+                foreach (int index in _stagedIndexes) {
                     _lifetime[index] -= drain;
                 }
             }
             else {
-                foreach (int index in _activeIndexes) {
+                foreach (int index in _stagedIndexes) {
                     _lifetime[index] -= _lifetimeSpan[index] * elapsed;
                 }
             }
@@ -225,7 +240,7 @@ namespace Amphibian.Systems.Particle
 
         private void UpdateParticlePosition (float elapsed)
         {
-            foreach (int index in _activeIndexes) {
+            foreach (int index in _stagedIndexes) {
                 Vector2 position = _position[index];
                 Vector2 velocity = _velocity[index];
 
@@ -306,11 +321,11 @@ namespace Amphibian.Systems.Particle
         private void UpdateParticleColor ()
         {
             if (_useColorVariance) {
-                foreach (int index in _activeIndexes)
+                foreach (int index in _stagedIndexes)
                     _color[index] = Color.Lerp(_endColor[index], _startColor[index], _lifetime[index]);
             }
             else {
-                foreach (int index in _activeIndexes)
+                foreach (int index in _stagedIndexes)
                     _color[index] = Color.Lerp(_baseEndColor, _baseStartColor, _lifetime[index]);
             }
         }
@@ -353,7 +368,7 @@ namespace Amphibian.Systems.Particle
             {
                 get
                 {
-                    int index = _emitter._activeIndexes[_index];
+                    int index = _emitter._stagedIndexes[_index];
                     return new ParticleRenderData() {
                         Position = _emitter._position[index],
                         Color = _emitter._color[index],
@@ -373,7 +388,7 @@ namespace Amphibian.Systems.Particle
             public bool MoveNext ()
             {
                 _index++;
-                return _index < _emitter._activeIndexes.Count;
+                return _index < _emitter._stagedIndexes.Count;
             }
 
             public void Reset ()
