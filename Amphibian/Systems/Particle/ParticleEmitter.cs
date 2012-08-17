@@ -69,7 +69,7 @@ namespace Amphibian.Systems.Particle
         private List<int> _stagedIndexes;
         private Stack<int> _freeIndexes;
 
-        private float _spawnRate = 0.33f;
+        private float _spawnRate = 0.1f; //0.33f;
         private float _spawnAccum = 0f;
 
         private static Random _random = new Random();
@@ -93,9 +93,11 @@ namespace Amphibian.Systems.Particle
             _lifetime = new float[maxParticles];
 
             Lifetime = 3;
+            LifetimeVariance = 2;
             StartColor = Color.White;
             EndColor = Color.Transparent;
             StartColorVariance = Color.White;
+            EmitSpeedVariance = 10f;
         }
 
         public ParticleEnumerator Particles
@@ -137,10 +139,19 @@ namespace Amphibian.Systems.Particle
             int index = _freeIndexes.Pop();
             _active[index] = true;
 
-            _lifetime[index] = 1f;
-
+            InitializeParticleLifetime(index);
             InitializeParticlePosition(index);
             InitializeParticleColor(index);
+        }
+
+        private void StageUpdate ()
+        {
+            _stagedIndexes.Clear();
+
+            for (int i = 0; i < _maxParticles; i++) {
+                if (_active[i])
+                    _stagedIndexes.Add(i);
+            }
         }
 
         private void ExpireParticles ()
@@ -154,28 +165,23 @@ namespace Amphibian.Systems.Particle
             }
         }
 
-        private void StageUpdate ()
-        {
-            _stagedIndexes.Clear();
-
-            for (int i = 0; i < _maxParticles; i++) {
-                if (_active[i])
-                    _stagedIndexes.Add(i);
-            }
-        }
-
         #region Lifetime
 
         private float _baseLifetime = 1f;
+        private float _baseLifetimeDecay = 1f;
         private float _varianceLifetime = 0f;
 
         private float[] _lifetime = null;
-        private float[] _lifetimeSpan = null;
+        private float[] _lifetimeDecay = null;
 
         public float Lifetime
         {
             get { return _baseLifetime; }
-            set { _baseLifetime = value; }
+            set
+            {
+                _baseLifetime = value;
+                _baseLifetimeDecay = 1f / _baseLifetime;
+            }
         }
 
         public float LifetimeVariance
@@ -190,52 +196,75 @@ namespace Amphibian.Systems.Particle
 
         private void InitializeParticleLifetime (int index)
         {
-            if (_varianceLifetime == 0) {
-                _lifetime[index] = 1f / _baseLifetime;
-            }
-            else {
-                float span = (float)Math.Max(0, _baseLifetime + _random.NextDouble() * _varianceLifetime - (_varianceLifetime / 2f));
-                _lifetimeSpan[index] = 1f / span;
-                _lifetime[index] = 1f / span;
-            }
+            _lifetime[index] = 1f;
+            if (_varianceLifetime != 0)
+                _lifetimeDecay[index] = 1f / (float)Math.Max(0.001f, _baseLifetime + _random.NextDouble() * _varianceLifetime - (_varianceLifetime / 2f));               
         }
 
         private void UpdateParticleLifetime (float elapsed)
         {
             if (_varianceLifetime == 0) {
-                float drain = (1f / _baseLifetime) * elapsed;
-                foreach (int index in _stagedIndexes) {
-                    _lifetime[index] -= drain;
-                }
+                float decay = _baseLifetimeDecay * elapsed;
+                foreach (int index in _stagedIndexes)
+                    _lifetime[index] -= decay;
             }
             else {
-                foreach (int index in _stagedIndexes) {
-                    _lifetime[index] -= _lifetimeSpan[index] * elapsed;
-                }
+                foreach (int index in _stagedIndexes)
+                    _lifetime[index] -= _lifetimeDecay[index] * elapsed;
             }
         }
 
         private void CheckLifetimeVariance ()
         {
-            if (_varianceLifetime != 0 && _lifetimeSpan == null)
-                _lifetimeSpan = new float[_maxParticles];
+            if (_varianceLifetime != 0 && _lifetimeDecay == null)
+                _lifetimeDecay = new float[_maxParticles];
             else if (_varianceLifetime == 0)
-                _lifetimeSpan = null;                
+                _lifetimeDecay = null;               
         }
 
         #endregion
 
         #region Position
 
+        private float _baseEmitAngle = 0f;
+        private float _baseEmitAngleVariance = 360f;
+        private float _baseEmitSpeed = 20f;
+        private float _baseEmitSpeedVariance = 0f;
+
         private Vector2[] _position;
         private Vector2[] _velocity;
 
+        public float EmitAngle
+        {
+            get { return _baseEmitAngle; }
+            set { _baseEmitAngle = value; }
+        }
+
+        public float EmitAngleVariance
+        {
+            get { return _baseEmitAngleVariance; }
+            set { _baseEmitAngleVariance = value; }
+        }
+
+        public float EmitSpeed
+        {
+            get { return _baseEmitSpeed; }
+            set { _baseEmitSpeed = value; }
+        }
+
+        public float EmitSpeedVariance
+        {
+            get { return _baseEmitSpeedVariance; }
+            set { _baseEmitSpeedVariance = value; }
+        }
+
         private void InitializeParticlePosition (int index)
         {
-            double angle = _random.NextDouble() * 2 * Math.PI;
+            double angle = DegToRad(_baseEmitAngle + (float)_random.NextDouble() * _baseEmitAngleVariance - (_baseEmitAngleVariance / 2f));
+            float speed = _baseEmitSpeed + (float)_random.NextDouble() * _baseEmitSpeedVariance - (_baseEmitSpeedVariance / 2f);
 
             _position[index] = Vector2.Zero;
-            _velocity[index] = new Vector2((float)Math.Cos(angle) * 20, (float)Math.Sin(angle) * 20);
+            _velocity[index] = new Vector2((float)Math.Cos(angle) * speed, (float)Math.Sin(angle) * speed);
         }
 
         private void UpdateParticlePosition (float elapsed)
@@ -246,6 +275,11 @@ namespace Amphibian.Systems.Particle
 
                 _position[index] = new Vector2(position.X + velocity.X * elapsed, position.Y + velocity.Y * elapsed);
             }
+        }
+
+        private float DegToRad (float degrees)
+        {
+            return (float)Math.PI * degrees / 180f;
         }
 
         #endregion
