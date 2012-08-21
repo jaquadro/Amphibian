@@ -81,7 +81,10 @@
     <Compile Include="Input\MouseController.cs" />
     <Compile Include="Systems\BehaviorSystem.cs" />
     <Compile Include="Systems\DynamicCollisionSystem.cs" />
+    <Compile Include="Systems\Particle\Distribution.cs" />
     <Compile Include="Systems\Particle\ParticleEmitter.cs" />
+    <Compile Include="Systems\Particle\Range.cs" />
+    <Compile Include="Systems\Particle\StandardEmitter.cs" />
     <Compile Include="Systems\Rendering\DrawRenderLayer.cs" />
     <Compile Include="Systems\Rendering\DrawRenderManager.cs" />
     <Compile Include="Systems\Rendering\DrawSpatial.cs" />
