@@ -44,7 +44,8 @@ namespace TimeRulerLibrary
         /// </summary>
         public SpriteFont DebugFont { get; private set; }
 
-        public Effect SolidColorEffect { get; private set; }
+        //public Effect SolidColorEffect { get; private set; }
+        public BasicEffect BasicEffect { get; private set; }
 
         #endregion
 
@@ -71,7 +72,8 @@ namespace TimeRulerLibrary
 
             DebugFont = Content.Load<SpriteFont>( "DebugFont" );
 
-            SolidColorEffect = Content.Load<Effect>("SolidColor");
+            //SolidColorEffect = Content.Load<Effect>("SolidColor");
+            BasicEffect = new BasicEffect(GraphicsDevice);
 
             // Create white texture.
             WhiteTexture = new Texture2D( GraphicsDevice, 1, 1 );

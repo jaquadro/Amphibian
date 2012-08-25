@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using TimeRulerLibrary;
 using System.Diagnostics;
 using Microsoft.Xna.Framework.Graphics;
+using Amphibian.Drawing;
 
 namespace Amphibian.Debug
 {
@@ -14,11 +15,6 @@ namespace Amphibian.Debug
     /// </summary>
     public class TimeHistory : DrawableGameComponent
     {
-        #region Properties
-
-
-        #endregion
-
         #region Fields
 
         // Reference for debug manager.
@@ -33,9 +29,13 @@ namespace Amphibian.Debug
 
         private int _graphIndex;
 
-        private VertexPosition[][][] _history;
+        private VertexPositionColor[][][] _history;
+        private Vector2[][][] _history2;
 
-        private VertexPosition[] _total;
+        private VertexPositionColor[] _total;
+        private Vector2[] _total2;
+
+        private DrawBatch _drawBatch;
 
         #endregion
 
@@ -80,11 +80,13 @@ namespace Amphibian.Debug
                 return;
 
             int bars = _ruler.Frame.Bars.Length;
-            _history = new VertexPosition[bars][][];
+            _history = new VertexPositionColor[bars][][];
+            _history2 = new Vector2[bars][][];
 
             for (int i = 0; i < bars; i++) {
                 int samples = _ruler.Frame.Bars[i].Markers.Length;
-                _history[i] = new VertexPosition[samples][];
+                _history[i] = new VertexPositionColor[samples][];
+                _history2[i] = new Vector2[samples][];
             }
         }
 
@@ -111,11 +113,21 @@ namespace Amphibian.Debug
             }
         }
 
-        private VertexPosition[] InitializeHistory (Vector2 origin, float xStride)
+        private VertexPositionColor[] InitializeHistory (Vector2 origin, float xStride, Color c)
         {
-            VertexPosition[] vec = new VertexPosition[_historyCount];
+            VertexPositionColor[] vec = new VertexPositionColor[_historyCount];
             for (int i = 0; i < _historyCount; i++) {
-                vec[i] = new VertexPosition(new Vector3(origin.X + i * xStride, origin.Y, 0));
+                vec[i] = new VertexPositionColor(new Vector3(origin.X + i * xStride, origin.Y, 0), c);
+            }
+
+            return vec;
+        }
+
+        private Vector2[] InitializeHistory2 (Vector2 origin, float xStride)
+        {
+            Vector2[] vec = new Vector2[_historyCount];
+            for (int i = 0; i < _historyCount; i++) {
+                vec[i] = new Vector2(origin.X + i * xStride, origin.Y);
             }
 
             return vec;
@@ -153,7 +165,9 @@ namespace Amphibian.Debug
             float scaleY = rect.Height * 1f / frameSpan;
 
             if (_total == null)
-                _total = InitializeHistory(new Vector2(rect.Left, rect.Bottom), sampleStride);
+                _total = InitializeHistory(new Vector2(rect.Left, rect.Bottom), sampleStride, Color.White * 0.33f);
+            if (_total2 == null)
+                _total2 = InitializeHistory2(new Vector2(rect.Left, rect.Bottom), sampleStride);
 
             int bars = _ruler.Frame.Bars.Length;
 
@@ -163,13 +177,19 @@ namespace Amphibian.Debug
                     float time = _ruler.Frame.Bars[i].Markers[j].EndTime - _ruler.Frame.Bars[i].Markers[j].BeginTime;
                     accum += time;
 
+                    Color c = _ruler.Frame.Bars[i].Markers[j].Color;
+
                     if (_history[i][j] == null)
-                        _history[i][j] = InitializeHistory(new Vector2(rect.Left, rect.Bottom), sampleStride);
-                    _history[i][j][_graphIndex] = new VertexPosition(new Vector3(rect.X + _graphIndex * sampleStride, rect.Bottom - time * scaleY, 0));
+                        _history[i][j] = InitializeHistory(new Vector2(rect.Left, rect.Bottom), sampleStride, c);
+                    if (_history2[i][j] == null)
+                        _history2[i][j] = InitializeHistory2(new Vector2(rect.Left, rect.Bottom), sampleStride);
+                    _history[i][j][_graphIndex] = new VertexPositionColor(new Vector3(rect.X + _graphIndex * sampleStride, rect.Bottom - time * scaleY, 0), c);
+                    _history2[i][j][_graphIndex] = new Vector2(rect.X + _graphIndex * sampleStride, rect.Bottom - time * scaleY);
                 }
             }
 
-            _total[_graphIndex] = new VertexPosition(new Vector3(rect.X + _graphIndex * sampleStride, rect.Bottom - accum * scaleY, 0));
+            _total[_graphIndex] = new VertexPositionColor(new Vector3(rect.X + _graphIndex * sampleStride, rect.Bottom - accum * scaleY, 0), Color.White * .33f);
+            _total2[_graphIndex] = new Vector2(rect.X + _graphIndex * sampleStride, rect.Bottom - accum * scaleY);
 
             _graphIndex++;
             if (_graphIndex >= _historyCount)
@@ -188,7 +208,7 @@ namespace Amphibian.Debug
             SpriteFont font = debugManager.DebugFont;
             SpriteBatch spriteBatch = debugManager.SpriteBatch;
             Texture2D whiteTexture = debugManager.WhiteTexture;
-            Effect solidEffect = debugManager.SolidColorEffect;
+            //Effect solidEffect = debugManager.SolidColorEffect;
 
             // Compute command window size and draw.
             float w = GraphicsDevice.Viewport.Width;
@@ -230,31 +250,53 @@ namespace Amphibian.Debug
                 M42 = 1f - nw,
             };
 
-            solidEffect.Parameters["MatrixTransform"].SetValue(mtx * mat);
+            //solidEffect.Parameters["MatrixTransform"].SetValue(mtx * mat);
+
+            //debugManager.BasicEffect.TextureEnabled = false;
+            debugManager.BasicEffect.VertexColorEnabled = true;
+            debugManager.BasicEffect.World = mtx * mat;
 
             const float frameSpan = 1.0f / 60.0f * 1000f;
             float scaleY = rect.Height * 1f / frameSpan;
 
             int bars = _ruler.Frame.Bars.Length;
 
+            if (_drawBatch == null)
+                _drawBatch = new DrawBatch(spriteBatch.GraphicsDevice);
+
+            //_drawBatch.Begin();
+
             for (int i = 0; i < bars; i++) {
                 for (int j = 0; j < _ruler.Frame.Bars[i].MarkCount; j++) {
                     float time = _ruler.Frame.Bars[i].Markers[j].EndTime - _ruler.Frame.Bars[i].Markers[j].BeginTime;
 
-                    if (_history[i][j] == null)
-                        _history[i][j] = InitializeHistory(new Vector2(rect.Left, rect.Bottom), sampleStride);
-                    _history[i][j][_graphIndex] = new VertexPosition(new Vector3(rect.X + _graphIndex * sampleStride, rect.Bottom - time * scaleY, 0));
-
                     Color c = _ruler.Frame.Bars[i].Markers[j].Color;
-                    solidEffect.Parameters["solidColor"].SetValue(new Vector4(c.R, c.G, c.B, 1));
-                    solidEffect.CurrentTechnique.Passes[0].Apply();
+
+                    if (_history[i][j] == null)
+                        _history[i][j] = InitializeHistory(new Vector2(rect.Left, rect.Bottom), sampleStride, c);
+                    _history[i][j][_graphIndex] = new VertexPositionColor(new Vector3(rect.X + _graphIndex * sampleStride, rect.Bottom - time * scaleY, 0), c);
+
+                    //solidEffect.Parameters["solidColor"].SetValue(new Vector4(c.R, c.G, c.B, 1));
+                    //solidEffect.CurrentTechnique.Passes[0].Apply();
+                    debugManager.BasicEffect.CurrentTechnique.Passes[0].Apply();
 
                     spriteBatch.GraphicsDevice.DrawUserPrimitives(PrimitiveType.LineStrip, _history[i][j], 0, _historyCount - 1);
+
+                    //_drawBatch.DrawPrimitivePath(_history2[i][j], Pens.White);
+
+                    /*for (int seg = 1; seg < _historyCount; seg++) {
+                        Vector3 pos1 = _history[i][j][seg - 1].Position;
+                        Vector3 pos2 = _history[i][j][seg].Position;
+
+                        _drawBatch.DrawPrimitiveLine(new Point((int)pos1.X, (int)pos1.Y), new Point((int)pos2.X, (int)pos2.Y), Pens.White);
+                    }*/
                 }
             }
 
-            solidEffect.Parameters["solidColor"].SetValue(new Vector4(1, 1, 1, .33f));
-            solidEffect.CurrentTechnique.Passes[0].Apply();
+            //_drawBatch.End();
+
+            //solidEffect.Parameters["solidColor"].SetValue(new Vector4(1, 1, 1, .33f));
+            //solidEffect.CurrentTechnique.Passes[0].Apply();
 
             spriteBatch.GraphicsDevice.DrawUserPrimitives(PrimitiveType.LineStrip, _total, 0, _historyCount - 1);
         }

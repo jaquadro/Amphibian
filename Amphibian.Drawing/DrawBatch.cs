@@ -12,6 +12,7 @@ namespace Amphibian.Drawing
         private struct DrawingInfo
         {
             public Texture2D Texture;
+            public PrimitiveType Primitive;
             public int IndexCount;
             public int VertexCount;
         }
@@ -98,7 +99,7 @@ namespace Amphibian.Drawing
 
             RequestBufferSpace(8, 24);
 
-            AddInfo(8, 24, pen.Brush);
+            AddInfo(PrimitiveType.TriangleList, 8, 24, pen.Brush);
 
             Vector2 a = new Vector2(rect.Left, rect.Top);
             Vector2 b = new Vector2(rect.Right, rect.Top);
@@ -125,7 +126,7 @@ namespace Amphibian.Drawing
 
             RequestBufferSpace(4, 6);
 
-            AddInfo(4, 6, pen.Brush);
+            AddInfo(PrimitiveType.TriangleList, 4, 6, pen.Brush);
 
             int baseVertexIndex = _vertexBufferIndex;
 
@@ -145,7 +146,7 @@ namespace Amphibian.Drawing
 
             RequestBufferSpace(4, 6);
 
-            AddInfo(4, 6, pen.Brush);
+            AddInfo(PrimitiveType.TriangleList, 4, 6, pen.Brush);
 
             int baseVertexIndex = _vertexBufferIndex;
 
@@ -155,6 +156,50 @@ namespace Amphibian.Drawing
             AddSegment(baseVertexIndex + 0, baseVertexIndex + 2);
         }
 
+        public void DrawPrimitiveLine (Point p0, Point p1, Pen pen)
+        {
+            if (!_inDraw)
+                throw new InvalidOperationException();
+
+            RequestBufferSpace(2, 2);
+
+            AddInfo(PrimitiveType.LineList, 2, 2, pen.Brush);
+
+            int baseVertexIndex = _vertexBufferIndex;
+
+            //AddVertex(new Vector2(p0.X, p0.Y), pen);
+            //AddVertex(new Vector2(p1.X, p1.Y), pen);
+
+            _vertexBuffer[_vertexBufferIndex++] = new VertexPositionColorTexture(new Vector3(p0.X, p0.Y, 0), pen.Color, new Vector2(p0.X, p0.Y));
+            _vertexBuffer[_vertexBufferIndex++] = new VertexPositionColorTexture(new Vector3(p1.X, p1.Y, 0), pen.Color, new Vector2(p1.X, p1.Y));
+
+            _indexBuffer[_indexBufferIndex++] = (short)(baseVertexIndex);
+            _indexBuffer[_indexBufferIndex++] = (short)(baseVertexIndex + 1);
+            //AddPrimitiveLineSegment(baseVertexIndex + 0, baseVertexIndex + 1);
+        }
+
+        public void DrawPrimitivePath (IList<Vector2> points, Pen pen)
+        {
+            if (!_inDraw)
+                throw new InvalidOperationException();
+
+            RequestBufferSpace(points.Count, points.Count * 2 - 2);
+
+            AddInfo(PrimitiveType.LineList, points.Count, points.Count * 2 - 2, pen.Brush);
+
+            int baseVertexIndex = _vertexBufferIndex;
+
+            for (int i = 0; i < points.Count; i++) {
+                Vector2 pos = new Vector2(points[i].X, points[i].Y);
+                _vertexBuffer[_vertexBufferIndex++] = new VertexPositionColorTexture(new Vector3(pos, 0), pen.Color, Vector2.Zero);
+            }
+
+            for (int i = 1; i < points.Count; i++) {
+                _indexBuffer[_indexBufferIndex++] = (short)(baseVertexIndex + i - 1);
+                _indexBuffer[_indexBufferIndex++] = (short)(baseVertexIndex + i);
+            }
+        }
+
         public void DrawPath (GraphicsPath path)
         {
             if (!_inDraw)
@@ -162,7 +207,7 @@ namespace Amphibian.Drawing
 
             RequestBufferSpace(path.VertexCount, path.IndexCount);
 
-            AddInfo(path.VertexCount, path.IndexCount, path.Pen.Brush);
+            AddInfo(PrimitiveType.TriangleList, path.VertexCount, path.IndexCount, path.Pen.Brush);
 
             for (int i = 0; i < path.VertexCount; i++) {
                 _vertexBuffer[_vertexBufferIndex + i] = new VertexPositionColorTexture(
@@ -208,7 +253,7 @@ namespace Amphibian.Drawing
                 throw new InvalidOperationException();
 
             RequestBufferSpace(4, 6);
-            AddInfo(4, 6, brush);
+            AddInfo(PrimitiveType.TriangleList, 4, 6, brush);
 
             int baseVertexIndex = _vertexBufferIndex;
 
@@ -229,7 +274,7 @@ namespace Amphibian.Drawing
             _triangulator.Triangulate(points, offset, count);
 
             RequestBufferSpace(count, _triangulator.ComputedIndexCount);
-            AddInfo(count, _triangulator.ComputedIndexCount, brush);
+            AddInfo(PrimitiveType.TriangleList, count, _triangulator.ComputedIndexCount, brush);
 
             int baseVertexIndex = _vertexBufferIndex;
 
@@ -286,16 +331,18 @@ namespace Amphibian.Drawing
             AddVertex(_computeBuffer[1], pen);
         }
 
-        private void AddInfo (int vertexCount, int indexCount, Brush brush)
+        private void AddInfo (PrimitiveType primitiveType, int vertexCount, int indexCount, Brush brush)
         {
+            _infoBuffer[_infoBufferIndex].Primitive = primitiveType;
             _infoBuffer[_infoBufferIndex].Texture = brush != null ? brush.Texture : _defaultTexture;
             _infoBuffer[_infoBufferIndex].IndexCount = indexCount;
             _infoBuffer[_infoBufferIndex].VertexCount = vertexCount;
             _infoBufferIndex++;
         }
 
-        private void AddInfo (int vertexCount, int indexCount, Texture2D texture)
+        private void AddInfo (PrimitiveType primitiveType, int vertexCount, int indexCount, Texture2D texture)
         {
+            _infoBuffer[_infoBufferIndex].Primitive = primitiveType;
             _infoBuffer[_infoBufferIndex].Texture = texture ?? _defaultTexture;
             _infoBuffer[_infoBufferIndex].IndexCount = indexCount;
             _infoBuffer[_infoBufferIndex].VertexCount = vertexCount;
@@ -306,7 +353,7 @@ namespace Amphibian.Drawing
         {
             RequestBufferSpace(count * 2, count * 6);
 
-            AddInfo(count * 2, count * 6, pen.Brush);
+            AddInfo(PrimitiveType.TriangleList, count * 2, count * 6, pen.Brush);
 
             int baseVertexIndex = _vertexBufferIndex;
 
@@ -365,6 +412,12 @@ namespace Amphibian.Drawing
             _indexBuffer[_indexBufferIndex++] = (short)(endVertexIndex + 0);
         }
 
+        private void AddPrimitiveLineSegment (int startVertexIndex, int endVertexIndex)
+        {
+            _indexBuffer[_indexBufferIndex++] = (short)startVertexIndex;
+            _indexBuffer[_indexBufferIndex++] = (short)endVertexIndex;
+        }
+
         private void AddTriangle (int a, int b, int c)
         {
             _indexBuffer[_indexBufferIndex++] = (short)a;
@@ -381,15 +434,16 @@ namespace Amphibian.Drawing
             int vertexCount = 0;
             int indexCount = 0;
             Texture2D texture = null;
+            PrimitiveType primitive = PrimitiveType.TriangleList;
 
             for (int i = 0; i < _infoBufferIndex; i++) {
-                if (texture != _infoBuffer[i].Texture) {
+                if (texture != _infoBuffer[i].Texture || primitive != _infoBuffer[i].Primitive) {
                     if (indexCount > 0) {
                         for (int j = 0; j < indexCount; j++) {
                             _indexBuffer[indexOffset + j] -= (short)vertexOffset;
                         }
 
-                        RenderBatch(indexOffset, indexCount, vertexOffset, vertexCount, texture);
+                        RenderBatch(primitive, indexOffset, indexCount, vertexOffset, vertexCount, texture);
                     }
 
                     vertexOffset += vertexCount;
@@ -397,6 +451,7 @@ namespace Amphibian.Drawing
                     vertexCount = 0;
                     indexCount = 0;
                     texture = _infoBuffer[i].Texture;
+                    primitive = _infoBuffer[i].Primitive;
                 }
 
                 vertexCount += _infoBuffer[i].VertexCount;
@@ -408,7 +463,7 @@ namespace Amphibian.Drawing
                     _indexBuffer[indexOffset + j] -= (short)vertexOffset;
                 }
 
-                RenderBatch(indexOffset, indexCount, vertexOffset, vertexCount, texture);
+                RenderBatch(primitive, indexOffset, indexCount, vertexOffset, vertexCount, texture);
             }
 
             ClearInfoBuffer();
@@ -418,10 +473,17 @@ namespace Amphibian.Drawing
             _vertexBufferIndex = 0;
         }
 
-        private void RenderBatch (int indexOffset, int indexCount, int vertexOffset, int vertexCount, Texture2D texture)
+        private void RenderBatch (PrimitiveType primitiveType, int indexOffset, int indexCount, int vertexOffset, int vertexCount, Texture2D texture)
         {
             _device.Textures[0] = texture;
-            _device.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, _vertexBuffer, vertexOffset, vertexCount, _indexBuffer, indexOffset, indexCount / 3);
+            switch (primitiveType) {
+                case PrimitiveType.LineList:
+                    _device.DrawUserIndexedPrimitives(primitiveType, _vertexBuffer, vertexOffset, vertexCount, _indexBuffer, indexOffset, indexCount / 2);
+                    break;
+                case PrimitiveType.TriangleList:
+                    _device.DrawUserIndexedPrimitives(primitiveType, _vertexBuffer, vertexOffset, vertexCount, _indexBuffer, indexOffset, indexCount / 3);
+                    break;
+            }
         }
 
         private void ClearInfoBuffer ()
