@@ -9,6 +9,7 @@ using Amphibian.Systems.Rendering.Sprites.Xml;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
+using System.IO;
 
 namespace Amphibian.Systems.Rendering.Spatials
 {
@@ -44,12 +45,14 @@ namespace Amphibian.Systems.Rendering.Spatials
         {
             SpatialTypeRecord record = new SpatialTypeRecord();
 
-            using (XmlReader reader = XmlReader.Create(contentPath)) {
-                XmlStaticSpriteElement xmldef = new XmlStaticSpriteElement();
-                xmldef.ReadXml(reader);
+            using (Stream contentStream = TitleContainer.OpenStream(contentPath)) {
+                using (XmlReader reader = XmlReader.Create(contentStream)) {
+                    XmlStaticSpriteElement xmldef = new XmlStaticSpriteElement();
+                    xmldef.ReadXml(reader);
 
-                record.Definition = xmldef.BuildDefinition(contentManager);
-                record.InstanceDefaults = xmldef.Instance;
+                    record.Definition = xmldef.BuildDefinition(contentManager);
+                    record.InstanceDefaults = xmldef.Instance;
+                }
             }
 
             _registered[contentPath] = record;
