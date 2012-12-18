@@ -288,6 +288,20 @@ namespace Amphibian.EntitySystem
             return EntityEnumerator.Empty;
         }
 
+        public int CountEntities (Type componentType)
+        {
+            if (componentType != null) {
+                ComponentType ctype = ComponentTypeManager.GetTypeFor(componentType);
+                return _entitiesByComponent[ctype.Index].Count - _freeEntListIndexes[ctype.Index].Count;
+            }
+            return 0;
+        }
+
+        public int CountEntities<T> ()
+        {
+            return CountEntities(typeof(T));
+        }
+
         private int NextId ()
         {
             unchecked {

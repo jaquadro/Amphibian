@@ -18,6 +18,10 @@ namespace Amphibian.Drawing
         public static Brush White { get; private set; }
         public static Brush Yellow { get; private set; }
 
+        public static Brush LightGray { get; private set; }
+        public static Brush Gray { get; private set; }
+        public static Brush DarkGray { get; private set; }
+
         public static void Initialize (GraphicsDevice device)
         {
             if (!_init) {
@@ -31,6 +35,10 @@ namespace Amphibian.Drawing
                 Red = new SolidColorBrush(device, Color.Red);
                 White = new SolidColorBrush(device, Color.White);
                 Yellow = new SolidColorBrush(device, Color.Yellow);
+
+                Gray = new SolidColorBrush(device, Color.Gray);
+                LightGray = new SolidColorBrush(device, Color.LightGray);
+                DarkGray = new SolidColorBrush(device, Color.DarkGray);
             }
         }
     }

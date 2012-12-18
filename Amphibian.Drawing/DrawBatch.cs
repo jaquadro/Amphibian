@@ -37,6 +37,7 @@ namespace Amphibian.Drawing
         private SamplerState _samplerState;
         private DepthStencilState _depthStencilState;
         private RasterizerState _rasterizerState;
+        private Matrix _transform;
 
         private static BasicEffect _effect;
 
@@ -65,10 +66,10 @@ namespace Amphibian.Drawing
 
         public void Begin ()
         {
-            Begin(null, null, null, null);
+            Begin(null, null, null, null, Matrix.Identity);
         }
 
-        public void Begin (BlendState blendState, SamplerState samplerState, DepthStencilState depthStencilState, RasterizerState rasterizerState)
+        public void Begin (BlendState blendState, SamplerState samplerState, DepthStencilState depthStencilState, RasterizerState rasterizerState, Matrix transform)
         {
             if (_inDraw)
                 throw new InvalidOperationException("DrawBatch already inside Begin/End pair");
@@ -79,6 +80,7 @@ namespace Amphibian.Drawing
             _samplerState = samplerState;
             _depthStencilState = depthStencilState;
             _rasterizerState = rasterizerState;
+            _transform = transform;
 
             _infoBufferIndex = 0;
             _indexBufferIndex = 0;
@@ -304,6 +306,7 @@ namespace Amphibian.Drawing
                 ? _samplerState : SamplerState.PointWrap;
 
             _effect.Projection = Matrix.CreateOrthographicOffCenter(0, _device.Viewport.Width, _device.Viewport.Height, 0, -1, 1);
+            _effect.World = _transform;
             _effect.CurrentTechnique.Passes[0].Apply();
         }
 

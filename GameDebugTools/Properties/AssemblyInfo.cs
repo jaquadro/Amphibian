@@ -34,3 +34,4 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyVersion("1.0.0.0")]
 
 [assembly: InternalsVisibleTo("Amphibian")]
+[assembly: InternalsVisibleTo("Amphibian.WP7")]
