@@ -80,6 +80,7 @@
     <Compile Include="Brushes.cs" />
     <Compile Include="Draw2D.cs" />
     <Compile Include="DrawBatch.cs" />
+    <Compile Include="GraphicsPath.cs" />
     <Compile Include="PatternBrush.cs" />
     <Compile Include="Pen.cs" />
     <Compile Include="Pens.cs" />

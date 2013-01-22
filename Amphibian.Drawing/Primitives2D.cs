@@ -65,6 +65,7 @@ namespace Amphibian.Drawing
 
     /// <summary>
     /// </summary>
+    [Obsolete]
     public static class Primitives2D
     {
 

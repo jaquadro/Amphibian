@@ -64,6 +64,11 @@ namespace Amphibian.Drawing
             _defaultTexture.SetData<Color>(new Color[] { Color.White * .6f });
         }
 
+        public GraphicsDevice GraphicsDevice
+        {
+            get { return _device; }
+        }
+
         public void Begin ()
         {
             Begin(null, null, null, null, Matrix.Identity);
@@ -182,21 +187,26 @@ namespace Amphibian.Drawing
 
         public void DrawPrimitivePath (IList<Vector2> points, Pen pen)
         {
+            DrawPrimitivePath(points, points.Count, pen);
+        }
+
+        public void DrawPrimitivePath (IList<Vector2> points, int count, Pen pen)
+        {
             if (!_inDraw)
                 throw new InvalidOperationException();
 
-            RequestBufferSpace(points.Count, points.Count * 2 - 2);
+            RequestBufferSpace(count, count * 2 - 2);
 
-            AddInfo(PrimitiveType.LineList, points.Count, points.Count * 2 - 2, pen.Brush);
+            AddInfo(PrimitiveType.LineList, count, count * 2 - 2, pen.Brush);
 
             int baseVertexIndex = _vertexBufferIndex;
 
-            for (int i = 0; i < points.Count; i++) {
+            for (int i = 0; i < count; i++) {
                 Vector2 pos = new Vector2(points[i].X, points[i].Y);
                 _vertexBuffer[_vertexBufferIndex++] = new VertexPositionColorTexture(new Vector3(pos, 0), pen.Color, Vector2.Zero);
             }
 
-            for (int i = 1; i < points.Count; i++) {
+            for (int i = 1; i < count; i++) {
                 _indexBuffer[_indexBufferIndex++] = (short)(baseVertexIndex + i - 1);
                 _indexBuffer[_indexBufferIndex++] = (short)(baseVertexIndex + i);
             }
@@ -236,6 +246,26 @@ namespace Amphibian.Drawing
             if (!_inDraw)
                 throw new InvalidOperationException();
 
+            BuildCircleGeometryBuffer(center, radius, subdivisions);
+            AddClosedPath(_geometryBuffer, 0, subdivisions, pen);
+        }
+
+        public void DrawPrimitiveCircle (Point center, float radius, Pen pen)
+        {
+            DrawPrimitiveCircle(center, radius, (int)Math.Ceiling(radius / 1.5), pen);
+        }
+
+        public void DrawPrimitiveCircle (Point center, float radius, int subdivisions, Pen pen)
+        {
+            if (!_inDraw)
+                throw new InvalidOperationException();
+
+            BuildCircleGeometryBuffer(center, radius, subdivisions);
+            DrawPrimitivePath(_geometryBuffer, subdivisions, pen);
+        }
+
+        private void BuildCircleGeometryBuffer (Point center, float radius, int subdivisions)
+        {
             List<Vector2> unitCircle = CalculateCircleSubdivisions(subdivisions);
 
             if (_geometryBuffer.Length < subdivisions) {
@@ -245,8 +275,6 @@ namespace Amphibian.Drawing
             for (int i = 0; i < subdivisions; i++) {
                 _geometryBuffer[i] = new Vector2(center.X + radius * unitCircle[i].X, center.Y + radius * unitCircle[i].Y);
             }
-
-            AddClosedPath(_geometryBuffer, 0, subdivisions, pen);
         }
 
         public void FillRectangle (Rectangle rect, Brush brush)
@@ -400,6 +428,7 @@ namespace Amphibian.Drawing
             if (brush != null && brush.Texture != null) {
                 Texture2D tex = brush.Texture;
                 vertex.TextureCoordinate = new Vector2(position.X / tex.Width, position.Y / tex.Height);
+                vertex.Color *= brush.Alpha;
             }
 
             _vertexBuffer[_vertexBufferIndex++] = vertex;
