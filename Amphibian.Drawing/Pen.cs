@@ -17,6 +17,13 @@ namespace Amphibian.Drawing
         Outset
     }
 
+    public class PrimitivePen : Pen
+    {
+        public PrimitivePen (Color color)
+            : base(color, 1)
+        { }
+    }
+
     public class Pen : IDisposable
     {
         public Color Color { get; set; }
@@ -73,7 +80,8 @@ namespace Amphibian.Drawing
         {
             if (!_disposed) {
                 if (disposing) {
-                    Brush.Dispose();
+                    if (Brush != null)
+                        Brush.Dispose();
                     DisposeManaged();
                 }
                 DisposeUnmanaged();

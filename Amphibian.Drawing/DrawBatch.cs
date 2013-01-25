@@ -246,7 +246,7 @@ namespace Amphibian.Drawing
             if (!_inDraw)
                 throw new InvalidOperationException();
 
-            BuildCircleGeometryBuffer(center, radius, subdivisions);
+            BuildCircleGeometryBuffer(center, radius, subdivisions, false);
             AddClosedPath(_geometryBuffer, 0, subdivisions, pen);
         }
 
@@ -260,21 +260,24 @@ namespace Amphibian.Drawing
             if (!_inDraw)
                 throw new InvalidOperationException();
 
-            BuildCircleGeometryBuffer(center, radius, subdivisions);
-            DrawPrimitivePath(_geometryBuffer, subdivisions, pen);
+            BuildCircleGeometryBuffer(center, radius, subdivisions, true);
+            DrawPrimitivePath(_geometryBuffer, subdivisions + 1, pen);
         }
 
-        private void BuildCircleGeometryBuffer (Point center, float radius, int subdivisions)
+        private void BuildCircleGeometryBuffer (Point center, float radius, int subdivisions, bool connect)
         {
             List<Vector2> unitCircle = CalculateCircleSubdivisions(subdivisions);
 
-            if (_geometryBuffer.Length < subdivisions) {
-                Array.Resize(ref _geometryBuffer, subdivisions * 2);
+            if (_geometryBuffer.Length < subdivisions + 1) {
+                Array.Resize(ref _geometryBuffer, (subdivisions + 1) * 2);
             }
 
             for (int i = 0; i < subdivisions; i++) {
                 _geometryBuffer[i] = new Vector2(center.X + radius * unitCircle[i].X, center.Y + radius * unitCircle[i].Y);
             }
+
+            if (connect)
+                _geometryBuffer[subdivisions] = new Vector2(center.X + radius * unitCircle[0].X, center.Y + radius * unitCircle[0].Y);
         }
 
         public void FillRectangle (Rectangle rect, Brush brush)
@@ -411,6 +414,7 @@ namespace Amphibian.Drawing
             if (pen.Brush != null && pen.Brush.Texture != null) {
                 Texture2D tex = pen.Brush.Texture;
                 vertex.TextureCoordinate = new Vector2(position.X / tex.Width, position.Y / tex.Height);
+                vertex.Color *= pen.Brush.Alpha;
             }
             else {
                 vertex.TextureCoordinate = new Vector2(position.X, position.Y);
