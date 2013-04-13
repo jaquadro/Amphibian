@@ -12,11 +12,14 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 #endregion
+
+[assembly:InternalsVisibleTo("Amphibian.MacOS")]
 
 namespace TimeRulerLibrary
 {

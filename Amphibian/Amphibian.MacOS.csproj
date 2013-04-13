@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{3AF297F3-74F4-4B51-8EB3-D4F210400038}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Amphibian.MacOS</RootNamespace>
+    <AssemblyName>Amphibian.MacOS</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;XNA;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <DefineConstants>XNA;</DefineConstants>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Compile Include="AmphibianGameTime.cs" />
+    <Compile Include="Engine.cs" />
+    <Compile Include="Frame.cs" />
+    <Compile Include="IL.cs" />
+    <Compile Include="Collision\AABBMask.cs" />
+    <Compile Include="Collision\AXLineMask.cs" />
+    <Compile Include="Collision\AYLineMask.cs" />
+    <Compile Include="Collision\CircleMask.cs" />
+    <Compile Include="Collision\Collision.cs" />
+    <Compile Include="Collision\CollisionManager.cs" />
+    <Compile Include="Collision\CollisionTileMapper.cs" />
+    <Compile Include="Collision\CompositeMask.cs" />
+    <Compile Include="Collision\LineMask.cs" />
+    <Compile Include="Collision\Mask.cs" />
+    <Compile Include="Collision\PointMask.cs" />
+    <Compile Include="Collision\TriangleMask.cs" />
+    <Compile Include="Collision\BroadPhase\SelectiveSweep.cs" />
+    <Compile Include="Components\ActivityComponent.cs" />
+    <Compile Include="Components\Collidable.cs" />
+    <Compile Include="Components\DirectionComponent.cs" />
+    <Compile Include="Components\ParallaxCom.cs" />
+    <Compile Include="Components\PlatformPhysics.cs" />
+    <Compile Include="Components\PlatformPushable.cs" />
+    <Compile Include="Components\Position.cs" />
+    <Compile Include="Components\RemovalTimeout.cs" />
+    <Compile Include="Components\Renderable.cs" />
+    <Compile Include="Components\ScriptedComponent.cs" />
+    <Compile Include="Debug\ADebug.cs" />
+    <Compile Include="Debug\MemoryTracker.cs" />
+    <Compile Include="Debug\Performance.cs" />
+    <Compile Include="Debug\TimeHistory.cs" />
+    <Compile Include="Drawing\Brush.cs" />
+    <Compile Include="Drawing\Brushes.cs" />
+    <Compile Include="Drawing\Draw2D.cs" />
+    <Compile Include="Drawing\PatternBrush.cs" />
+    <Compile Include="Drawing\Pen.cs" />
+    <Compile Include="Drawing\Pens.cs" />
+    <Compile Include="Drawing\Primitives2D.cs" />
+    <Compile Include="Drawing\SolidColorBrush.cs" />
+    <Compile Include="EntitySystem\BaseSystem.cs" />
+    <Compile Include="EntitySystem\Component.cs" />
+    <Compile Include="EntitySystem\ComponentType.cs" />
+    <Compile Include="EntitySystem\ComponentTypeManager.cs" />
+    <Compile Include="EntitySystem\Entity.cs" />
+    <Compile Include="EntitySystem\EntityManager.cs" />
+    <Compile Include="EntitySystem\EntityWorld.cs" />
+    <Compile Include="EntitySystem\ProcessingSystem.cs" />
+    <Compile Include="EntitySystem\SystemManager.cs" />
+    <Compile Include="EntitySystem\TagManager.cs" />
+    <Compile Include="EntitySystem\TagSystem.cs" />
+    <Compile Include="Geometry\FPInt.cs" />
+    <Compile Include="Geometry\FPLong.cs" />
+    <Compile Include="Geometry\FPMath.cs" />
+    <Compile Include="Geometry\PointFP.cs" />
+    <Compile Include="Geometry\RectangleFP.cs" />
+    <Compile Include="Geometry\SharedPointFP.cs" />
+    <Compile Include="Geometry\VectorFP.cs" />
+    <Compile Include="Input\ButtonController.cs" />
+    <Compile Include="Input\ButtonControllerGroup.cs" />
+    <Compile Include="Input\CursorController.cs" />
+    <Compile Include="Input\GamePadController.cs" />
+    <Compile Include="Input\InputController.cs" />
+    <Compile Include="Input\KeyboardController.cs" />
+    <Compile Include="Input\MouseController.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Systems\AnimationSystem.cs" />
+    <Compile Include="Systems\BackgroundCollisionSystem.cs" />
+    <Compile Include="Systems\BehaviorSystem.cs" />
+    <Compile Include="Systems\CameraSystem.cs" />
+    <Compile Include="Systems\ClockSystem.cs" />
+    <Compile Include="Systems\DynamicCollisionSystem.cs" />
+    <Compile Include="Systems\ExpirationSystem.cs" />
+    <Compile Include="Systems\PlatformControlSystem.cs" />
+    <Compile Include="Systems\PlatformPhysicsSystem.cs" />
+    <Compile Include="Systems\RenderSystem.cs" />
+    <Compile Include="Systems\RenderTransformSystem.cs" />
+    <Compile Include="Systems\Particle\Distribution.cs" />
+    <Compile Include="Systems\Particle\ParticleEmitter.cs" />
+    <Compile Include="Systems\Particle\Range.cs" />
+    <Compile Include="Systems\Particle\StandardEmitter.cs" />
+    <Compile Include="Systems\Rendering\Defn.cs" />
+    <Compile Include="Systems\Rendering\DrawRenderLayer.cs" />
+    <Compile Include="Systems\Rendering\DrawRenderManager.cs" />
+    <Compile Include="Systems\Rendering\DrawSpatial.cs" />
+    <Compile Include="Systems\Rendering\RenderLayer.cs" />
+    <Compile Include="Systems\Rendering\RenderManager.cs" />
+    <Compile Include="Systems\Rendering\Spatial.cs" />
+    <Compile Include="Systems\Rendering\SpatialManager.cs" />
+    <Compile Include="Systems\Rendering\SpatialRef.cs" />
+    <Compile Include="Systems\Rendering\SpriteRenderLayer.cs" />
+    <Compile Include="Systems\Rendering\SpriteRenderManager.cs" />
+    <Compile Include="Systems\Rendering\SpriteSpatial.cs" />
+    <Compile Include="Systems\Rendering\Spatials\AnimatedSpriteSpatial.cs" />
+    <Compile Include="Systems\Rendering\Spatials\BackdropSpatial.cs" />
+    <Compile Include="Systems\Rendering\Spatials\DirectionalAnimatedSpriteSpatial.cs" />
+    <Compile Include="Systems\Rendering\Spatials\DirectionalAnimationSetSpatial.cs" />
+    <Compile Include="Systems\Rendering\Spatials\RenderEffects.cs" />
+    <Compile Include="Systems\Rendering\Spatials\StaticSpriteSpatial.cs" />
+    <Compile Include="Systems\Rendering\Sprites\AnimatedSprite.cs" />
+    <Compile Include="Systems\Rendering\Sprites\AnimatedSpriteDefinition.cs" />
+    <Compile Include="Systems\Rendering\Sprites\AnimatedSpriteElement.cs" />
+    <Compile Include="Systems\Rendering\Sprites\AnimationInfo.cs" />
+    <Compile Include="Systems\Rendering\Sprites\AnimationOptions.cs" />
+    <Compile Include="Systems\Rendering\Sprites\Direction.cs" />
+    <Compile Include="Systems\Rendering\Sprites\DirectionalAnimatedSprite.cs" />
+    <Compile Include="Systems\Rendering\Sprites\DirectionalAnimatedSpriteDefinition.cs" />
+    <Compile Include="Systems\Rendering\Sprites\DirectionalAnimatedSpriteElement.cs" />
+    <Compile Include="Systems\Rendering\Sprites\DirectionalAnimationSet.cs" />
+    <Compile Include="Systems\Rendering\Sprites\DirectionalAnimationSetDefinition.cs" />
+    <Compile Include="Systems\Rendering\Sprites\DirectionalAnimationSetElement.cs" />
+    <Compile Include="Systems\Rendering\Sprites\Elements.cs" />
+    <Compile Include="Systems\Rendering\Sprites\Sprite.cs" />
+    <Compile Include="Systems\Rendering\Sprites\SpriteInfo.cs" />
+    <Compile Include="Systems\Rendering\Sprites\StaticSprite.cs" />
+    <Compile Include="Systems\Rendering\Sprites\StaticSpriteDefinition.cs" />
+    <Compile Include="Systems\Rendering\Sprites\StaticSpriteElement.cs" />
+    <Compile Include="Systems\Rendering\Sprites\Xml\XmlActivityElement.cs" />
+    <Compile Include="Systems\Rendering\Sprites\Xml\XmlActivityMapElement.cs" />
+    <Compile Include="Systems\Rendering\Sprites\Xml\XmlAnimatedSpriteElement.cs" />
+    <Compile Include="Systems\Rendering\Sprites\Xml\XmlAnimatedSpriteInstance.cs" />
+    <Compile Include="Systems\Rendering\Sprites\Xml\XmlAnimationElement.cs" />
+    <Compile Include="Systems\Rendering\Sprites\Xml\XmlAnimationSetElement.cs" />
+    <Compile Include="Systems\Rendering\Sprites\Xml\XmlDirectionElement.cs" />
+    <Compile Include="Systems\Rendering\Sprites\Xml\XmlDirectionalAnimatedSpriteElement.cs" />
+    <Compile Include="Systems\Rendering\Sprites\Xml\XmlDirectionalAnimatedSpriteInstance.cs" />
+    <Compile Include="Systems\Rendering\Sprites\Xml\XmlDirectionalAnimationSetElement.cs" />
+    <Compile Include="Systems\Rendering\Sprites\Xml\XmlDirectionalAnimationSetInstance.cs" />
+    <Compile Include="Systems\Rendering\Sprites\Xml\XmlFrameElement.cs" />
+    <Compile Include="Systems\Rendering\Sprites\Xml\XmlSpriteElement.cs" />
+    <Compile Include="Systems\Rendering\Sprites\Xml\XmlSpriteListElement.cs" />
+    <Compile Include="Systems\Rendering\Sprites\Xml\XmlStaticSpriteElement.cs" />
+    <Compile Include="Systems\Rendering\Sprites\Xml\XmlStaticSpriteInstance.cs" />
+    <Compile Include="Systems\Rendering\Sprites\Xml\XmlTransformElement.cs" />
+    <Compile Include="Templates\DebugCue.cs" />
+    <Compile Include="Utility\EnumHelper.cs" />
+    <Compile Include="Utility\IntPair.cs" />
+    <Compile Include="Utility\Pair.cs" />
+    <Compile Include="Utility\ResourcePool.cs" />
+    <Compile Include="Utility\UnorderedList.cs" />
+    <Compile Include="Xna\ColorExt.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="MonoGame.Framework, Version=3.0.1.0, Culture=neutral">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="System" />
+    <Reference Include="LilyPath.MacOS">
+      <HintPath>..\..\..\jmitchell\LilyPath\LilyPath\bin\Debug\LilyPath.MacOS.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GameDebugTools\GameDebugTools.MacOS.csproj">
+      <Project>{98792D6F-B1B6-4685-96CA-E1CC5E3BBBC1}</Project>
+      <Name>GameDebugTools.MacOS</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Collision\CollisionTR.cs" />
+  </ItemGroup>
+</Project>
