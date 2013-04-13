@@ -6,7 +6,6 @@ using Amphibian.Systems.Rendering;
 using Amphibian.EntitySystem;
 using Microsoft.Xna.Framework.Graphics;
 using Amphibian.Components;
-using Amphibian.Drawing;
 using Microsoft.Xna.Framework;
 using Amphibian.Geometry;
 using Amphibian.Systems;
@@ -18,14 +17,14 @@ namespace Amphibian.Templates
     {
         private float _radius;
         private float _opacity;
-        private Pen _pen;
+        //private Pen _pen;
 
         public DebugCueSpatial (EntityWorld world)
             : base(world)
         {
             _radius = 1f;
             _opacity = 1f;
-            _pen = Pens.White;
+            //_pen = Pens.White;
         }
 
         public override void Initialize (ContentManager contentManager)
@@ -41,8 +40,8 @@ namespace Amphibian.Templates
 
         public override void Render (SpriteBatch spriteBatch, Entity entity, Renderable position)
         {
-            Rectangle area = new Rectangle((int)position.RenderX - (int)_radius, (int)position.RenderY - (int)_radius, (int)_radius * 2, (int)_radius * 2);
-            Drawing.Draw2D.DrawRectangle(spriteBatch, area, _pen);
+            //Rectangle area = new Rectangle((int)position.RenderX - (int)_radius, (int)position.RenderY - (int)_radius, (int)_radius * 2, (int)_radius * 2);
+            //Drawing.Draw2D.DrawRectangle(spriteBatch, area, _pen);
         }
     }
 

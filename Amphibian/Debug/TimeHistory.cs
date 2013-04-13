@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework;
 using TimeRulerLibrary;
 using System.Diagnostics;
 using Microsoft.Xna.Framework.Graphics;
-using Amphibian.Drawing;
+using LilyPath;
 
 namespace Amphibian.Debug
 {
@@ -261,11 +261,6 @@ namespace Amphibian.Debug
 
             int bars = _ruler.Frame.Bars.Length;
 
-            if (_drawBatch == null)
-                _drawBatch = new DrawBatch(spriteBatch.GraphicsDevice);
-
-            //_drawBatch.Begin();
-
             for (int i = 0; i < bars; i++) {
                 for (int j = 0; j < _ruler.Frame.Bars[i].MarkCount; j++) {
                     float time = _ruler.Frame.Bars[i].Markers[j].EndTime - _ruler.Frame.Bars[i].Markers[j].BeginTime;
@@ -292,8 +287,6 @@ namespace Amphibian.Debug
                     }*/
                 }
             }
-
-            //_drawBatch.End();
 
             //solidEffect.Parameters["solidColor"].SetValue(new Vector4(1, 1, 1, .33f));
             //solidEffect.CurrentTechnique.Passes[0].Apply();

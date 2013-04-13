@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Amphibian.Drawing;
 using Amphibian.Geometry;
 
 namespace Amphibian.Collision
@@ -36,13 +35,13 @@ namespace Amphibian.Collision
             return mask;
         }
 
-        public override void Draw (SpriteBatch spriteBatch, Pen pen)
+        /*public override void Draw (SpriteBatch spriteBatch, Pen pen)
         {
             VectorFP a = (VectorFP)_pos + _p0;
             VectorFP b = (VectorFP)_pos + new VectorFP(_p0.X + _w, _p0.Y + _h);
 
             Draw2D.DrawLine(spriteBatch, (Point)a, (Point)b, pen);
-        }
+        }*/
 
         public override RectangleFP Bounds
         {

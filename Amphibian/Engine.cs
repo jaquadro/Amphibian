@@ -4,7 +4,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Amphibian.Input;
-using Amphibian.Drawing;
 using Amphibian.Debug;
 
 namespace Amphibian
@@ -69,9 +68,6 @@ namespace Amphibian
             // Default Values
             _simulationStep = 1 / 60.0;
             _prevTime = new GameTime(TimeSpan.Zero, TimeSpan.Zero);
-
-            Brushes.Initialize(_graphicsDevice);
-            Pens.Initialize(_graphicsDevice);
         }
 
         #region Properties

@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 
-namespace Amphibian.Drawing
+namespace LilyPath
 {
     public class DrawBatch
     {

@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Amphibian.Drawing;
 using Amphibian.Geometry;
 
 namespace Amphibian.Collision
@@ -135,11 +134,11 @@ namespace Amphibian.Collision
             return mask;
         }
 
-        public override void Draw (SpriteBatch spriteBatch, Pen pen)
+        /*public override void Draw (SpriteBatch spriteBatch, Pen pen)
         {
             VectorFP a = (VectorFP)_pos + _p;
             Draw2D.DrawLine(spriteBatch, new Point((int)a.X, (int)a.Y), (int)_w, 0, pen);
-        }
+        }*/
 
         public override bool TestOverlap (Mask mask)
         {

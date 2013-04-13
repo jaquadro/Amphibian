@@ -64,12 +64,12 @@ namespace Amphibian.Collision
             return mask;
         }
 
-        public override void Draw (SpriteBatch spriteBatch)
+        /*public override void Draw (SpriteBatch spriteBatch)
         {
             foreach (Mask m in _components) {
                 m.Draw(spriteBatch);
             }
-        }
+        }*/
 
         public override RectangleFP Bounds
         {

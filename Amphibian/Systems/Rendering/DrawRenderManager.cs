@@ -1,7 +1,7 @@
 ﻿using System;
-using Amphibian.Drawing;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using LilyPath;
 
 namespace Amphibian.Systems.Rendering
 {
@@ -43,7 +43,8 @@ namespace Amphibian.Systems.Rendering
             if (options == null)
                 throw new ArgumentException("renderOptions must be of type DrawRenderManagerOptions");
 
-            _drawBatch.Begin(options.BlendState,
+            _drawBatch.Begin(DrawSortMode.Deferred, 
+                options.BlendState,
                 options.SamplerState,
                 options.DepthStencilState,
                 options.RasterizerState);

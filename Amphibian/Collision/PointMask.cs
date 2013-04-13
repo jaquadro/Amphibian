@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Amphibian.Drawing;
 using Amphibian.Geometry;
 
 namespace Amphibian.Collision
@@ -32,11 +31,11 @@ namespace Amphibian.Collision
             get { return new RectangleFP(_pos.X + _point.X, _pos.Y + _point.Y, 0, 0); }
         }
 
-        public override void Draw (SpriteBatch spriteBatch)
+        /*public override void Draw (SpriteBatch spriteBatch)
         {
             VectorFP c = (VectorFP)_pos + _point;
             //Primitives2D.DrawCircle(spriteBatch, (float)c.X, (float)c.Y, 1, 4, Color.White);
-        }
+        }*/
 
         public override bool TestOverlap (Mask mask)
         {

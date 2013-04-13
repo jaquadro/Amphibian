@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Amphibian.Collision;
-using Amphibian.Drawing;
 using Amphibian.Geometry;
 using Amphibian.Debug;
 using Amphibian.EntitySystem;

@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Amphibian.Drawing
+namespace LilyPath
 {
     public class SolidColorBrush : Brush
     {

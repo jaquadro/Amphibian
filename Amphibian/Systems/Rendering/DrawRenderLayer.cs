@@ -1,6 +1,6 @@
-﻿using Amphibian.Drawing;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using LilyPath;
 
 namespace Amphibian.Systems.Rendering
 {

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Amphibian.Drawing;
 using Amphibian.Geometry;
 using Amphibian.Collision.BroadPhase;
 using Amphibian.Utility;
@@ -466,13 +465,13 @@ namespace Amphibian.Collision
             int minY = Math.Max((int)Math.Floor((float)drawArea.Top / _tileHeight), 0);
             int maxY = Math.Min((int)Math.Ceiling((float)drawArea.Bottom / _tileHeight), _height);
 
-            for (int x = minX; x < maxX; x++) {
+            /*for (int x = minX; x < maxX; x++) {
                 for (int y = minY; y < maxY; y++) {
                     if (_grid[x, y] != null) {
                         _grid[x, y].Draw(spriteBatch);
                     }
                 }
-            }
+            }*/
         }
     }
 }

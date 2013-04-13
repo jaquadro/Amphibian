@@ -1,7 +1,7 @@
 ﻿using System;
 using Amphibian.Components;
-using Amphibian.Drawing;
 using Amphibian.EntitySystem;
+using LilyPath;
 
 namespace Amphibian.Systems.Rendering
 {

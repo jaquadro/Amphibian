@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using Amphibian.Drawing;
 using Microsoft.Xna.Framework.Graphics;
 using Amphibian.Geometry;
 
@@ -50,7 +49,7 @@ namespace Amphibian.Collision
             get { return _bound; }
         }
 
-        public override void Draw (SpriteBatch spriteBatch, Pen pen)
+        /*public override void Draw (SpriteBatch spriteBatch, Pen pen)
         {
             Point a = (Point)((VectorFP)_pos + _p0);
             Point b = (Point)((VectorFP)_pos + _p1);
@@ -59,7 +58,7 @@ namespace Amphibian.Collision
             Draw2D.DrawLine(spriteBatch, a, b, pen);
             Draw2D.DrawLine(spriteBatch, b, c, pen);
             Draw2D.DrawLine(spriteBatch, a, c, pen);
-        }
+        }*/
 
         public override bool TestOverlap (Mask mask)
         {

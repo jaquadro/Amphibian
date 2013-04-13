@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 
-namespace Amphibian.Drawing
+namespace LilyPath
 {
     public enum LineCap
     {
