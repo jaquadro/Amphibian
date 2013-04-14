@@ -21,9 +21,10 @@ namespace Amphibian.Systems
         private float _animOriginX;
         private float _animOriginY;
         private float _animOriginTime;
-        private float _animDestX;
-        private float _animDestY;
+        private int _animDestX;
+        private int _animDestY;
         private float _animDestTime;
+        private bool _scrolling;
 
         #endregion
 
@@ -50,7 +51,7 @@ namespace Amphibian.Systems
 
             _lastTime = (float)_frame.Engine.GameTime.TotalGameTime.TotalSeconds;
 
-            if (_lastTime > _animOriginTime && _lastTime < _animDestTime) {
+            if (_scrolling) {
                 AnimateLine();
             }
         }
@@ -110,6 +111,11 @@ namespace Amphibian.Systems
             get { return _view; }
         }
 
+        public bool IsScrolling
+        {
+            get { return _scrolling; }
+        }
+
         #endregion
 
         public void ScrollTo (int x, int y)
@@ -117,8 +123,8 @@ namespace Amphibian.Systems
             x = x - (_view.Width >> 1);
             y = y - (_view.Height >> 1);
 
-            _view.X = Math.Min(Math.Max(x, 0), _frame.Width - _view.Width);
-            _view.Y = Math.Min(Math.Max(y, 0), _frame.Height - _view.Height);
+            _view.X = Math.Min(x, _frame.Width - _view.Width);
+            _view.Y = Math.Min(y, _frame.Height - _view.Height);
         }
 
         public void ScrollByDuration (int x, int y, float duration)
@@ -130,6 +136,7 @@ namespace Amphibian.Systems
 
             _animOriginTime = _lastTime;
             _animDestTime = _lastTime + duration;
+            _scrolling = true;
         }
 
         public void ScrollBySpeed (int x, int y, float pxPerSecond)
@@ -145,6 +152,7 @@ namespace Amphibian.Systems
 
             _animOriginTime = _lastTime;
             _animDestTime = _lastTime + (dist / pxPerSecond);
+            _scrolling = true;
         }
 
         public void CancelScroll ()
@@ -155,6 +163,7 @@ namespace Amphibian.Systems
             _animDestX = 0;
             _animDestY = 0;
             _animDestTime = 0;
+            _scrolling = false;
         }
 
         public Matrix GetTranslationMatrix ()
@@ -171,10 +180,19 @@ namespace Amphibian.Systems
             float elapsed = _lastTime - _animOriginTime;
             float normalized = elapsed / range;
 
-            float x = _animOriginX + (_animDestX - _animOriginX) * normalized;
-            float y = _animOriginY + (_animDestY - _animOriginY) * normalized;
+            if (normalized >= 1)
+            {
+                ScrollTo(_animDestX, _animDestY);
+                _scrolling = false;
+            }
+            else
+            {
 
-            ScrollTo((int)x, (int)y);
+                float x = _animOriginX + (_animDestX - _animOriginX) * normalized;
+                float y = _animOriginY + (_animDestY - _animOriginY) * normalized;
+
+                ScrollTo((int)x, (int)y);
+            }
         }
 
         #endregion

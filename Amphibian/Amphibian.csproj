@@ -228,7 +228,6 @@
     <Compile Include="Templates\DebugCue.cs" />
     <Compile Include="Utility\EnumHelper.cs" />
     <Compile Include="Utility\ResourcePool.cs" />
-    <None Include="Collision\CollisionTR.cs" />
     <Compile Include="Collision\CompositeMask.cs" />
     <Compile Include="Collision\LineMask.cs" />
     <Compile Include="Collision\Mask.cs" />
