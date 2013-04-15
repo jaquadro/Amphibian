@@ -83,7 +83,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="AmphibianGameTime.cs" />
+    <Compile Include="**\*.cs" Exclude="**\*.*.cs;bin\**;obj\**" />
+    <Compile Include="**\*.WP8.cs" />
+    <!--<Compile Include="AmphibianGameTime.cs" />
     <Compile Include="Collision\AABBMask.cs" />
     <Compile Include="Collision\AXLineMask.cs" />
     <Compile Include="Collision\AYLineMask.cs" />
@@ -230,7 +232,7 @@
     <Compile Include="Utility\Pair.cs" />
     <Compile Include="Utility\ResourcePool.cs" />
     <Compile Include="Utility\UnorderedList.cs" />
-    <Compile Include="Xna\ColorExt.cs" />
+    <Compile Include="Xna\ColorExt.cs" />-->
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">
