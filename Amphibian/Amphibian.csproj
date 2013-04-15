@@ -2,7 +2,7 @@
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ProjectGuid>{E0C66FEA-3843-458D-AAF7-779EBBE6BBBB}</ProjectGuid>
-    <ProjectTypeGuids>{6D335F3A-9D43-41b4-9D22-F6F17C4BE596};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <ProjectTypeGuids>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <OutputType>Library</OutputType>
@@ -95,6 +95,10 @@
     <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="LilyPath, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\LilyPath\LilyPath\bin\Debug\LilyPath.dll</HintPath>
+    </Reference>
     <Reference Include="MonoGame.Framework, Version=3.0.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\MonoGame\MonoGame.Framework\bin\WindowsGL\Debug\MonoGame.Framework.dll</HintPath>
@@ -140,6 +144,14 @@
     <Compile Include="Components\RemovalTimeout.cs" />
     <Compile Include="Components\Renderable.cs" />
     <Compile Include="Components\ScriptedComponent.cs" />
+    <Compile Include="Debug\GameDebugTools\DebugCommandUI.cs" />
+    <Compile Include="Debug\GameDebugTools\DebugManager.cs" />
+    <Compile Include="Debug\GameDebugTools\FpsCounter.cs" />
+    <Compile Include="Debug\GameDebugTools\IDebugCommandHost.cs" />
+    <Compile Include="Debug\GameDebugTools\KeyboardUtils.cs" />
+    <Compile Include="Debug\GameDebugTools\Layout.cs" />
+    <Compile Include="Debug\GameDebugTools\StringBuilderExtensions.cs" />
+    <Compile Include="Debug\GameDebugTools\TimeRuler.cs" />
     <Compile Include="Debug\TimeHistory.cs" />
     <Compile Include="Debug\MemoryTracker.cs" />
     <Compile Include="Input\CursorController.cs" />
@@ -261,16 +273,6 @@
     <Compile Include="Input\KeyboardController.cs" />
     <Compile Include="Geometry\FPLong.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\LilyPath\LilyPath\LilyPath.csproj">
-      <Project>{2921C80E-2B58-41C4-B834-B92A478C3631}</Project>
-      <Name>LilyPath</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GameDebugTools\GameDebugTools.csproj">
-      <Project>{BDE38033-0722-470B-9F63-E3C9486A4B33}</Project>
-      <Name>GameDebugTools</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

@@ -35,7 +35,7 @@ namespace Amphibian.Debug
         private VertexPositionColor[] _total;
         private Vector2[] _total2;
 
-        private DrawBatch _drawBatch;
+        //private DrawBatch _drawBatch;
 
         #endregion
 
