@@ -33,6 +33,8 @@ namespace Amphibian.Systems
         {
             _frame = frame;
             _view = view;
+
+            ClampToFrame = true;
         }
 
         public CameraSystem (Frame frame, int width, int height)
@@ -71,8 +73,11 @@ namespace Amphibian.Systems
             get { return _view.X + (_view.Width >> 1); }
             set
             {
-                value = value - (_view.Width >> 1);
-                _view.X = Math.Min(Math.Max(value, 0), _frame.Width - _view.Width);
+                PreviousX = X;
+
+                _view.X = value - (_view.Width >> 1);
+                if (ClampToFrame)
+                    _view.X = Math.Min(Math.Max(_view.X, 0), _frame.Width - _view.Width);
             }
         }
 
@@ -81,10 +86,16 @@ namespace Amphibian.Systems
             get { return _view.Y + (_view.Height >> 1); }
             set
             {
-                value = value - (_view.Height >> 1);
-                _view.Y = Math.Min(Math.Max(value, 0), _frame.Height - _view.Height);
+                PreviousY = Y;
+
+                _view.Y = value - (_view.Height >> 1);
+                if (ClampToFrame)
+                    _view.Y = Math.Min(Math.Max(_view.Y, 0), _frame.Height - _view.Height);
             }
         }
+
+        public int PreviousX { get; private set; }
+        public int PreviousY { get; private set; }
 
         public int Left
         {
@@ -116,15 +127,14 @@ namespace Amphibian.Systems
             get { return _scrolling; }
         }
 
+        public bool ClampToFrame { get; set; }
+
         #endregion
 
         public void ScrollTo (int x, int y)
         {
-            x = x - (_view.Width >> 1);
-            y = y - (_view.Height >> 1);
-
-            _view.X = Math.Min(x, _frame.Width - _view.Width);
-            _view.Y = Math.Min(y, _frame.Height - _view.Height);
+            X = x;
+            Y = y;
         }
 
         public void ScrollByDuration (int x, int y, float duration)
