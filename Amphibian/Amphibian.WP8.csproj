@@ -108,6 +108,14 @@
     <Compile Include="Components\Renderable.cs" />
     <Compile Include="Components\ScriptedComponent.cs" />
     <Compile Include="Debug\ADebug.cs" />
+    <Compile Include="Debug\GameDebugTools\DebugCommandUI.cs" />
+    <Compile Include="Debug\GameDebugTools\DebugManager.cs" />
+    <Compile Include="Debug\GameDebugTools\FpsCounter.cs" />
+    <Compile Include="Debug\GameDebugTools\IDebugCommandHost.cs" />
+    <Compile Include="Debug\GameDebugTools\KeyboardUtils.cs" />
+    <Compile Include="Debug\GameDebugTools\Layout.cs" />
+    <Compile Include="Debug\GameDebugTools\StringBuilderExtensions.cs" />
+    <Compile Include="Debug\GameDebugTools\TimeRuler.cs" />
     <Compile Include="Debug\MemoryTracker.cs" />
     <Compile Include="Debug\Performance.cs" />
     <Compile Include="Debug\TimeHistory.cs" />
@@ -225,17 +233,14 @@
     <Compile Include="Xna\ColorExt.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="LilyPath">
-      <HintPath>..\..\LilyPath\LilyPath\bin\ARM\Debug\LilyPath.dll</HintPath>
-    </Reference>
     <Reference Include="MonoGame.Framework">
       <HintPath>..\..\MonoGame\MonoGame.Framework\bin\WindowsPhone\ARM\Debug\MonoGame.Framework.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GameDebugTools\GameDebugTools.WP8.csproj">
-      <Project>{E5E3B85D-879E-4383-85A8-F352D95CB0EE}</Project>
-      <Name>GameDebugTools.WP8</Name>
+    <ProjectReference Include="..\..\LilyPath\LilyPath\LilyPath.WP8.csproj">
+      <Project>{0C66A57B-593E-40DB-A11C-A7D99A5EDC55}</Project>
+      <Name>LilyPath.WP8</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).$(TargetFrameworkVersion).Overrides.targets" />
