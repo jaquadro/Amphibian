@@ -49,9 +49,21 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="MonoGame.Framework, Version=3.0.1.0, Culture=neutral">
-      <Private>False</Private>
-    </Reference>
     <Reference Include="System" />
+    <Reference Include="GamepadBridge">
+      <HintPath>..\..\..\github\MonoGame\MonoGame.Framework\bin\MacOS\Release\GamepadBridge.dll</HintPath>
+    </Reference>
+    <Reference Include="Lidgren.Network">
+      <HintPath>..\..\..\github\MonoGame\MonoGame.Framework\bin\MacOS\Release\Lidgren.Network.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoGame.Framework">
+      <HintPath>..\..\..\github\MonoGame\MonoGame.Framework\bin\MacOS\Release\MonoGame.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoMac">
+      <HintPath>..\..\..\github\MonoGame\MonoGame.Framework\bin\MacOS\Release\MonoMac.dll</HintPath>
+    </Reference>
+    <Reference Include="Tao.Sdl">
+      <HintPath>..\..\..\github\MonoGame\MonoGame.Framework\bin\MacOS\Release\Tao.Sdl.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>

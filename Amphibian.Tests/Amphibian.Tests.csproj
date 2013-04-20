@@ -81,4 +81,10 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <ItemGroup>
+    <ProjectReference Include="..\Amphibian\Amphibian.MacOS.csproj">
+      <Project>{3AF297F3-74F4-4B51-8EB3-D4F210400038}</Project>
+      <Name>Amphibian.MacOS</Name>
+    </ProjectReference>
+  </ItemGroup>
 </Project>
