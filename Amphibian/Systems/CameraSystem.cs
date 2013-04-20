@@ -137,6 +137,14 @@ namespace Amphibian.Systems
             Y = y;
         }
 
+        public void JumpTo (int x, int y)
+        {
+            X = x;
+            Y = y;
+            PreviousX = X;
+            PreviousY = Y;
+        }
+
         public void ScrollByDuration (int x, int y, float duration)
         {
             _animOriginX = X;
