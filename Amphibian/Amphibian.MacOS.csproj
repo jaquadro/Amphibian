@@ -15,7 +15,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;XNA;</DefineConstants>
+    <DefineConstants>DEBUG;XNA;TRACE;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
@@ -27,7 +27,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
-    <DefineConstants>XNA;</DefineConstants>
+    <DefineConstants>XNA;TRACE;</DefineConstants>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -173,13 +173,25 @@
     <Compile Include="Xna\ColorExt.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="MonoGame.Framework, Version=3.0.1.0, Culture=neutral">
-      <Private>False</Private>
-    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System" />
     <Reference Include="LilyPath.MacOS">
       <HintPath>..\..\..\jmitchell\LilyPath\LilyPath\bin\Debug\LilyPath.MacOS.dll</HintPath>
+    </Reference>
+    <Reference Include="GamepadBridge">
+      <HintPath>..\..\..\github\MonoGame\MonoGame.Framework\bin\MacOS\Release\GamepadBridge.dll</HintPath>
+    </Reference>
+    <Reference Include="Lidgren.Network">
+      <HintPath>..\..\..\github\MonoGame\MonoGame.Framework\bin\MacOS\Release\Lidgren.Network.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoGame.Framework">
+      <HintPath>..\..\..\github\MonoGame\MonoGame.Framework\bin\MacOS\Release\MonoGame.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoMac">
+      <HintPath>..\..\..\github\MonoGame\MonoGame.Framework\bin\MacOS\Release\MonoMac.dll</HintPath>
+    </Reference>
+    <Reference Include="Tao.Sdl">
+      <HintPath>..\..\..\github\MonoGame\MonoGame.Framework\bin\MacOS\Release\Tao.Sdl.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
