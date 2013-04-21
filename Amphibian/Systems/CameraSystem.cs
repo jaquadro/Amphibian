@@ -164,8 +164,8 @@ namespace Amphibian.Systems
             _animDestX = x;
             _animDestY = y;
 
-            Vector2 p1 = new Vector2(_animOriginX);
-            Vector2 p2 = new Vector2(_animOriginY);
+            Vector2 p1 = new Vector2(_animOriginX, _animOriginY);
+            Vector2 p2 = new Vector2(_animDestX, _animDestY);
             float dist = Vector2.Distance(p1, p2);
 
             _animOriginTime = _lastTime;
