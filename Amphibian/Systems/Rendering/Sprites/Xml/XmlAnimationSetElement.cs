@@ -20,6 +20,7 @@ namespace Amphibian.Systems.Rendering.Sprites.Xml
         }
 
         public XmlAnimationSetElement (IAnimationSetElement animationSetElement)
+            : this()
         {
             if (animationSetElement != null) {
                 Name = animationSetElement.Name;

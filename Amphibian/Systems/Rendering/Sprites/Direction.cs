@@ -1,4 +1,5 @@
 ﻿using System;
+using Amphibian.Utility;
 
 namespace Amphibian.Systems.Rendering.Sprites
 {
