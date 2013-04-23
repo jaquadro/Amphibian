@@ -2,6 +2,8 @@
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
+using Amphibian.Systems.Rendering.Common.Xml;
+using Amphibian.Systems.Rendering.Common;
 
 namespace Amphibian.Systems.Rendering.Sprites.Xml
 {

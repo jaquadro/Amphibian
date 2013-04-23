@@ -1,8 +1,9 @@
 ﻿using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
+using Amphibian.Systems.Rendering.Common.Xml;
 
-namespace Amphibian.Systems.Rendering.Sprites.Xml
+namespace Amphibian.Systems.Rendering.Spine.Xml
 {
     public class XmlSkeletonDefElement : SkeletonDefElement, IXmlSerializable
     {

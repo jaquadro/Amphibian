@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Spine;
-using Amphibian.EntitySystem;
-using Amphibian.Components;
-using Microsoft.Xna.Framework.Content;
-using Amphibian.Systems.Rendering.Sprites;
-using Microsoft.Xna.Framework;
 using System.IO;
 using System.Xml;
-using Amphibian.Systems.Rendering.Sprites.Xml;
+using Amphibian.Components;
+using Amphibian.EntitySystem;
+using Amphibian.Systems.Rendering.Spine;
+using Amphibian.Systems.Rendering.Spine.Xml;
+using Amphibian.Systems.Rendering.Sprites;
+using Microsoft.Xna.Framework;
+using Spine;
 
 namespace Amphibian.Systems.Rendering.Spatials
 {

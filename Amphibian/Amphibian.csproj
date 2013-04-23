@@ -158,6 +158,7 @@
     <Compile Include="Systems\Particle\ParticleEmitter.cs" />
     <Compile Include="Systems\Particle\Range.cs" />
     <Compile Include="Systems\Particle\StandardEmitter.cs" />
+    <Compile Include="Systems\Rendering\Common\Elements.cs" />
     <Compile Include="Systems\Rendering\DrawRenderLayer.cs" />
     <Compile Include="Systems\Rendering\DrawRenderManager.cs" />
     <Compile Include="Systems\Rendering\DrawSpatial.cs" />
@@ -168,6 +169,7 @@
     <Compile Include="Systems\Rendering\SpineRenderLayer.cs" />
     <Compile Include="Systems\Rendering\SpineRenderManager.cs" />
     <Compile Include="Systems\Rendering\SpineSpatial.cs" />
+    <Compile Include="Systems\Rendering\Spine\Elements.cs" />
     <Compile Include="Systems\Rendering\SpriteRenderLayer.cs" />
     <Compile Include="Systems\Rendering\SpriteRenderManager.cs" />
     <Compile Include="Systems\Rendering\SpriteSpatial.cs" />
@@ -175,7 +177,7 @@
     <Compile Include="Systems\Rendering\Sprites\DirectionalAnimatedSpriteElement.cs" />
     <Compile Include="Systems\Rendering\Sprites\DirectionalAnimationSetElement.cs" />
     <Compile Include="Systems\Rendering\Sprites\Elements.cs" />
-    <Compile Include="Systems\Rendering\Sprites\SkeletonDefElement.cs" />
+    <Compile Include="Systems\Rendering\Spine\SkeletonDefElement.cs" />
     <Compile Include="Systems\Rendering\Sprites\StaticSpriteElement.cs" />
     <Compile Include="Systems\Rendering\Sprites\Xml\XmlAnimatedSpriteElement.cs" />
     <Compile Include="Systems\Rendering\Sprites\Xml\XmlAnimatedSpriteInstance.cs" />
@@ -183,12 +185,12 @@
     <Compile Include="Systems\Rendering\Sprites\Xml\XmlDirectionalAnimatedSpriteInstance.cs" />
     <Compile Include="Systems\Rendering\Sprites\Xml\XmlDirectionalAnimationSetElement.cs" />
     <Compile Include="Systems\Rendering\Sprites\Xml\XmlDirectionalAnimationSetInstance.cs" />
-    <Compile Include="Systems\Rendering\Sprites\Xml\XmlSkeletonDefElement.cs" />
-    <Compile Include="Systems\Rendering\Sprites\Xml\XmlSpineAnimationMapElement.cs" />
-    <Compile Include="Systems\Rendering\Sprites\Xml\XmlSpineAnimationSetElement.cs" />
-    <Compile Include="Systems\Rendering\Sprites\Xml\XmlSpineAtlasElement.cs" />
-    <Compile Include="Systems\Rendering\Sprites\Xml\XmlSpineDirectionElement.cs" />
-    <Compile Include="Systems\Rendering\Sprites\Xml\XmlSpineSkeletonElement.cs" />
+    <Compile Include="Systems\Rendering\Spine\Xml\XmlSkeletonDefElement.cs" />
+    <Compile Include="Systems\Rendering\Spine\Xml\XmlSpineAnimationMapElement.cs" />
+    <Compile Include="Systems\Rendering\Spine\Xml\XmlSpineAnimationSetElement.cs" />
+    <Compile Include="Systems\Rendering\Spine\Xml\XmlSpineAtlasElement.cs" />
+    <Compile Include="Systems\Rendering\Spine\Xml\XmlSpineDirectionElement.cs" />
+    <Compile Include="Systems\Rendering\Spine\Xml\XmlSpineSkeletonElement.cs" />
     <Compile Include="Systems\Rendering\Sprites\Xml\XmlStaticSpriteElement.cs" />
     <Compile Include="Systems\Rendering\Sprites\Xml\XmlStaticSpriteInstance.cs" />
     <Compile Include="ThirdParty\Spine\Animation.cs" />
@@ -255,8 +257,8 @@
     <Compile Include="Systems\Rendering\Sprites\SpriteInfo.cs" />
     <Compile Include="Systems\Rendering\Sprites\StaticSprite.cs" />
     <Compile Include="Systems\Rendering\Sprites\StaticSpriteDefinition.cs" />
-    <Compile Include="Systems\Rendering\Sprites\Xml\XmlActivityElement.cs" />
-    <Compile Include="Systems\Rendering\Sprites\Xml\XmlActivityMapElement.cs" />
+    <Compile Include="Systems\Rendering\Common\Xml\XmlActivityElement.cs" />
+    <Compile Include="Systems\Rendering\Common\Xml\XmlActivityMapElement.cs" />
     <Compile Include="Systems\Rendering\Sprites\Xml\XmlAnimationElement.cs" />
     <Compile Include="Systems\Rendering\Sprites\Xml\XmlAnimationSetElement.cs" />
     <Compile Include="Systems\Rendering\Sprites\Xml\XmlDirectionElement.cs" />

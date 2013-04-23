@@ -2,7 +2,7 @@
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
-namespace Amphibian.Systems.Rendering.Sprites.Xml
+namespace Amphibian.Systems.Rendering.Spine.Xml
 {
     public class XmlSpineSkeletonElement : ISpineSkeletonElement, IXmlSerializable
     {

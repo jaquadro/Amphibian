@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Amphibian.Systems.Rendering.Common;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 

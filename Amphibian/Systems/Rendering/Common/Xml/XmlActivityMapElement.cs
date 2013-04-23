@@ -3,7 +3,7 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
-namespace Amphibian.Systems.Rendering.Sprites.Xml
+namespace Amphibian.Systems.Rendering.Common.Xml
 {
     public class XmlActivityMapElement : IActivityMapElement, IXmlSerializable
     {
