@@ -164,6 +164,10 @@
     <Compile Include="Systems\Rendering\RenderLayer.cs" />
     <Compile Include="Systems\Rendering\RenderManager.cs" />
     <Compile Include="Systems\Rendering\Spatials\RenderEffects.cs" />
+    <Compile Include="Systems\Rendering\Spatials\SkeletonSpatial.cs" />
+    <Compile Include="Systems\Rendering\SpineRenderLayer.cs" />
+    <Compile Include="Systems\Rendering\SpineRenderManager.cs" />
+    <Compile Include="Systems\Rendering\SpineSpatial.cs" />
     <Compile Include="Systems\Rendering\SpriteRenderLayer.cs" />
     <Compile Include="Systems\Rendering\SpriteRenderManager.cs" />
     <Compile Include="Systems\Rendering\SpriteSpatial.cs" />
@@ -171,6 +175,7 @@
     <Compile Include="Systems\Rendering\Sprites\DirectionalAnimatedSpriteElement.cs" />
     <Compile Include="Systems\Rendering\Sprites\DirectionalAnimationSetElement.cs" />
     <Compile Include="Systems\Rendering\Sprites\Elements.cs" />
+    <Compile Include="Systems\Rendering\Sprites\SkeletonDefElement.cs" />
     <Compile Include="Systems\Rendering\Sprites\StaticSpriteElement.cs" />
     <Compile Include="Systems\Rendering\Sprites\Xml\XmlAnimatedSpriteElement.cs" />
     <Compile Include="Systems\Rendering\Sprites\Xml\XmlAnimatedSpriteInstance.cs" />
@@ -178,8 +183,36 @@
     <Compile Include="Systems\Rendering\Sprites\Xml\XmlDirectionalAnimatedSpriteInstance.cs" />
     <Compile Include="Systems\Rendering\Sprites\Xml\XmlDirectionalAnimationSetElement.cs" />
     <Compile Include="Systems\Rendering\Sprites\Xml\XmlDirectionalAnimationSetInstance.cs" />
+    <Compile Include="Systems\Rendering\Sprites\Xml\XmlSkeletonDefElement.cs" />
+    <Compile Include="Systems\Rendering\Sprites\Xml\XmlSpineAnimationMapElement.cs" />
+    <Compile Include="Systems\Rendering\Sprites\Xml\XmlSpineAnimationSetElement.cs" />
+    <Compile Include="Systems\Rendering\Sprites\Xml\XmlSpineAtlasElement.cs" />
+    <Compile Include="Systems\Rendering\Sprites\Xml\XmlSpineDirectionElement.cs" />
+    <Compile Include="Systems\Rendering\Sprites\Xml\XmlSpineSkeletonElement.cs" />
     <Compile Include="Systems\Rendering\Sprites\Xml\XmlStaticSpriteElement.cs" />
     <Compile Include="Systems\Rendering\Sprites\Xml\XmlStaticSpriteInstance.cs" />
+    <Compile Include="ThirdParty\Spine\Animation.cs" />
+    <Compile Include="ThirdParty\Spine\AnimationState.cs" />
+    <Compile Include="ThirdParty\Spine\AnimationStateData.cs" />
+    <Compile Include="ThirdParty\Spine\Atlas.cs" />
+    <Compile Include="ThirdParty\Spine\Attachments\AtlasAttachmentLoader.cs" />
+    <Compile Include="ThirdParty\Spine\Attachments\Attachment.cs" />
+    <Compile Include="ThirdParty\Spine\Attachments\AttachmentLoader.cs" />
+    <Compile Include="ThirdParty\Spine\Attachments\AttachmentType.cs" />
+    <Compile Include="ThirdParty\Spine\Attachments\RegionAttachment.cs" />
+    <Compile Include="ThirdParty\Spine\Bone.cs" />
+    <Compile Include="ThirdParty\Spine\BoneData.cs" />
+    <Compile Include="ThirdParty\Spine\Json.cs" />
+    <Compile Include="ThirdParty\Spine\Skeleton.cs" />
+    <Compile Include="ThirdParty\Spine\SkeletonData.cs" />
+    <Compile Include="ThirdParty\Spine\SkeletonJson.cs" />
+    <Compile Include="ThirdParty\Spine\SkeletonRenderer.cs" />
+    <Compile Include="ThirdParty\Spine\Skin.cs" />
+    <Compile Include="ThirdParty\Spine\Slot.cs" />
+    <Compile Include="ThirdParty\Spine\SlotData.cs" />
+    <Compile Include="ThirdParty\Spine\SpriteBatcher.cs" />
+    <Compile Include="ThirdParty\Spine\Util.cs" />
+    <Compile Include="ThirdParty\Spine\XnaTextureLoader.cs" />
     <Compile Include="Utility\IntPair.cs" />
     <Compile Include="Utility\Pair.cs" />
     <Compile Include="Xna\ColorExt.cs" />
@@ -276,6 +309,7 @@
       <Name>LilyPath</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
   <!--

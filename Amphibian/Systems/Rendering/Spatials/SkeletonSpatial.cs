@@ -81,15 +81,24 @@ namespace Amphibian.Systems.Rendering.Spatials
             }
 
             if (activityCom != null && activityCom.Activity != _activity) {
+                _activity = activityCom.Activity;
+
                 string animationKey = null;
                 if (!_record.ActivityMap.TryGetValue(activityCom.Activity, out animationKey))
                     animationKey = _record.DefaultAnimation;
 
                 string animation = "";
+                bool flipX = false;
+                bool flipY = false;
+
                 if (animationKey != null) {
                     if (directionCom != null && _record.DirectedAnimationMap.ContainsKey(animationKey)) {
-                        if (_record.DirectedAnimationMap[animationKey].ContainsKey(directionCom.Direction))
-                            animation = _record.DirectedAnimationMap[animationKey][directionCom.Direction].Animation;
+                        if (_record.DirectedAnimationMap[animationKey].ContainsKey(directionCom.Direction)) {
+                            ISpineDirectionElement element = _record.DirectedAnimationMap[animationKey][directionCom.Direction];
+                            animation = element.Animation;
+                            flipX = element.FlipX;
+                            flipY = element.FlipY;
+                        }
                         else if (_record.DefaultAnimationMap.ContainsKey(animationKey))
                             animation = _record.DefaultAnimationMap[animationKey];
                     }
@@ -107,10 +116,13 @@ namespace Amphibian.Systems.Rendering.Spatials
                     _time = 0;
                 }
 
-                if (_animation != null) {
-                    _time += (float)World.GameTime.ElapsedGameTime.TotalSeconds;
-                    _animation.Apply(_skeleton, _time, true);
-                }
+                _skeleton.FlipX = flipX;
+                _skeleton.FlipY = flipY;
+            }
+
+            if (_animation != null) {
+                _time += (float)World.GameTime.ElapsedGameTime.TotalSeconds;
+                _animation.Apply(_skeleton, _time, true);
             }
 
             _skeleton.RootBone.X = (float)position.RenderX;
