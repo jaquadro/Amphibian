@@ -150,6 +150,7 @@
     <Compile Include="Debug\GameDebugTools\TimeRuler.cs" />
     <Compile Include="Debug\TimeHistory.cs" />
     <Compile Include="Debug\MemoryTracker.cs" />
+    <Compile Include="EntitySystem\EventElement.cs" />
     <Compile Include="Input\CursorController.cs" />
     <Compile Include="Input\MouseController.cs" />
     <Compile Include="Systems\BehaviorSystem.cs" />

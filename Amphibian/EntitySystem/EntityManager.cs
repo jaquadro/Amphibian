@@ -6,7 +6,6 @@ using Amphibian.Utility;
 
 namespace Amphibian.EntitySystem
 {
-
     public sealed class EntityManager
     {
         private static int _nextId = 1;
@@ -49,6 +48,9 @@ namespace Amphibian.EntitySystem
 
         #endregion
 
+        private Dictionary<ComponentType, EventElement> _comAddedEvents;
+        private Dictionary<ComponentType, EventElement> _comRemovedEvents;
+
         public EntityManager (EntityWorld world)
         {
             _world = world;
@@ -61,6 +63,9 @@ namespace Amphibian.EntitySystem
             _entitiesByComponent = new UnorderedList<UnorderedList<Entity>>();
             _componentsByEntity = new UnorderedList<UnorderedList<IComponent>>();
 
+            _comAddedEvents = new Dictionary<ComponentType, EventElement>();
+            _comRemovedEvents = new Dictionary<ComponentType, EventElement>();
+
             ComponentTypeManager.ComponentTypeAdded += ComponentTypeManager_ComponentTypeAdded;
         }
 
@@ -72,6 +77,7 @@ namespace Amphibian.EntitySystem
         public event Action<Entity, IComponent> AddedComponent;
         public event Action<Entity> RemovedEntity;
         public event Action<Entity, IComponent> RemovedComponent;
+
 
         private void OnAddedEntity (Entity e)
         {
@@ -203,6 +209,10 @@ namespace Amphibian.EntitySystem
                 entList.Set(index, entity);
 
                 OnAddedComponent(entity, component);
+
+                EventElement element;
+                if (_comAddedEvents.TryGetValue(ctype, out element))
+                    element.Dispatch(entity, component);
             }
         }
 
@@ -233,8 +243,13 @@ namespace Amphibian.EntitySystem
                     }
                 }
 
-                if (component != null)
+                if (component != null) {
                     OnRemovedComponent(entity, component);
+
+                    EventElement element;
+                    if (_comRemovedEvents.TryGetValue(ctype, out element))
+                        element.Dispatch(entity, component);
+                }
             }
         }
 
@@ -310,6 +325,70 @@ namespace Amphibian.EntitySystem
                     _nextId = 1;
                 return _nextId;
             }
+        }
+
+        public void RegisterComponentAddedHandler<T> (Action<Entity, T> handler)
+            where T : class, IComponent
+        {
+            ComponentType ctype = ComponentTypeManager.GetTypeFor<T>();
+            EventElement element;
+            if (!_comAddedEvents.TryGetValue(ctype, out element)) {
+                element = new EventElement<T>();
+                _comAddedEvents.Add(ctype, element);
+            }
+
+            EventElement<T> typedElement = element as EventElement<T>;
+            if (typedElement == null)
+                throw new InvalidOperationException("Unexpected EventElement type for component type T");
+
+            typedElement += handler;
+        }
+
+        public void UnregisterComponentAddedHandler<T> (Action<Entity, T> handler)
+            where T : class, IComponent
+        {
+            ComponentType ctype = ComponentTypeManager.GetTypeFor<T>();
+            EventElement element;
+            if (!_comAddedEvents.TryGetValue(ctype, out element))
+                return;
+
+            EventElement<T> typedElement = element as EventElement<T>;
+            if (typedElement == null)
+                throw new InvalidOperationException("Unexpected EventElement type for component type T");
+
+            typedElement -= handler;
+        }
+
+        public void RegisterComponentRemovedHandler<T> (Action<Entity, T> handler)
+            where T : class, IComponent
+        {
+            ComponentType ctype = ComponentTypeManager.GetTypeFor<T>();
+            EventElement element;
+            if (!_comRemovedEvents.TryGetValue(ctype, out element)) {
+                element = new EventElement<T>();
+                _comRemovedEvents.Add(ctype, element);
+            }
+
+            EventElement<T> typedElement = element as EventElement<T>;
+            if (typedElement == null)
+                throw new InvalidOperationException("Unexpected EventElement type for component type T");
+
+            typedElement += handler;
+        }
+
+        public void UnregisterComponentRemovedHandler<T> (Action<Entity, T> handler)
+            where T : class, IComponent
+        {
+            ComponentType ctype = ComponentTypeManager.GetTypeFor<T>();
+            EventElement element;
+            if (!_comRemovedEvents.TryGetValue(ctype, out element))
+                return;
+
+            EventElement<T> typedElement = element as EventElement<T>;
+            if (typedElement == null)
+                throw new InvalidOperationException("Unexpected EventElement type for component type T");
+
+            typedElement -= handler;
         }
 
         #region Enumerators
