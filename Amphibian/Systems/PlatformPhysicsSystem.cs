@@ -127,20 +127,12 @@ namespace Amphibian.Systems
 
         private void Process (Entity entity)
         {
-            PlatformPhysics physicsCom = null;
-            Collidable collisionCom = null;
-            Position positionCom = null;
+            PlatformPhysics physicsCom;
+            Collidable collisionCom;
+            Position positionCom;
 
-            foreach (IComponent com in EntityManager.GetComponents(entity)) {
-                if (com is PlatformPhysics)
-                    physicsCom = com as PlatformPhysics;
-                if (com is Collidable)
-                    collisionCom = com as Collidable;
-                if (com is Position)
-                    positionCom = com as Position;
-            }
-
-            if (physicsCom == null || collisionCom == null || positionCom == null)
+            if (!EntityManager.GetComponent<PlatformPhysics, Collidable, Position>(entity, 
+                out physicsCom, out collisionCom, out positionCom))
                 return;
 
             float time = (float)SystemManager.World.GameTime.ElapsedGameTime.TotalSeconds * 60f;

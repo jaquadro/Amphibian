@@ -97,21 +97,14 @@ namespace Amphibian.Systems
             if (_controller == null)
                 return;
 
-            PlatformPhysics physicsCom = null;
-            DirectionComponent directionCom = null;
-            ActivityComponent activityCom = null;
+            PlatformPhysics physicsCom;
+            DirectionComponent directionCom;
+            ActivityComponent activityCom;
 
-            foreach (IComponent com in EntityManager.GetComponents(entity)) {
-                if (com is PlatformPhysics)
-                    physicsCom = com as PlatformPhysics;
-                else if (com is DirectionComponent)
-                    directionCom = com as DirectionComponent;
-                else if (com is ActivityComponent)
-                    activityCom = com as ActivityComponent;
-            }
-
-            if (physicsCom == null)
+            if (!EntityManager.GetComponent<PlatformPhysics>(entity, out physicsCom))
                 return;
+
+            EntityManager.GetComponent<DirectionComponent, ActivityComponent>(entity, out directionCom, out activityCom);
 
             HandleInput(physicsCom, directionCom);
 

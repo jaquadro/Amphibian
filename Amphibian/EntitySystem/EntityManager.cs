@@ -271,9 +271,111 @@ namespace Amphibian.EntitySystem
         }
 
         public T GetComponent<T>(Entity entity)
-            where T : IComponent
+            where T : class, IComponent
         {
-            return (T)GetComponent(entity, typeof(T));
+            return GetComponent(entity, typeof(T)) as T;
+        }
+
+        private static List<Type> _typeBuffer = new List<Type>();
+
+
+        // Assumption: entity is valid and  _typeBuffer has been updated to match the entity's current component types
+        private bool GetComponent<T> (Entity entity, out T com, UnorderedList<IComponent> comList)
+            where T : class, IComponent
+        {
+            for (int i = 0; i < comList.Count; i++) {
+                if (_typeBuffer[i] == typeof(T)) {
+                    com = comList[i] as T;
+                    return true;
+                }
+            }
+
+            com = null;
+            return false;
+        }
+
+        public bool GetComponent<T1> (Entity entity, out T1 com1)
+            where T1 : class, IComponent
+        {
+            if (IsValid(entity)) {
+                UnorderedList<IComponent> comList = _componentsByEntity[entity.Index];
+
+                for (int i = 0; i < comList.Count; i++) {
+                    if (comList[i].GetType() == typeof(T1)) {
+                        com1 = comList[i] as T1;
+                        return true;
+                    }
+                }
+            }
+
+            com1 = null;
+            return false;
+        }
+
+        public bool GetComponent<T1, T2> (Entity entity, out T1 com1, out T2 com2)
+            where T1 : class, IComponent
+            where T2 : class, IComponent
+        {
+            if (IsValid(entity)) {
+                UnorderedList<IComponent> comList = _componentsByEntity[entity.Index];
+
+                for (int i = 0; i < comList.Count; i++)
+                    _typeBuffer[i] = comList[i].GetType();
+
+                return GetComponent<T1>(entity, out com1, comList) &
+                    GetComponent<T2>(entity, out com2, comList);
+            }
+
+            com1 = null;
+            com2 = null;
+            return false;
+        }
+
+        public bool GetComponent<T1, T2, T3> (Entity entity, out T1 com1, out T2 com2, out T3 com3)
+            where T1 : class, IComponent
+            where T2 : class, IComponent
+            where T3 : class, IComponent
+        {
+            if (IsValid(entity)) {
+                UnorderedList<IComponent> comList = _componentsByEntity[entity.Index];
+
+                for (int i = 0; i < comList.Count; i++)
+                    _typeBuffer[i] = comList[i].GetType();
+
+                return GetComponent<T1>(entity, out com1, comList) &
+                    GetComponent<T2>(entity, out com2, comList) &
+                    GetComponent<T3>(entity, out com3, comList);
+            }
+
+            com1 = null;
+            com2 = null;
+            com3 = null;
+            return false;
+        }
+
+        public bool GetComponent<T1, T2, T3, T4> (Entity entity, out T1 com1, out T2 com2, out T3 com3, out T4 com4)
+            where T1 : class, IComponent
+            where T2 : class, IComponent
+            where T3 : class, IComponent
+            where T4 : class, IComponent
+        {
+            if (IsValid(entity)) {
+                UnorderedList<IComponent> comList = _componentsByEntity[entity.Index];
+
+                for (int i = 0; i < comList.Count; i++)
+                    _typeBuffer[i] = comList[i].GetType();
+
+                return GetComponent<T1>(entity, out com1, comList) &
+                    GetComponent<T2>(entity, out com2, comList) &
+                    GetComponent<T3>(entity, out com3, comList) &
+                    GetComponent<T4>(entity, out com4, comList);
+            }
+
+            com1 = null;
+            com2 = null;
+            com3 = null;
+            com4 = null;
+            return false;
         }
 
         public bool HasComponent (Entity entity, Type componentType)
