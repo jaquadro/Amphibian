@@ -71,7 +71,7 @@ namespace Amphibian.Input
         private Dictionary<TActionSet, bool> _released;
 
         private PlayerIndex _player;
-        private float _stickTolerance = 0.10f;
+        private float _stickTolerance = 0.27f;
 
         static GamePadController ()
         {
