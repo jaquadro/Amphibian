@@ -276,7 +276,7 @@ namespace Amphibian.EntitySystem
             return GetComponent(entity, typeof(T)) as T;
         }
 
-        private static List<Type> _typeBuffer = new List<Type>();
+        private static List<Type> _typeBuffer;
 
 
         // Assumption: entity is valid and  _typeBuffer has been updated to match the entity's current component types
@@ -491,6 +491,13 @@ namespace Amphibian.EntitySystem
                 throw new InvalidOperationException("Unexpected EventElement type for component type T");
 
             typedElement -= handler;
+        }
+
+        static EntityManager ()
+        {
+            _typeBuffer = new List<Type>(32);
+            for (int i = 0; i < 32; i++)
+                _typeBuffer.Add(null);
         }
 
         #region Enumerators

@@ -120,8 +120,8 @@ namespace Amphibian.Systems
                 else if (physicsCom.VelocityY > 0)
                     activityCom.Activity = "Falling";
 
-                if (physicsCom.Pusher.TargetEntity != Entity.None)
-                    activityCom.Activity = "Pushing";
+                //if (physicsCom.Pusher.TargetEntity != Entity.None)
+                //    activityCom.Activity = "Pushing";
             }
         }
 
