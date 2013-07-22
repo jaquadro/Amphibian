@@ -36,4 +36,39 @@ namespace Amphibian.EntitySystem
             return kElement;
         }
     }
+
+    public abstract class SystemElement
+    {
+        public abstract void Dispatch (BaseSystem sys);
+    }
+
+    public class SystemElement<T> : SystemElement
+        where T : BaseSystem
+    {
+        protected event Action<T> eventdelegate;
+
+        public override void Dispatch (BaseSystem sys)
+        {
+            if (eventdelegate != null)
+                eventdelegate(sys as T);
+        }
+
+        public void Dispatch (T sys)
+        {
+            if (eventdelegate != null)
+                eventdelegate(sys);
+        }
+
+        public static SystemElement<T> operator + (SystemElement<T> kElement, Action<T> kDelegate)
+        {
+            kElement.eventdelegate += kDelegate;
+            return kElement;
+        }
+
+        public static SystemElement<T> operator - (SystemElement<T> kElement, Action<T> kDelegate)
+        {
+            kElement.eventdelegate -= kDelegate;
+            return kElement;
+        }
+    }
 }

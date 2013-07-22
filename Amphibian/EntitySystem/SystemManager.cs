@@ -48,6 +48,8 @@ namespace Amphibian.EntitySystem
         private List<BaseSystem> _drawSystems;
         private List<BaseSystem> _updateSystems;
 
+        private Dictionary<Type, SystemElement> _sysAddedEvents;
+
         public event Action<BaseSystem> SystemAdded;
 
         public SystemManager (EntityWorld world)
@@ -57,6 +59,8 @@ namespace Amphibian.EntitySystem
             _systems = new Dictionary<Type, BaseSystem>();
             _drawSystems = new List<BaseSystem>();
             _updateSystems = new List<BaseSystem>();
+
+            _sysAddedEvents = new Dictionary<Type, SystemElement>();
         }
 
         public EntityWorld World
@@ -107,6 +111,10 @@ namespace Amphibian.EntitySystem
             system.Initialize();
 
             OnSystemAdded(system);
+
+            SystemElement element;
+            if (_sysAddedEvents.TryGetValue(systemType, out element))
+                element.Dispatch(system);
         }
 
         public BaseSystem GetSystem (Type systemType) {
@@ -153,6 +161,51 @@ namespace Amphibian.EntitySystem
                     yield return system;
                 }
             }
+        }
+
+        public void RegisterSystemAddedHandler<T> (Action<T> handler)
+            where T : BaseSystem
+        {
+            Type sysType = typeof(T);
+
+            SystemElement element;
+            if (!_sysAddedEvents.TryGetValue(sysType, out element)) {
+                element = new SystemElement<T>();
+                _sysAddedEvents.Add(sysType, element);
+            }
+
+            SystemElement<T> typedElement = element as SystemElement<T>;
+            if (typedElement == null)
+                throw new InvalidOperationException("Unexpected EventElement type for system type T");
+
+            typedElement += handler;
+        }
+
+        public void UnregisterComponentAddedHandler<T> (Action<T> handler)
+            where T : BaseSystem
+        {
+            Type sysType = typeof(T);
+
+            SystemElement element;
+            if (!_sysAddedEvents.TryGetValue(sysType, out element))
+                return;
+
+            SystemElement<T> typedElement = element as SystemElement<T>;
+            if (typedElement == null)
+                throw new InvalidOperationException("Unexpected EventElement type for system type T");
+
+            typedElement -= handler;
+        }
+
+        public T GetSystemOrRegisterHandler<T> (Action<T> handler)
+            where T : BaseSystem
+        {
+            T system = GetSystem<T>();
+            if (system != null)
+                return system;
+
+            RegisterSystemAddedHandler<T>(handler);
+            return null;
         }
     }
 }

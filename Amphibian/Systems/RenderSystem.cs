@@ -56,6 +56,11 @@ namespace Amphibian.Systems
             }
         }
 
+        public void ClearLayer (int index)
+        {
+            _layers.Remove(index);
+        }
+
         protected internal override void Initialize ()
         {
             _cameraSystem = SystemManager.GetSystem(typeof(CameraSystem)) as CameraSystem;
