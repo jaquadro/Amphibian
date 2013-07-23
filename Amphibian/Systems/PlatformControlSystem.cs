@@ -45,68 +45,35 @@ namespace Amphibian.Systems
         }
     }
 
-    public class PlatformControlSystem : TagSystem
+    public class PlatformControlSystem : ProcessingSystem
     {
-        private static string _tag = "platform_control";
-
-        private string _controllerName;
-        private ButtonController<PlatformAction> _controller;
-
-        public static string Tag
-        {
-            get { return _tag; }
-        }
-
         public PlatformControlSystem ()
-            : base(_tag)
+            : base(typeof(InputComponent))
+        { }
+
+        protected override void ProcessEntities (EntityManager.EntityEnumerator entities)
         {
+            foreach (Entity e in entities)
+                Process(e);
         }
 
-        public PlatformControlSystem (string buttonControllerName)
-            : this()
+        private void Process (Entity entity)
         {
-            Controller = buttonControllerName;
-        }
-
-        public string Controller
-        {
-            get { return _controllerName; }
-            set
-            {
-                _controllerName = value;
-
-                if (this.SystemManager != null) {
-                    Engine engine = this.SystemManager.World.Frame.Engine;
-                    _controller = engine.GetController(value) as ButtonController<PlatformAction>;
-                }
-            }
-        }
-
-        protected internal override void Initialize ()
-        {
-            Engine engine = this.SystemManager.World.Frame.Engine;
-            engine.ControllerAdded += HandleControllerAdded;
-            engine.ControllerRemoved += HandleControllerRemoved;
-
-            if (_controller == null)
-                Controller = Controller;
-        }
-
-        public override void Process (Entity entity)
-        {
-            if (_controller == null)
-                return;
-
             PlatformPhysics physicsCom;
             DirectionComponent directionCom;
             ActivityComponent activityCom;
+            InputComponent inputCom;
 
-            if (!EntityManager.GetComponent<PlatformPhysics>(entity, out physicsCom))
+            if (!EntityManager.GetComponent<PlatformPhysics, InputComponent>(entity, out physicsCom, out inputCom))
+                return;
+
+            var controller = SystemManager.World.Frame.Engine.GetController<ButtonController<PlatformAction>>(inputCom.Controller);
+            if (controller == null)
                 return;
 
             EntityManager.GetComponent<DirectionComponent, ActivityComponent>(entity, out directionCom, out activityCom);
 
-            HandleInput(physicsCom, directionCom);
+            HandleInput(controller, physicsCom, directionCom);
 
             if (activityCom != null) {
                 if (physicsCom.VelocityY == 0) {
@@ -125,15 +92,15 @@ namespace Amphibian.Systems
             }
         }
 
-        private void HandleInput (PlatformPhysics physicsCom, DirectionComponent directionCom)
+        private void HandleInput (ButtonController<PlatformAction> controller, PlatformPhysics physicsCom, DirectionComponent directionCom)
         {
-            if (_controller.ButtonHeld(PlatformAction.Left)) {
+            if (controller.ButtonHeld(PlatformAction.Left)) {
                 physicsCom.AccelX = -FPMath.Abs(physicsCom.AccelX);
                 physicsCom.AccelStateX = PlatformAccelState.Accelerate;
                 if (directionCom != null)
                     directionCom.Direction = Rendering.Sprites.Direction.West;
             }
-            else if (_controller.ButtonHeld(PlatformAction.Right)) {
+            else if (controller.ButtonHeld(PlatformAction.Right)) {
                 physicsCom.AccelX = FPMath.Abs(physicsCom.AccelX);
                 physicsCom.AccelStateX = PlatformAccelState.Accelerate;
                 if (directionCom != null)
@@ -143,21 +110,9 @@ namespace Amphibian.Systems
                 physicsCom.AccelStateX = PlatformAccelState.Decelerate;
             }
 
-            if (_controller.ButtonPressed(PlatformAction.Jump)) {
+            if (controller.ButtonPressed(PlatformAction.Jump)) {
                 physicsCom.VelocityY = -10;
             }
-        }
-
-        private void HandleControllerAdded (Object sender, ControllerEventArgs e)
-        {
-            if (_controllerName == e.Name)
-                _controller = e.Controller as ButtonController<PlatformAction>;
-        }
-
-        private void HandleControllerRemoved (Object sender, ControllerEventArgs e)
-        {
-            if (_controllerName == e.Name)
-                _controller = null;
         }
     }
 }

@@ -133,6 +133,7 @@
     <Compile Include="Components\ActivityComponent.cs" />
     <Compile Include="Components\Collidable.cs" />
     <Compile Include="Components\DirectionComponent.cs" />
+    <Compile Include="Components\InputComponent.cs" />
     <Compile Include="Components\ParallaxCom.cs" />
     <Compile Include="Components\PlatformPhysics.cs" />
     <Compile Include="Components\PlatformPushable.cs" />
@@ -152,6 +153,7 @@
     <Compile Include="Debug\MemoryTracker.cs" />
     <Compile Include="EntitySystem\EventElement.cs" />
     <Compile Include="Input\CursorController.cs" />
+    <Compile Include="Input\ControllerType.cs" />
     <Compile Include="Input\MouseController.cs" />
     <Compile Include="Systems\BehaviorSystem.cs" />
     <Compile Include="Systems\DynamicCollisionSystem.cs" />
