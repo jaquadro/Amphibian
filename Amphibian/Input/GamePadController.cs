@@ -31,6 +31,8 @@ namespace Amphibian.Input
         RightStickDown,
         RightStickLeft,
         RightStickRight,
+        LeftTrigger,
+        RightTrigger,
     }
 
     public class GamePadInputEquality : IEqualityComparer<GamePadInput>
@@ -71,7 +73,8 @@ namespace Amphibian.Input
         private Dictionary<TActionSet, bool> _released;
 
         private PlayerIndex _player;
-        private float _stickTolerance = 0.27f;
+        private float _stickTolerance = 0.70f;
+        private float _triggerTolerance = 0.50f;
 
         static GamePadController ()
         {
@@ -173,6 +176,10 @@ namespace Amphibian.Input
                     return _state.ThumbSticks.Right.X < (0 - _stickTolerance) ? ButtonState.Pressed : ButtonState.Released;
                 case GamePadInput.RightStickRight:
                     return _state.ThumbSticks.Right.X > _stickTolerance ? ButtonState.Pressed : ButtonState.Released;
+                case GamePadInput.LeftTrigger:
+                    return _state.Triggers.Left > _triggerTolerance ? ButtonState.Pressed : ButtonState.Released;
+                case GamePadInput.RightTrigger:
+                    return _state.Triggers.Right > _triggerTolerance ? ButtonState.Pressed : ButtonState.Released;
                 default:
                     return ButtonState.Released;
             }
