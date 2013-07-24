@@ -162,7 +162,7 @@ namespace Amphibian
             _updateAccumulator += gameTime.ElapsedGameTime.TotalSeconds;
 
             TimeSpan simStart = _prevTime.TotalGameTime;
-            TimeSpan simSpan = TimeSpan.FromSeconds(_simulationStep);
+            TimeSpan simSpan = TimeSpan.FromTicks((int)(10000000 * _simulationStep));
 
             while (_updateAccumulator >= _simulationStep) {
                 simStart.Add(simSpan);
