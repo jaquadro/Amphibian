@@ -17,7 +17,8 @@ namespace Amphibian.Systems
         Up,
         Down,
         Jump,
-        Action
+        Action,
+        Run
     }
 
     public class PlatformActionEquality : IEqualityComparer<PlatformAction>
@@ -73,7 +74,7 @@ namespace Amphibian.Systems
 
             EntityManager.GetComponent<DirectionComponent, ActivityComponent>(entity, out directionCom, out activityCom);
 
-            HandleInput(controller, physicsCom, directionCom);
+            HandleInput(controller, physicsCom, directionCom, activityCom);
 
             if (activityCom != null) {
                 if (physicsCom.VelocityY == 0) {
@@ -92,7 +93,7 @@ namespace Amphibian.Systems
             }
         }
 
-        private void HandleInput (ButtonController<PlatformAction> controller, PlatformPhysics physicsCom, DirectionComponent directionCom)
+        private void HandleInput (ButtonController<PlatformAction> controller, PlatformPhysics physicsCom, DirectionComponent directionCom, ActivityComponent activityCom)
         {
             if (controller.ButtonHeld(PlatformAction.Left)) {
                 physicsCom.AccelX = -FPMath.Abs(physicsCom.AccelX);
@@ -110,8 +111,23 @@ namespace Amphibian.Systems
                 physicsCom.AccelStateX = PlatformAccelState.Decelerate;
             }
 
-            if (controller.ButtonPressed(PlatformAction.Jump)) {
-                physicsCom.VelocityY = -10;
+            if (controller.ButtonPressed(PlatformAction.Jump) && (activityCom.Activity == "Standing" || activityCom.Activity == "Walking"))
+                physicsCom.VelocityY = (FPInt)(-8.5);
+
+            if (controller.ButtonHeld(PlatformAction.Jump) && physicsCom.VelocityY < 0)
+                physicsCom.AccelY = (FPInt)0.3;
+            if (controller.ButtonReleased(PlatformAction.Jump) || physicsCom.VelocityY >= 0)
+                physicsCom.AccelYMem.Reset();
+
+            if (controller.ButtonHeld(PlatformAction.Run)) {
+                if (activityCom.Activity == "Standing" || activityCom.Activity == "Walking") {
+                    physicsCom.MaxVelocityX = physicsCom.MaxVelocityXMem.InitValue * 2;
+                    physicsCom.MinVelocityX = physicsCom.MinVelocityXMem.InitValue * 2;
+                }
+            }
+            else if (activityCom.Activity == "Standing" || activityCom.Activity == "Walking") {
+                physicsCom.MaxVelocityXMem.Reset();
+                physicsCom.MinVelocityXMem.Reset();
             }
         }
     }
