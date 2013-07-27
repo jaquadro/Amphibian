@@ -286,6 +286,11 @@ namespace Amphibian.Systems
             return _backCollisionSystem.TestEdge(line) || TestSolidObject(collidable, line);
         }
 
+        private bool TestCollision (Collidable collidable, AYLine line)
+        {
+            return _backCollisionSystem.Test(line) || TestSolidObject(collidable, line);
+        }
+
         private void MoveVertical (Entity entity, FPInt distX, FPInt distY, Position position, Collidable collidable, PlatformPhysics physics)
         {
             if (physics.State == PlatformState.NonSolid) {
@@ -386,7 +391,7 @@ namespace Amphibian.Systems
 
                         posX = (FPInt)posX.Floor;
                         right = new AYLine(new PointFP((FPInt)right.X.Floor, right.Top), right.Height);
-                        if (TestCollisionEdge(collidable, right)) {
+                        if (TestCollision(collidable, right)) {
                             posX -= 1;
                             right = OffsetDetector(right, -1, 0);
                         }
