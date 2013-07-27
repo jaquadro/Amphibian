@@ -150,9 +150,11 @@ namespace Amphibian
             }
 
             Frame frame = _frameStack[_frameStack.Count - 1];
-            _frameStack.RemoveAt(_frameStack.Count - 1);
 
+            frame.UnloadFrame();
             frame.Engine = null;
+
+            _frameStack.RemoveAt(_frameStack.Count - 1);
 
             return frame;
         }

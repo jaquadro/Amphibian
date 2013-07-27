@@ -32,15 +32,8 @@ namespace Amphibian
         private int _width;
         private int _height;
 
-        private SamplerState _samplerState;
-
         public Frame ()
-        {
-            _samplerState = new SamplerState()
-            {
-                Filter = TextureFilter.Point
-            };
-        }
+        { }
 
         public Frame (Engine engine)
             : this()
@@ -105,11 +98,25 @@ namespace Amphibian
             _loaded = true;
         }
 
-        protected virtual void Load () { }
+        public void UnloadFrame ()
+        {
+            if (_loaded) {
+                Unload();
+            }
+
+            _loaded = false;
+        }
+
+        protected virtual void Load () 
+        { }
+
+        protected virtual void Unload () 
+        { }
 
         public abstract void Update ();
 
-        public virtual void Interpolate (double alpha) { }
+        public virtual void Interpolate (double alpha) 
+        { }
 
         public abstract void Draw ();
     }
