@@ -47,7 +47,7 @@ namespace Amphibian.EntitySystem
         private UnorderedList<UnorderedList<Entity>> _entitiesByComponent;
 
         #endregion
-
+         
         private Dictionary<ComponentType, EventElement> _comAddedEvents;
         private Dictionary<ComponentType, EventElement> _comRemovedEvents;
 
@@ -67,6 +67,10 @@ namespace Amphibian.EntitySystem
             _comRemovedEvents = new Dictionary<ComponentType, EventElement>();
 
             ComponentTypeManager.ComponentTypeAdded += ComponentTypeManager_ComponentTypeAdded;
+            foreach(ComponentType type in ComponentTypeManager.GetTypes())
+            {
+                InitializeComponent(type);
+            }
         }
 
         #region Events
@@ -113,8 +117,7 @@ namespace Amphibian.EntitySystem
 
         private void ComponentTypeManager_ComponentTypeAdded (ComponentType type)
         {
-            _entitiesByComponent.Set(type.Index, new UnorderedList<Entity>());
-            _freeEntListIndexes.Set(type.Index, new Stack<int>());
+            InitializeComponent(type);
         }
 
         #endregion
@@ -183,6 +186,12 @@ namespace Amphibian.EntitySystem
         public bool IsValid (Entity entity)
         {
             return entity.Id == _active[entity.Index].Id && entity.Id != 0;
+        }
+
+        private void InitializeComponent(ComponentType type)
+        {
+            _entitiesByComponent.Set(type.Index, new UnorderedList<Entity>());
+            _freeEntListIndexes.Set(type.Index, new Stack<int>());
         }
 
         public void AddComponent (Entity entity, IComponent component)

@@ -13,28 +13,28 @@ namespace Amphibian.Debug
         CycleView
     }
 
-    public class DebugActionEquality : IEqualityComparer<DebugAction>
+    public class DebugActionEquality<T> : IEqualityComparer<T> 
     {
-        private static DebugActionEquality _instance;
+        private static DebugActionEquality<T> _instance;
 
-        public static DebugActionEquality Default
+        public static DebugActionEquality<T> Default
         {
             get
             {
                 if (_instance == null)
-                    _instance = new DebugActionEquality();
+                    _instance = new DebugActionEquality<T>();
                 return _instance;
             }
         }
 
-        public bool Equals (DebugAction val1, DebugAction val2)
+        public bool Equals (T val1, T val2)
         {
-            return val1 == val2;
+            return val1.Equals(val2);
         }
 
-        public int GetHashCode (DebugAction val)
+        public int GetHashCode (T val)
         {
-            return ((int)val).GetHashCode();
+            return val.GetHashCode();
         }
     }
 

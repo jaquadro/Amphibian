@@ -68,7 +68,7 @@ namespace Amphibian.Input
         private GamePadState _state;
         private Dictionary<TActionSet, GamePadInput> _keymap;
 
-        private Dictionary<TActionSet, bool> _held;
+        private Dictionary<TActionSet, bool> _held; 
         private Dictionary<TActionSet, bool> _pressed;
         private Dictionary<TActionSet, bool> _released;
 

@@ -155,4 +155,4 @@ namespace Amphibian
             _entityWorld.SystemManager.Update(ExecutionType.Draw);
         }
     }
-}
+} 
