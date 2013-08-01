@@ -58,7 +58,7 @@ namespace Amphibian.Systems
                 Process(e);
         }
 
-        private void Process (Entity entity)
+        protected override void Process(Entity entity)
         {
             PlatformPhysics physicsCom;
             DirectionComponent directionCom;

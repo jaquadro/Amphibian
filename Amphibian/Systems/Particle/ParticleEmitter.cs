@@ -26,7 +26,7 @@ namespace Amphibian.Systems.Particle
             }
         }
 
-        private void Process (Entity entity)
+        protected override void Process(Entity entity)
         {
             ParticleComponent comParticle = EntityManager.GetComponent<ParticleComponent>(entity);
             if (comParticle != null)

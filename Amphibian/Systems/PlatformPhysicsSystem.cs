@@ -25,7 +25,7 @@ namespace Amphibian.Systems
             }
         }
 
-        private void Process (Entity entity)
+        protected override void Process(Entity entity)
         {
             Physics physicsCom = null;
             Position positionCom = null;
@@ -125,7 +125,7 @@ namespace Amphibian.Systems
             }
         }
 
-        private void Process (Entity entity)
+        protected override void Process(Entity entity)
         {
             PlatformPhysics physicsCom;
             Collidable collisionCom;
