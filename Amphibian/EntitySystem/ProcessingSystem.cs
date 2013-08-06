@@ -19,6 +19,14 @@ namespace Amphibian.EntitySystem
             ProcessEntities(EntityManager.GetEntities(_primaryKey));
         }
 
-        protected virtual void ProcessEntities (EntityManager.EntityEnumerator entities) { }
+        protected virtual void ProcessEntities(EntityManager.EntityEnumerator entities)
+        {
+            foreach (Entity entity in entities)
+            {
+                Process(entity);
+            }
+        }
+
+        protected abstract void Process(Entity entity);
     }
 }

@@ -30,7 +30,7 @@ namespace Amphibian.Systems
             }
         }
 
-        private void Process (Entity entity) {
+        protected override void Process (Entity entity) {
             ScriptedComponent scriptCom = EntityManager.GetComponent<ScriptedComponent>(entity);
             if (scriptCom != null) {
                 foreach (Behavior behaviors in scriptCom.Behaviors) {

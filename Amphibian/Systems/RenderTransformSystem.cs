@@ -26,7 +26,7 @@ namespace Amphibian.Systems
             }
         }
 
-        private void Process (Entity entity)
+        protected override void Process (Entity entity)
         {
             Renderable renderCom = EntityManager.GetComponent(entity, typeof(Renderable)) as Renderable;
             if (renderCom == null)

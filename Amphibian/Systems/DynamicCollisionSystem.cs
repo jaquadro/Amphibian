@@ -138,7 +138,7 @@ namespace Amphibian.Systems
             }
         }
 
-        private void Process (Entity entity)
+        protected override void Process(Entity entity)
         {
             Position comPosition = null;
             Collidable comCollidable = null;

@@ -116,14 +116,8 @@ namespace Amphibian.Systems
         protected virtual void EndRenderLayer (int layerIndex)
         { }
 
-        protected override void ProcessEntities (EntityManager.EntityEnumerator entities)
-        {
-            foreach (Entity entity in entities) {
-                Separate(entity);
-            }
-        }
 
-        private void Separate (Entity entity)
+        protected override void Process (Entity entity)
         {
             Renderable renderCom = null;
             foreach (IComponent com in EntityManager.GetComponents(entity)) {

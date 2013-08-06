@@ -52,5 +52,10 @@ namespace Amphibian.EntitySystem
         {
             return _nextIndex++;
         }
+
+        public static IEnumerable<ComponentType> GetTypes()
+        {
+            return _components;
+        }
     }
 }

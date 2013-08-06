@@ -538,12 +538,16 @@ namespace Amphibian.EntitySystem
             {
             }
 
-            public bool MoveNext ()
+            public bool MoveNext()
             {
-                _index++;
-                return _index < _entList.Count;
-            }
+                for (; _index < _entList.Count-1;)
+                {
+                    if (_entList[++_index] != Entity.None)
+                        return true;
+                }
 
+                return false;
+            }
             public void Reset ()
             {
                 _index = -1;

@@ -29,7 +29,7 @@ namespace Amphibian.Systems
             }
         }
 
-        private void Process (Entity entity)
+        protected override void Process (Entity entity)
         {
             RemovalTimeout timeout = EntityManager.GetComponent(entity, typeof(RemovalTimeout)) as RemovalTimeout;
             if (timeout == null)
