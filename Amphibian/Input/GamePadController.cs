@@ -161,17 +161,17 @@ namespace Amphibian.Input
                 case GamePadInput.DPadRight:
                     return _state.DPad.Right;
                 case GamePadInput.LeftStickUp:
-                    return _state.ThumbSticks.Left.Y < (0 - _stickTolerance) ? ButtonState.Pressed : ButtonState.Released;
-                case GamePadInput.LeftStickDown:
                     return _state.ThumbSticks.Left.Y > _stickTolerance ? ButtonState.Pressed : ButtonState.Released;
+                case GamePadInput.LeftStickDown:
+                    return _state.ThumbSticks.Left.Y < (0 - _stickTolerance) ? ButtonState.Pressed : ButtonState.Released;
                 case GamePadInput.LeftStickLeft:
                     return _state.ThumbSticks.Left.X < (0 - _stickTolerance) ? ButtonState.Pressed : ButtonState.Released;
                 case GamePadInput.LeftStickRight:
                     return _state.ThumbSticks.Left.X > _stickTolerance ? ButtonState.Pressed : ButtonState.Released;
                 case GamePadInput.RightStickUp:
-                    return _state.ThumbSticks.Right.Y < (0 - _stickTolerance) ? ButtonState.Pressed : ButtonState.Released;
+                    return _state.ThumbSticks.Right.Y >_stickTolerance ? ButtonState.Pressed : ButtonState.Released;
                 case GamePadInput.RightStickDown:
-                    return _state.ThumbSticks.Right.Y > _stickTolerance ? ButtonState.Pressed : ButtonState.Released;
+                    return _state.ThumbSticks.Right.Y < (0 - _stickTolerance) ? ButtonState.Pressed : ButtonState.Released;
                 case GamePadInput.RightStickLeft:
                     return _state.ThumbSticks.Right.X < (0 - _stickTolerance) ? ButtonState.Pressed : ButtonState.Released;
                 case GamePadInput.RightStickRight:
