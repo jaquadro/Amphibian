@@ -34,6 +34,10 @@ namespace Amphibian.Collision
             _h = FPMath.Abs(p1.Y - p0.Y);
         }
 
+        public AABBMask(PointFP[] pointFP):this(pointFP[0],pointFP[1])
+        {
+        }
+
         public override object Clone ()
         {
             AABBMask mask = new AABBMask(_point, _w, _h);
