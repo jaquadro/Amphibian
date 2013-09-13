@@ -146,7 +146,7 @@ namespace Amphibian
 
         public override void Update ()
         {
-            _entityWorld.GameTime = Engine.GameTime;
+             _entityWorld.GameTime = Engine.GameTime;
             _entityWorld.SystemManager.Update(ExecutionType.Update);
         }
 
