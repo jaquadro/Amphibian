@@ -68,6 +68,8 @@ namespace Amphibian
             // Default Values
             _simulationStep = 1 / 60.0;
             _prevTime = new GameTime(TimeSpan.Zero, TimeSpan.Zero);
+
+            GameService = new GameServiceAdapter();
         }
 
         #region Properties
@@ -102,6 +104,10 @@ namespace Amphibian
             get { return _simulationStep; }
             set { _simulationStep = value; }
         }
+
+        public IGameService GameService { get; set; }
+
+        public Action<bool> IsCursorVisibleHandler { get; set; }
 
         #endregion
 
