@@ -34,12 +34,12 @@ namespace Amphibian.EntitySystem
         private UnorderedList<Stack<int>> _freeEntListIndexes;
 
         // Master entity list.  Serves as a lookup table between entity index and entity id.
-        private UnorderedList<Entity> _active;
+        internal UnorderedList<Entity> _active;
 
         // List of component lists.  For every entity in _active, a corresponding component list is stored
         // at the same index here.  The stored list contains references to all of the components currently
         // attached to the corresponding entity.
-        private UnorderedList<UnorderedList<IComponent>> _componentsByEntity;
+        internal UnorderedList<UnorderedList<IComponent>> _componentsByEntity;
 
         // List of entity lists.  There is an entry For every component defined in the global system.  Each
         // entry lists all entities that currently have an instance of the corresponding component attached.

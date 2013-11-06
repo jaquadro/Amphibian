@@ -25,9 +25,9 @@ namespace Amphibian
         private Engine _engine;
         private bool _loaded;
 
-        private bool _blocksUpdates;
-        private bool _blocksDrawing;
-        private bool _blocksTime;
+        private bool _blocksUpdates = true;
+        private bool _blocksDrawing = true;
+        private bool _blocksTime = true;
 
         private int _width;
         private int _height;
@@ -153,6 +153,11 @@ namespace Amphibian
         public override void Draw ()
         {
             _entityWorld.SystemManager.Update(ExecutionType.Draw);
+        }
+
+        public EntityDebugger GetEntityDebugger()
+        {
+            return new EntityDebugger(this);
         }
     }
 } 

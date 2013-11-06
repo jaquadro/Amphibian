@@ -39,6 +39,7 @@ namespace Amphibian
         private AmphibianGameTime _gameTime;
 
         private List<Frame> _frameStack;
+        public bool IsFrameStackEmpty { get { return _frameStack.Count == 0; } }
         private List<Frame> _sortFrameStack;
 
         private Dictionary<string, InputController> _input;

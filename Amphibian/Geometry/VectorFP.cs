@@ -196,5 +196,16 @@ namespace Amphibian.Geometry
         #endregion
 
 
+
+        public FPInt Distance()
+        {
+            return (FPInt)Math.Sqrt((double)X * (double)X + (double)Y * (double)Y);
+        }
+
+        public VectorFP Normalize()
+        {
+            FPInt dist = this.Distance();
+            return new VectorFP(X / dist, Y / dist);
+        }
     }
 }

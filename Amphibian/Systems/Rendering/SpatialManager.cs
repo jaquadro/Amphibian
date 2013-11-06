@@ -53,7 +53,9 @@ namespace Amphibian.Systems.Rendering
 
         public bool IsValid (SpatialRef sref)
         {
-            return sref.Id == _spatials[sref.Index].Id;
+            if(sref.Index<_spatials.Count)
+                return sref.Id == _spatials[sref.Index].Id;
+            return false;
         }
 
         public Spatial GetSpatial (SpatialRef sref)
