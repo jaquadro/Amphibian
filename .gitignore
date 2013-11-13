@@ -1,3 +1,6 @@
 Amphibian/bin/x86/Debug/Lidgren.Network.xml
 Amphibian/bin/x86/Debug/LilyPath.xml
 Amphibian/obj/x86/Debug/Amphibian.csproj.FileListAbsolute.txt
+Amphibian/bin/
+Amphibian/obj/
+*.suo

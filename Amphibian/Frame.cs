@@ -35,10 +35,11 @@ namespace Amphibian
         public Frame ()
         { }
 
-        public Frame (Engine engine)
+        internal Frame (Engine engine)
             : this()
         {
-            engine.PushFrame(this);
+            //engine.PushFrame(this);
+            Engine = engine;
         }
 
         #region Properties
