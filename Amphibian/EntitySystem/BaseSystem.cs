@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace Amphibian.EntitySystem
@@ -58,5 +59,41 @@ namespace Amphibian.EntitySystem
         {
             return _enabled;
         }
+
+        private void InitRequiredSystems ()
+        {
+            foreach (var propInfo in this.GetType().GetProperties(BindingFlags.FlattenHierarchy | BindingFlags.NonPublic)) {
+                if (propInfo.CanWrite && Attribute.IsDefined(propInfo, typeof(RequiredSystemAttribute))) {
+                    BaseSystem sys = SystemManager.GetSystem(propInfo.PropertyType);
+                    if (sys != null) {
+                        propInfo.SetValue(this, sys, null);
+                        continue;
+                    }
+
+                    SystemManager.RegisterSystemAddedHandler(propInfo.PropertyType, HandleRequiredSystemAdded);
+                }
+            }
+        }
+
+        private void HandleRequiredSystemAdded (object system)
+        {
+            Type systemType = system.GetType();
+            while (systemType != null) {
+                foreach (var propInfo in this.GetType().GetProperties(BindingFlags.FlattenHierarchy | BindingFlags.NonPublic)) {
+                    if (propInfo.CanWrite && Attribute.IsDefined(propInfo, typeof(RequiredSystemAttribute))) {
+                        if (propInfo.PropertyType == systemType) {
+                            propInfo.SetValue(this, system, null);
+                            return;
+                        }
+                    }
+                }
+
+                systemType = systemType.BaseType;
+            }
+        }
     }
+
+    [AttributeUsage(AttributeTargets.Property)]
+    public class RequiredSystemAttribute : Attribute
+    { }
 }
