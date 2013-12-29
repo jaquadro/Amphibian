@@ -108,7 +108,7 @@ namespace Amphibian.EntitySystem
                     break;
             }
 
-            system.Initialize();
+            system.InitializeSystem();
 
             OnSystemAdded(system);
 
