@@ -35,7 +35,7 @@ namespace Amphibian
         public Frame ()
         { }
 
-        internal Frame (Engine engine)
+        public Frame (Engine engine)
             : this()
         {
             //engine.PushFrame(this);

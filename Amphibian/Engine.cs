@@ -217,6 +217,7 @@ namespace Amphibian
         {
             _gameTime.Copy(gameTime);
 
+            // Determine draw depth of frame stack
             int depth = _frameStack.Count - 1;
             for (; depth >= 0; depth--) {
                 if (_frameStack[depth].BlocksDrawing) {
@@ -224,8 +225,9 @@ namespace Amphibian
                 }
             }
 
+            // Draw each frame bottom-up
             if (depth >= 0) {
-                for (int i = _frameStack.Count - 1; i >= depth; i--)
+                for (int i = depth; i < _frameStack.Count; i++)
                     _frameStack[i].Draw();
             }
         }
