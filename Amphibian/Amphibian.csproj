@@ -166,6 +166,7 @@
     <Compile Include="Systems\Rendering\DrawSpatial.cs" />
     <Compile Include="Systems\Rendering\RenderLayer.cs" />
     <Compile Include="Systems\Rendering\RenderManager.cs" />
+    <Compile Include="Systems\Rendering\Spatials\CounterSpatial.cs" />
     <Compile Include="Systems\Rendering\Spatials\RenderEffects.cs" />
     <Compile Include="Systems\Rendering\Spatials\SkeletonSpatial.cs" />
     <Compile Include="Systems\Rendering\SpineRenderLayer.cs" />
@@ -176,6 +177,9 @@
     <Compile Include="Systems\Rendering\SpriteRenderManager.cs" />
     <Compile Include="Systems\Rendering\SpriteSpatial.cs" />
     <Compile Include="Systems\Rendering\Sprites\AnimatedSpriteElement.cs" />
+    <Compile Include="Systems\Rendering\Sprites\Counter.cs" />
+    <Compile Include="Systems\Rendering\Sprites\CounterDefinition.cs" />
+    <Compile Include="Systems\Rendering\Sprites\CounterElement.cs" />
     <Compile Include="Systems\Rendering\Sprites\DirectionalAnimatedSpriteElement.cs" />
     <Compile Include="Systems\Rendering\Sprites\DirectionalAnimationSetElement.cs" />
     <Compile Include="Systems\Rendering\Sprites\Elements.cs" />
@@ -183,6 +187,8 @@
     <Compile Include="Systems\Rendering\Sprites\StaticSpriteElement.cs" />
     <Compile Include="Systems\Rendering\Sprites\Xml\XmlAnimatedSpriteElement.cs" />
     <Compile Include="Systems\Rendering\Sprites\Xml\XmlAnimatedSpriteInstance.cs" />
+    <Compile Include="Systems\Rendering\Sprites\Xml\XmlCounterElement.cs" />
+    <Compile Include="Systems\Rendering\Sprites\Xml\XmlCounterInstance.cs" />
     <Compile Include="Systems\Rendering\Sprites\Xml\XmlDirectionalAnimatedSpriteElement.cs" />
     <Compile Include="Systems\Rendering\Sprites\Xml\XmlDirectionalAnimatedSpriteInstance.cs" />
     <Compile Include="Systems\Rendering\Sprites\Xml\XmlDirectionalAnimationSetElement.cs" />
