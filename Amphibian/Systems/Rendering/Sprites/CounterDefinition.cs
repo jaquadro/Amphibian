@@ -13,11 +13,6 @@ namespace Amphibian.Systems.Rendering.Sprites
             { "+", 10 }, { "-", 11 }, { ".", 12 },
         };
 
-        private Rectangle _source;
-
-        private Texture2D _texture;
-        private Vector2 _origin;
-
         private StaticSpriteDefinition[] _digitFrames;
 
         public CounterDefinition ()
@@ -47,7 +42,7 @@ namespace Amphibian.Systems.Rendering.Sprites
             FPInt x = position.X;
             foreach (int digitIndex in digitIndexList) {
                 _digitFrames[digitIndex].Draw(spriteBatch, new PointFP(x, position.Y), spriteData);
-                x += _digitFrames[digitIndex].Width + DigitSpacing;
+                x += (FPInt)(_digitFrames[digitIndex].Width * spriteData.Scale) + DigitSpacing;
             }
         }
 
@@ -75,14 +70,14 @@ namespace Amphibian.Systems.Rendering.Sprites
             digitIndexList.Reverse(start, digitIndexList.Count - start);
         }
 
-        internal PointFP CalculateSize (List<int> digitList)
+        internal PointFP CalculateSize (List<int> digitList, SpriteInfo spriteInfo)
         {
             FPInt width = 0;
             FPInt height = 0;
 
             foreach (int digitIndex in digitList) {
-                width += _digitFrames[digitIndex].Width;
-                height = (FPInt)FPMath.Max(height, _digitFrames[digitIndex].Height);
+                width += (FPInt)(_digitFrames[digitIndex].Width * spriteInfo.Scale);
+                height = (FPInt)FPMath.Max(height, (FPInt)(_digitFrames[digitIndex].Height * spriteInfo.Scale));
             }
 
             if (digitList.Count > 1)

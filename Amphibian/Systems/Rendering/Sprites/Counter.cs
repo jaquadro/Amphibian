@@ -38,7 +38,7 @@ namespace Amphibian.Systems.Rendering.Sprites
                     _value = value;
 
                     _definition.ParseValue(value, _cachedDigits);
-                    _cachedSize = _definition.CalculateSize(_cachedDigits);
+                    _cachedSize = _definition.CalculateSize(_cachedDigits, SpriteInfo);
                 }
             }
         }
