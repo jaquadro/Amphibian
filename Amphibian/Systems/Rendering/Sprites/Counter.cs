@@ -8,7 +8,7 @@ namespace Amphibian.Systems.Rendering.Sprites
     {
         private CounterDefinition _definition;
 
-        private int _value;
+        private int _value = int.MinValue;
         private List<int> _cachedDigits;
         private PointFP _cachedSize;
 
@@ -16,12 +16,16 @@ namespace Amphibian.Systems.Rendering.Sprites
         {
             _definition = definition;
             _cachedDigits = new List<int>();
+
+            Value = 0;
         }
 
         public Counter (CounterDefinition definition, SpriteInfo spriteInfo)
             : base(spriteInfo)
         {
             _definition = definition;
+
+            Value = 0;
         }
 
         public CounterDefinition Definition
