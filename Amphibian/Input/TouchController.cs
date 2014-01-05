@@ -88,7 +88,7 @@ namespace Amphibian.Input
             _state = TouchPanel.GetState();
 
             foreach (KeyValuePair<TActionSet, TouchInput> touch in _touchmap) {
-                bool touchstate = GetTouchState(touch.Value) == (TouchLocationState.Pressed | TouchLocationState.Moved);
+                bool touchstate = (GetTouchState(touch.Value) & (TouchLocationState.Pressed | TouchLocationState.Moved)) != 0;
                 if (!_held[touch.Key] && touchstate) {
                     _pressed[touch.Key] = true;
                 }
@@ -156,7 +156,7 @@ namespace Amphibian.Input
         {
             if (_state.Count <= index)
                 return false;
-            return _state[index].State == (TouchLocationState.Pressed | TouchLocationState.Moved);
+            return (_state[index].State & (TouchLocationState.Pressed | TouchLocationState.Moved)) != 0;
         }
 
         private static List<T> GetValues<T> ()
