@@ -153,7 +153,9 @@
     <Compile Include="GameServiceAdapter.cs" />
     <Compile Include="Input\CursorController.cs" />
     <Compile Include="Input\ControllerType.cs" />
+    <Compile Include="Input\CursorControllerGroup.cs" />
     <Compile Include="Input\MouseController.cs" />
+    <Compile Include="Input\TouchController.cs" />
     <Compile Include="Systems\BehaviorSystem.cs" />
     <Compile Include="Systems\DynamicCollisionSystem.cs" />
     <Compile Include="Systems\Particle\Distribution.cs" />
