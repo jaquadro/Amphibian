@@ -163,6 +163,7 @@
     <Compile Include="Systems\Particle\Range.cs" />
     <Compile Include="Systems\Particle\StandardEmitter.cs" />
     <Compile Include="Systems\Rendering\Common\Elements.cs" />
+    <Compile Include="Systems\Rendering\DrawCommandSpatial.cs" />
     <Compile Include="Systems\Rendering\DrawRenderLayer.cs" />
     <Compile Include="Systems\Rendering\DrawRenderManager.cs" />
     <Compile Include="Systems\Rendering\DrawSpatial.cs" />
