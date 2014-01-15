@@ -40,10 +40,16 @@ namespace Amphibian.Systems
             _layers = new Dictionary<int, RenderLayer>();
         }
 
-        public RenderSystem (SpriteBatch spriteBatch)
+        public RenderSystem (EntityWorld world)
             : this()
         {
-            SetLayer(0, new SpriteRenderLayer(spriteBatch));
+            SetLayer(0, new SpriteRenderLayer(world));
+        }
+
+        public RenderSystem (EntityWorld world, SpriteBatch spriteBatch)
+            : this()
+        {
+            SetLayer(0, new SpriteRenderLayer(world, spriteBatch));
         }
 
         public void SetLayer (int index, RenderLayer layer)

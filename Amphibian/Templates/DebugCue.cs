@@ -15,21 +15,12 @@ namespace Amphibian.Templates
 {
     public class DebugCueSpatial : SpriteSpatial
     {
-        private float _radius;
-        private float _opacity;
+        private float _radius = 1f;
+        private float _opacity = 1f;
         //private Pen _pen;
 
-        public DebugCueSpatial (EntityWorld world)
-            : base(world)
-        {
-            _radius = 1f;
-            _opacity = 1f;
-            //_pen = Pens.White;
-        }
-
         public override void Initialize (ContentManager contentManager)
-        {
-        }
+        { }
 
         public override void Update ()
         {
@@ -38,7 +29,7 @@ namespace Amphibian.Templates
                 _opacity -= 0.05f;
         }
 
-        public override void Render (SpriteBatch spriteBatch, Entity entity, Renderable position)
+        public override void Render (SpriteBatch spriteBatch, EntityWorld world, Entity entity, Renderable position)
         {
             //Rectangle area = new Rectangle((int)position.RenderX - (int)_radius, (int)position.RenderY - (int)_radius, (int)_radius * 2, (int)_radius * 2);
             //Drawing.Draw2D.DrawRectangle(spriteBatch, area, _pen);
@@ -55,7 +46,7 @@ namespace Amphibian.Templates
 
             Entity ent = sysManager.World.EntityManager.Create();
 
-            Amphibian.Systems.Rendering.Spatial spat = new DebugCueSpatial(sysManager.World);
+            Amphibian.Systems.Rendering.Spatial spat = new DebugCueSpatial();
             spat.Initialize(engine.Content);
             Amphibian.Systems.Rendering.SpatialRef potSR = renderSys.SpatialManager.Add(spat);
 

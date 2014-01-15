@@ -45,14 +45,13 @@ namespace Amphibian.Systems.Particle
 
         private Texture2D _texture;
 
-        public ParticleSpatial (EntityWorld world, ParticleEmitter emitter, Texture2D texture)
-            : base(world)
+        public ParticleSpatial (ParticleEmitter emitter, Texture2D texture)
         {
             _emitter = emitter;
             _texture = texture;
         }
 
-        public override void Render (SpriteBatch spriteBatch, Entity entity, Renderable position)
+        public override void Render (SpriteBatch spriteBatch, EntityWorld world, Entity entity, Renderable position)
         {
             foreach (ParticleRenderData particle in _emitter.Particles) {
                 Vector2 pos = new Vector2((float)position.RenderX + particle.Position.X, (float)position.RenderY + particle.Position.Y);

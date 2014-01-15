@@ -63,6 +63,16 @@ namespace Amphibian.Debug
             _currentRuler.Update(null);
         }
 
+        public static void AdvanceToHidden ()
+        {
+            _debugCommandUI.ExecuteCommand("tr off log:off");
+            _debugCommandUI.ExecuteCommand("fps off");
+            _debugCommandUI.ExecuteCommand("memory off");
+            _debugCommandUI.ExecuteCommand("th off");
+
+            _state = DebugOutputState.None;
+        }
+
         public static void AdvanceOutputState ()
         {
             switch (_state) {

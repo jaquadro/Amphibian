@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Spine;
 using Microsoft.Xna.Framework.Graphics;
+using Amphibian.EntitySystem;
 
 namespace Amphibian.Systems.Rendering
 {
@@ -15,21 +16,22 @@ namespace Amphibian.Systems.Rendering
 
     public class SpineRenderManager : IRenderManager
     {
-        private SkeletonRenderer _skeletonRenderer;
+        public SpineRenderManager (EntityWorld world)
+            : this(world, new SkeletonRenderer(world.Frame.Engine.GraphicsDevice))
+        { }
 
-        public SpineRenderManager (GraphicsDevice device)
+        public SpineRenderManager (EntityWorld world, SkeletonRenderer skeletonRenderer)
         {
-            _skeletonRenderer = new SkeletonRenderer(device);
+            World = world;
+            SkeletonRenderer = skeletonRenderer;
         }
 
-        public SkeletonRenderer SkeletonRenderer
-        {
-            get { return _skeletonRenderer; }
-        }
+        public EntityWorld World { get; private set; }
+        public SkeletonRenderer SkeletonRenderer { get; private set; }
 
         public void Begin ()
         {
-            _skeletonRenderer.Begin();
+            SkeletonRenderer.Begin();
         }
 
         public void Begin (IRenderManagerOptions renderOptions)
@@ -44,13 +46,13 @@ namespace Amphibian.Systems.Rendering
                 throw new ArgumentException("renderOptions must be of type SpineRenderManagerOptions");
 
             if (options.BlendState != null)
-                _skeletonRenderer.BlendState = options.BlendState;
-            _skeletonRenderer.Begin();
+                SkeletonRenderer.BlendState = options.BlendState;
+            SkeletonRenderer.Begin();
         }
 
         public void End ()
         {
-            _skeletonRenderer.End();
+            SkeletonRenderer.End();
         }
     }
 }

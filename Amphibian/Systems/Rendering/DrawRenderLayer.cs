@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using LilyPath;
+using Amphibian.EntitySystem;
 
 namespace Amphibian.Systems.Rendering
 {
@@ -9,10 +10,22 @@ namespace Amphibian.Systems.Rendering
         private DrawRenderManager _manager;
         private DrawRenderManagerOptions _options;
 
-        public DrawRenderLayer (DrawBatch drawBatch)
+        public DrawRenderLayer (EntityWorld world)
         {
-            _manager = new DrawRenderManager(drawBatch);
+            _manager = new DrawRenderManager(world);
 
+            InitOptions();
+        }
+
+        public DrawRenderLayer (EntityWorld world, DrawBatch drawBatch)
+        {
+            _manager = new DrawRenderManager(world, drawBatch);
+
+            InitOptions();
+        }
+
+        private void InitOptions ()
+        {
             _options = new DrawRenderManagerOptions() {
                 SamplerState = SamplerState.PointClamp,
             };
