@@ -186,11 +186,11 @@ namespace Amphibian
                     break;
             }
 
+            depth = Math.Max(0, depth);
+
             // Update each frame
-            if (depth >= 0) {
-                for (int i = _frameStack.Count - 1; i >= depth; i--)
-                    _frameStack[i].Update();
-            }
+            for (int i = _frameStack.Count - 1; i >= depth; i--)
+                _frameStack[i].Update();
 
             // Reset controllers
             foreach (InputController controller in _input.Values)
@@ -206,11 +206,11 @@ namespace Amphibian
                     break;
             }
 
+            depth = Math.Max(0, depth);
+
             // Update each frame
-            if (depth >= 0) {
-                for (int i = _frameStack.Count - 1; i >= depth; i--)
-                    _frameStack[i].Interpolate(alpha);
-            }
+            for (int i = _frameStack.Count - 1; i >= depth; i--)
+                _frameStack[i].Interpolate(alpha);
         }
 
         public void Draw (GameTime gameTime)
@@ -225,11 +225,11 @@ namespace Amphibian
                 }
             }
 
+            depth = Math.Max(0, depth);
+
             // Draw each frame bottom-up
-            if (depth >= 0) {
-                for (int i = depth; i < _frameStack.Count; i++)
-                    _frameStack[i].Draw();
-            }
+            for (int i = depth; i < _frameStack.Count; i++)
+                _frameStack[i].Draw();
         }
 
         public void AddController (string name, InputController controller)
