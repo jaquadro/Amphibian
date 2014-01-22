@@ -8,6 +8,7 @@ using Amphibian.Systems.Rendering.Spine;
 using Amphibian.Systems.Rendering.Spine.Xml;
 using Amphibian.Systems.Rendering.Sprites;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Spine;
 
 namespace Amphibian.Systems.Rendering.Spatials
@@ -31,18 +32,17 @@ namespace Amphibian.Systems.Rendering.Spatials
         private string _activity;
         private float _time;
 
-        public SkeletonSpatial (string contentPath, EntityWorld world, string skin)
-            : base(world)
+        public SkeletonSpatial (GraphicsDevice device, string contentPath, string skin)
         {
             if (!_registered.TryGetValue(contentPath, out _record))
-                _record = Load(contentPath);
+                _record = Load(device, contentPath);
 
             _skeleton = new Skeleton(_record.Data);
             _skeleton.SetSkin(skin);
             _skeleton.SetSlotsToBindPose();
         }
 
-        private SpatialTypeRecord Load (string contentPath)
+        private SpatialTypeRecord Load (GraphicsDevice device, string contentPath)
         {
             SpatialTypeRecord record = new SpatialTypeRecord();
 
@@ -51,7 +51,7 @@ namespace Amphibian.Systems.Rendering.Spatials
                     XmlSkeletonDefElement xmldef = new XmlSkeletonDefElement();
                     xmldef.ReadXml(reader);
 
-                    Atlas atlas = new Atlas(xmldef.Atlas.Source, new XnaTextureLoader(World.Frame.Engine.GraphicsDevice));
+                    Atlas atlas = new Atlas(xmldef.Atlas.Source, new XnaTextureLoader(device));
                     SkeletonJson json = new SkeletonJson(atlas);
 
                     record.Data = json.ReadSkeletonData(xmldef.Skeleton.Source);
@@ -66,12 +66,12 @@ namespace Amphibian.Systems.Rendering.Spatials
             return record;
         }
 
-        public override void Render (SkeletonRenderer skeletonRenderer, Entity entity, Renderable position)
+        public override void Render (SkeletonRenderer skeletonRenderer, EntityWorld world, Entity entity, Renderable position)
         {
             ActivityComponent activityCom = null;
             DirectionComponent directionCom = null;
 
-            foreach (IComponent com in World.EntityManager.GetComponents(entity)) {
+            foreach (IComponent com in world.EntityManager.GetComponents(entity)) {
                 if (com is ActivityComponent)
                     activityCom = com as ActivityComponent;
                 else if (com is DirectionComponent)
@@ -119,7 +119,7 @@ namespace Amphibian.Systems.Rendering.Spatials
             }
 
             if (_animation != null) {
-                _time += (float)World.GameTime.ElapsedGameTime.TotalSeconds;
+                _time += (float)world.GameTime.ElapsedGameTime.TotalSeconds;
                 _animation.Apply(_skeleton, _time, true);
             }
 

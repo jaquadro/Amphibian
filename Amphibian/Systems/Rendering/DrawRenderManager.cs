@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using LilyPath;
+using Amphibian.EntitySystem;
 
 namespace Amphibian.Systems.Rendering
 {
@@ -15,21 +16,22 @@ namespace Amphibian.Systems.Rendering
 
     public class DrawRenderManager : IRenderManager
     {
-        private DrawBatch _drawBatch;
+        public DrawRenderManager (EntityWorld world)
+            : this(world, new DrawBatch(world.Frame.Engine.GraphicsDevice))
+        { }
 
-        public DrawRenderManager (DrawBatch drawBatch)
+        public DrawRenderManager (EntityWorld world, DrawBatch drawBatch)
         {
-            _drawBatch = drawBatch;
+            World = world;
+            DrawBatch = drawBatch;
         }
 
-        public DrawBatch DrawBatch
-        {
-            get { return _drawBatch; }
-        }
+        public EntityWorld World { get; private set; }
+        public DrawBatch DrawBatch { get; private set; }
 
         public void Begin ()
         {
-            _drawBatch.Begin();
+            DrawBatch.Begin();
         }
 
         public void Begin (IRenderManagerOptions renderOptions)
@@ -43,7 +45,7 @@ namespace Amphibian.Systems.Rendering
             if (options == null)
                 throw new ArgumentException("renderOptions must be of type DrawRenderManagerOptions");
 
-            _drawBatch.Begin(DrawSortMode.Deferred, 
+            DrawBatch.Begin(DrawSortMode.Deferred, 
                 options.BlendState,
                 options.SamplerState,
                 options.DepthStencilState,
@@ -52,7 +54,7 @@ namespace Amphibian.Systems.Rendering
 
         public void End ()
         {
-            _drawBatch.End();
+            DrawBatch.End();
         }
     }
 }

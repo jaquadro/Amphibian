@@ -34,8 +34,8 @@ namespace Amphibian.Systems.Rendering.Sprites
         int Y { get; set; }
         int Height { get; set; }
         int Width { get; set; }
-        int OriginX { get; set; }
-        int OriginY { get; set; }
+        float OriginX { get; set; }
+        float OriginY { get; set; }
     }
 
     public interface ISpriteListElement

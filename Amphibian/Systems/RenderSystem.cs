@@ -40,10 +40,16 @@ namespace Amphibian.Systems
             _layers = new Dictionary<int, RenderLayer>();
         }
 
-        public RenderSystem (SpriteBatch spriteBatch)
+        public RenderSystem (EntityWorld world)
             : this()
         {
-            SetLayer(0, new SpriteRenderLayer(spriteBatch));
+            SetLayer(0, new SpriteRenderLayer(world));
+        }
+
+        public RenderSystem (EntityWorld world, SpriteBatch spriteBatch)
+            : this()
+        {
+            SetLayer(0, new SpriteRenderLayer(world, spriteBatch));
         }
 
         public void SetLayer (int index, RenderLayer layer)
@@ -63,9 +69,13 @@ namespace Amphibian.Systems
 
         protected internal override void Initialize ()
         {
-            _cameraSystem = SystemManager.GetSystem(typeof(CameraSystem)) as CameraSystem;
+            EntityManager.RegisterComponentRemovedHandler<Renderable>((entity, renderCom) => {
+                _manager.Remove(renderCom.SpatialRef);
+            });
 
-            SystemManager.SystemAdded += SystemManager_SystemAdded;
+            SystemManager.RegisterSystemAddedHandler<CameraSystem>(cameraSys => {
+                _cameraSystem = cameraSys;
+            });
         }
 
         public SpatialManager SpatialManager
@@ -137,13 +147,6 @@ namespace Amphibian.Systems
                 _separator.Add(renderCom.LayerIndex, new UnorderedList<EntityRenderRecord>());
 
             _separator[renderCom.LayerIndex].Add(new EntityRenderRecord(entity, renderCom));
-        }
-
-        private void SystemManager_SystemAdded (BaseSystem system)
-        {
-            if (system is CameraSystem) {
-                _cameraSystem = system as CameraSystem;
-            }
         }
     }
 }

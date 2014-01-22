@@ -40,6 +40,9 @@ namespace Amphibian.EntitySystem
     public abstract class SystemElement
     {
         public abstract void Dispatch (BaseSystem sys);
+
+        internal abstract void AddHandler (Action<object> kDelegate);
+        internal abstract void RemoveHandler (Action<object> kDelegate);
     }
 
     public class SystemElement<T> : SystemElement
@@ -69,6 +72,18 @@ namespace Amphibian.EntitySystem
         {
             kElement.eventdelegate -= kDelegate;
             return kElement;
+        }
+
+        internal override void AddHandler (Action<object> kDelegate)
+        {
+            Action<T> typedDelegate = (Action<T>)kDelegate;
+            eventdelegate += typedDelegate;
+        }
+
+        internal override void RemoveHandler (Action<object> kDelegate)
+        {
+            Action<T> typedDelegate = (Action<T>)kDelegate;
+            eventdelegate -= typedDelegate;
         }
     }
 }

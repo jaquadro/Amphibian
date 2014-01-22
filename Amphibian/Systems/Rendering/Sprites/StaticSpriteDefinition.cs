@@ -1,8 +1,7 @@
-﻿using System;
+﻿using Amphibian.Geometry;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Amphibian.Geometry;
 
 namespace Amphibian.Systems.Rendering.Sprites
 {
@@ -89,7 +88,7 @@ namespace Amphibian.Systems.Rendering.Sprites
             _width = source.Width;
             _height = source.Height;
 
-            _origin = new Vector2(_texture.Width >> 1, _texture.Height >> 1);
+            _origin = new Vector2(_texture.Width / 2f, _texture.Height / 2f);
         }
 
         public void Draw (SpriteBatch spriteBatch, PointFP position, SpriteInfo spriteData)

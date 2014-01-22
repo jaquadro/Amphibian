@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Amphibian.EntitySystem;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Amphibian.Systems.Rendering
@@ -8,10 +9,22 @@ namespace Amphibian.Systems.Rendering
         private SpriteRenderManager _manager;
         private SpriteRenderManagerOptions _options;
 
-        public SpriteRenderLayer (SpriteBatch spriteBatch)
+        public SpriteRenderLayer (EntityWorld world)
         {
-            _manager = new SpriteRenderManager(spriteBatch);
+            _manager = new SpriteRenderManager(world);
 
+            InitOptions();
+        }
+
+        public SpriteRenderLayer (EntityWorld world, SpriteBatch spriteBatch)
+        {
+            _manager = new SpriteRenderManager(world, spriteBatch);
+
+            InitOptions();
+        }
+
+        private void InitOptions ()
+        {
             _options = new SpriteRenderManagerOptions() {
                 SamplerState = SamplerState.PointClamp,
             };

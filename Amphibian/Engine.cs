@@ -38,9 +38,7 @@ namespace Amphibian
         private GameServiceContainer _services;
         private AmphibianGameTime _gameTime;
 
-        private List<Frame> _frameStack;
-        public bool IsFrameStackEmpty { get { return _frameStack.Count == 0; } }
-        private List<Frame> _sortFrameStack;
+        private FrameStack _frameStack;
 
         private Dictionary<string, InputController> _input;
 
@@ -61,8 +59,7 @@ namespace Amphibian
             _content = new ContentManager(_services);
             _spriteBatch = new SpriteBatch(_graphicsDevice);
 
-            _frameStack = new List<Frame>();
-            _sortFrameStack = new List<Frame>();
+            _frameStack = new FrameStack(this);
 
             _input = new Dictionary<string, InputController>();
 
@@ -106,6 +103,11 @@ namespace Amphibian
             set { _simulationStep = value; }
         }
 
+        public FrameStack Frames
+        {
+            get { return _frameStack; }
+        }
+
         public IGameService GameService { get; set; }
 
         public Action<bool> IsCursorVisibleHandler { get; set; }
@@ -136,35 +138,6 @@ namespace Amphibian
         }
 
         #endregion
-
-        public void PushFrame (Frame frame) {
-            if (frame.Engine != null) {
-                throw new Exception("Frame already bound to engine");
-            }
-
-            if (!_frameStack.Contains(frame)) {
-                _frameStack.Add(frame);
-
-                frame.Engine = this;
-                frame.LoadFrame();
-            }
-        }
-
-        public Frame PopFrame ()
-        {
-            if (_frameStack.Count == 0) {
-                return null;
-            }
-
-            Frame frame = _frameStack[_frameStack.Count - 1];
-
-            frame.UnloadFrame();
-            frame.Engine = null;
-
-            _frameStack.RemoveAt(_frameStack.Count - 1);
-
-            return frame;
-        }
 
         public void Update (GameTime gameTime)
         {
@@ -207,60 +180,56 @@ namespace Amphibian
             }
 
             // Determine update depth of frame stack
-            for (int i = _frameStack.Count - 1; i >= 0; i--) {
-                _sortFrameStack.Add(_frameStack[i]);
-                if (_frameStack[i].BlocksUpdates) {
+            int depth = _frameStack.Count - 1;
+            for (; depth >= 0; depth--) {
+                if (_frameStack[depth].BlocksUpdates)
                     break;
-                }
             }
+
+            depth = Math.Max(0, depth);
 
             // Update each frame
-            foreach (Frame frame in _sortFrameStack) {
-                frame.Update();
-            }
+            for (int i = _frameStack.Count - 1; i >= depth; i--)
+                _frameStack[i].Update();
 
             // Reset controllers
-            foreach (InputController controller in _input.Values) {
+            foreach (InputController controller in _input.Values)
                 controller.Reset();
-            }
-
-            _sortFrameStack.Clear();
         }
 
         protected void InterpolateStep (double alpha)
         {
             // Determine update depth of frame stack
-            for (int i = _frameStack.Count - 1; i >= 0; i--) {
-                _sortFrameStack.Add(_frameStack[i]);
-                if (_frameStack[i].BlocksUpdates) {
+            int depth = _frameStack.Count - 1;
+            for (; depth >= 0; depth--) {
+                if (_frameStack[depth].BlocksUpdates)
                     break;
-                }
             }
+
+            depth = Math.Max(0, depth);
 
             // Update each frame
-            foreach (Frame frame in _sortFrameStack) {
-                frame.Interpolate(alpha);
-            }
-
-            _sortFrameStack.Clear();
+            for (int i = _frameStack.Count - 1; i >= depth; i--)
+                _frameStack[i].Interpolate(alpha);
         }
 
         public void Draw (GameTime gameTime)
         {
             _gameTime.Copy(gameTime);
 
-            for (int i = _frameStack.Count - 1; i >= 0; i--) {
-                _sortFrameStack.Add(_frameStack[i]);
-                if (_frameStack[i].BlocksDrawing) {
+            // Determine draw depth of frame stack
+            int depth = _frameStack.Count - 1;
+            for (; depth >= 0; depth--) {
+                if (_frameStack[depth].BlocksDrawing) {
                     break;
                 }
             }
 
-            foreach (Frame frame in _sortFrameStack) {
-                frame.Draw();
-            }
+            depth = Math.Max(0, depth);
 
-            _sortFrameStack.Clear();
+            // Draw each frame bottom-up
+            for (int i = depth; i < _frameStack.Count; i++)
+                _frameStack[i].Draw();
         }
 
         public void AddController (string name, InputController controller)

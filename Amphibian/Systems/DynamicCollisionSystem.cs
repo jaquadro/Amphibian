@@ -52,6 +52,12 @@ namespace Amphibian.Systems
             return Overlaps(e, _noCondition);
         }
 
+        public CollisionEnumerator Overlaps<T> (Entity e)
+            where T : class, IComponent
+        {
+            return Overlaps(e, typeof(T));
+        }
+
         public CollisionEnumerator Overlaps (Entity e, Type component)
         {
             return Overlaps(e, GetComponentCondition(component));
@@ -78,27 +84,33 @@ namespace Amphibian.Systems
             return true;
         }
 
-        public CollisionStartEnumerator CollisionStarted (Entity e)
+        public CollisionBoundaryEnumerator CollisionStarted (Entity e)
         {
             return CollisionStarted(e, _noCondition);
         }
 
-        public CollisionStartEnumerator CollisionStarted (Entity e, Type component)
+        public CollisionBoundaryEnumerator CollisionStarted<T> (Entity e)
+            where T : class, IComponent
+        {
+            return CollisionStarted(e, typeof(T));
+        }
+
+        public CollisionBoundaryEnumerator CollisionStarted (Entity e, Type component)
         {
             return CollisionStarted(e, GetComponentCondition(component));
         }
 
-        public CollisionStartEnumerator CollisionStarted (Entity e, Func<Entity, bool> condition)
+        public CollisionBoundaryEnumerator CollisionStarted (Entity e, Func<Entity, bool> condition)
         {
             List<Entity> curList;
             if (!_curPairs.TryGetValue(e, out curList))
-                return CollisionStartEnumerator.Empty;
+                return CollisionBoundaryEnumerator.Empty;
 
             List<Entity> prevList;
             if (!_prevPairs.TryGetValue(e, out prevList))
                 prevList = _empty;
 
-            return new CollisionStartEnumerator(curList, prevList, condition);
+            return new CollisionBoundaryEnumerator(curList, prevList, condition);
         }
 
         public bool CollisionHeld (Entity e1, Entity e2)
@@ -123,6 +135,35 @@ namespace Amphibian.Systems
                 return false;
 
             return true;
+        }
+
+        public CollisionBoundaryEnumerator CollisionEnded (Entity e)
+        {
+            return CollisionEnded(e, _noCondition);
+        }
+
+        public CollisionBoundaryEnumerator CollisionEnded<T> (Entity e)
+            where T : class, IComponent
+        {
+            return CollisionEnded(e, typeof(T));
+        }
+
+        public CollisionBoundaryEnumerator CollisionEnded (Entity e, Type component)
+        {
+            return CollisionEnded(e, GetComponentCondition(component));
+        }
+
+        public CollisionBoundaryEnumerator CollisionEnded (Entity e, Func<Entity, bool> condition)
+        {
+            List<Entity> prevList;
+            if (!_prevPairs.TryGetValue(e, out prevList))
+                return CollisionBoundaryEnumerator.Empty;
+
+            List<Entity> curList;
+            if (!_curPairs.TryGetValue(e, out curList))
+                curList = _empty;
+
+            return new CollisionBoundaryEnumerator(prevList, curList, condition);
         }
 
         protected internal override void Initialize ()
@@ -284,7 +325,7 @@ namespace Amphibian.Systems
             }
         }
 
-        public struct CollisionStartEnumerator
+        public struct CollisionBoundaryEnumerator
         {
             private static List<Entity> _emptyEntityList = new List<Entity>();
             private static Func<Entity, bool> _noConidition = (e) => { return true; };
@@ -295,16 +336,16 @@ namespace Amphibian.Systems
             private int _index;
             private Func<Entity, bool> _condition;
 
-            internal static CollisionStartEnumerator Empty
+            internal static CollisionBoundaryEnumerator Empty
             {
-                get { return new CollisionStartEnumerator(_emptyEntityList, _emptyEntityList); }
+                get { return new CollisionBoundaryEnumerator(_emptyEntityList, _emptyEntityList); }
             }
 
-            internal CollisionStartEnumerator (List<Entity> curList, List<Entity> prevList)
+            internal CollisionBoundaryEnumerator (List<Entity> curList, List<Entity> prevList)
                 : this(curList, prevList, _noConidition)
             { }
 
-            internal CollisionStartEnumerator (List<Entity> curList, List<Entity> prevList, Func<Entity, bool> condition)
+            internal CollisionBoundaryEnumerator (List<Entity> curList, List<Entity> prevList, Func<Entity, bool> condition)
             {
                 _index = -1;
                 _curList = curList;
@@ -339,11 +380,72 @@ namespace Amphibian.Systems
                 _index = -1;
             }
 
-            public CollisionStartEnumerator GetEnumerator ()
+            public CollisionBoundaryEnumerator GetEnumerator ()
             {
                 return this;
             }
         }
+
+        /*public struct CollisionEndEnumerator
+        {
+            private static List<Entity> _emptyEntityList = new List<Entity>();
+            private static Func<Entity, bool> _noConidition = (e) => { return true; };
+
+            private List<Entity> _curList;
+            private List<Entity> _prevList;
+
+            private int _index;
+            private Func<Entity, bool> _condition;
+
+            internal static CollisionEndEnumerator Empty
+            {
+                get { return new CollisionEndEnumerator(_emptyEntityList, _emptyEntityList); }
+            }
+
+            internal CollisionEndEnumerator (List<Entity> curList, List<Entity> prevList)
+                : this(curList, prevList, _noConidition)
+            { }
+
+            internal CollisionEndEnumerator (List<Entity> curList, List<Entity> prevList, Func<Entity, bool> condition)
+            {
+                _index = -1;
+                _curList = curList;
+                _prevList = prevList;
+                _condition = condition;
+            }
+
+            public Entity Current
+            {
+                get { return _prevList[_index]; }
+            }
+
+            public void Dispose () { }
+
+            public bool MoveNext ()
+            {
+                _index++;
+
+                while (_index < _prevList.Count) {
+                    Entity e = _prevList[_index];
+                    if (!_curList.Contains(e) && _condition(e))
+                        return true;
+
+                    _index++;
+                }
+
+                return false;
+            }
+
+            public void Reset ()
+            {
+                _index = -1;
+            }
+
+            public CollisionEndEnumerator GetEnumerator ()
+            {
+                return this;
+            }
+        }*/
 
         /*public struct EntityEnumerator
         {
