@@ -1,42 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Amphibian.EntitySystem;
 using Amphibian.Components;
-using System.Reflection;
+using Amphibian.EntitySystem;
 
 namespace Amphibian.Systems
 {
-    public class BehaviorSystem : ProcessingSystem
+    public class BehaviorSystem : ProcessingSystem<ScriptedComponent>
     {
-        private Dictionary<Type, ScriptInfo> _infoMap;
-
-        public BehaviorSystem()
-            : base(typeof(ScriptedComponent))
-        {
-            _infoMap = new Dictionary<Type, ScriptInfo>();
-        }
+        private Dictionary<Type, ScriptInfo> _infoMap = new Dictionary<Type,ScriptInfo>();
 
         protected internal override void Initialize ()
         {
             EntityManager.AddedComponent += HandleAddedComponent;
         }
 
-        protected override void ProcessEntities (EntityManager.EntityEnumerator entities)
+        protected override void Process (Entity entity, ScriptedComponent scriptCom)
         {
-            foreach (Entity e in entities) {
-                Process(e);
-            }
-        }
-
-        protected override void Process (Entity entity) {
-            ScriptedComponent scriptCom = EntityManager.GetComponent<ScriptedComponent>(entity);
-            if (scriptCom != null) {
-                foreach (Behavior behaviors in scriptCom.Behaviors) {
-                    behaviors.Update(this.SystemManager.World, entity);
-                }
-            }
+            foreach (Behavior behaviors in scriptCom.Behaviors)
+                behaviors.Update(this.SystemManager.World, entity);
         }
 
         public void RegisterType (Type behaviorType)

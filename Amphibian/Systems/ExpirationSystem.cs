@@ -1,46 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Amphibian.EntitySystem;
+﻿using System.Collections.Generic;
 using Amphibian.Components;
-using Amphibian.Utility;
+using Amphibian.EntitySystem;
 
 namespace Amphibian.Systems
 {
-    public class ExpirationSystem : ProcessingSystem
+    public class ExpirationSystem : ProcessingSystem<RemovalTimeout>
     {
-        private Queue<Entity> _purgeQueue;
+        private Queue<Entity> _purgeQueue = new Queue<Entity>();
 
-        public ExpirationSystem ()
-            : base(typeof(RemovalTimeout))
+        protected override void Process (Entity entity, RemovalTimeout timeoutCom)
         {
-            _purgeQueue = new Queue<Entity>();
-        }
-
-        protected override void ProcessEntities (EntityManager.EntityEnumerator entities)
-        {
-            foreach (Entity entity in entities) {
-                Process(entity);
-            }
-
-            while (_purgeQueue.Count > 0) {
-                EntityManager.Destroy(_purgeQueue.Dequeue());
-            }
-        }
-
-        protected override void Process (Entity entity)
-        {
-            RemovalTimeout timeout = EntityManager.GetComponent(entity, typeof(RemovalTimeout)) as RemovalTimeout;
-            if (timeout == null)
-                return;
-
             float time = (float)SystemManager.World.GameTime.ElapsedGameTime.TotalSeconds;
-            timeout.TimeRemaining -= time;
+            timeoutCom.TimeRemaining -= time;
 
-            if (timeout.TimeRemaining <= 0) {
+            if (timeoutCom.TimeRemaining <= 0)
                 _purgeQueue.Enqueue(entity);
-            }
+        }
+
+        protected override void End ()
+        {
+            while (_purgeQueue.Count > 0)
+                EntityManager.Destroy(_purgeQueue.Dequeue());
         }
     }
 }

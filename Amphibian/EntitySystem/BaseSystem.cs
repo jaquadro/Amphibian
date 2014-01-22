@@ -16,7 +16,8 @@ namespace Amphibian.EntitySystem
         private EntityManager _entityManager;
         private SystemManager _systemManager;
 
-        private List<string> _pendingSystems = new List<string>();
+        private List<string> _pendingRequiredSystems = new List<string>();
+        private List<string> _pendingOptionalSystems = new List<string>();
 
         public BaseSystem ()
         { }
@@ -79,21 +80,31 @@ namespace Amphibian.EntitySystem
 
         protected virtual bool CheckProcessing ()
         {
-            return _enabled && _pendingSystems.Count == 0;
+            return _enabled && _pendingRequiredSystems.Count == 0;
         }
 
         private void InitRequiredSystems ()
         {
+            InitSystems(typeof(RequiredSystemAttribute), _pendingRequiredSystems, HandleRequiredSystemAdded);
+        }
+
+        private void InitOptionalSystems ()
+        {
+            InitSystems(typeof(OptionalSystemAttribute), _pendingOptionalSystems, HandleOptionalSystemAdded);
+        }
+
+        private void InitSystems (Type attribType, List<string> pendingList, Action<object> handler)
+        {
             foreach (var propInfo in this.GetType().GetProperties(BindingFlags.Instance | BindingFlags.FlattenHierarchy | BindingFlags.Public | BindingFlags.NonPublic)) {
-                if (propInfo.CanWrite && Attribute.IsDefined(propInfo, typeof(RequiredSystemAttribute))) {
+                if (propInfo.CanWrite && Attribute.IsDefined(propInfo, attribType)) {
                     BaseSystem sys = SystemManager.GetSystem(propInfo.PropertyType);
                     if (sys != null) {
                         propInfo.SetValue(this, sys, null);
                         continue;
                     }
 
-                    _pendingSystems.Add(this.GetType().FullName + "." + propInfo.Name);
-                    SystemManager.RegisterSystemAddedHandler(propInfo.PropertyType, HandleRequiredSystemAdded);
+                    pendingList.Add(this.GetType().FullName + "." + propInfo.Name);
+                    SystemManager.RegisterSystemAddedHandler(propInfo.PropertyType, handler);
                 }
             }
         }
@@ -106,7 +117,25 @@ namespace Amphibian.EntitySystem
                     if (propInfo.CanWrite && Attribute.IsDefined(propInfo, typeof(RequiredSystemAttribute))) {
                         if (propInfo.PropertyType == systemType) {
                             propInfo.SetValue(this, system, null);
-                            _pendingSystems.Remove(this.GetType().FullName + "." + propInfo.Name);
+                            _pendingRequiredSystems.Remove(this.GetType().FullName + "." + propInfo.Name);
+                            return;
+                        }
+                    }
+                }
+
+                systemType = systemType.BaseType;
+            }
+        }
+
+        private void HandleOptionalSystemAdded (object system)
+        {
+            Type systemType = system.GetType();
+            while (systemType != null) {
+                foreach (var propInfo in this.GetType().GetProperties(BindingFlags.Instance | BindingFlags.FlattenHierarchy | BindingFlags.Public | BindingFlags.NonPublic)) {
+                    if (propInfo.CanWrite && Attribute.IsDefined(propInfo, typeof(OptionalSystemAttribute))) {
+                        if (propInfo.PropertyType == systemType) {
+                            propInfo.SetValue(this, system, null);
+                            _pendingOptionalSystems.Remove(this.GetType().FullName + "." + propInfo.Name);
                             return;
                         }
                     }
@@ -119,5 +148,9 @@ namespace Amphibian.EntitySystem
 
     [AttributeUsage(AttributeTargets.Property)]
     public class RequiredSystemAttribute : Attribute
+    { }
+
+    [AttributeUsage(AttributeTargets.Property)]
+    public class OptionalSystemAttribute : Attribute
     { }
 }

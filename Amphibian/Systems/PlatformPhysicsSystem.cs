@@ -11,35 +11,10 @@ using Amphibian.Utility;
 
 namespace Amphibian.Systems
 {
-    public class PhysicsSystem : ProcessingSystem
+    public class PhysicsSystem : ProcessingSystem<Physics, Position>
     {
-        public PhysicsSystem ()
-            : base(typeof(Physics))
+        protected override void Process (Entity entity, Physics physicsCom, Position positionCom)
         {
-        }
-
-        protected override void ProcessEntities (EntityManager.EntityEnumerator entities)
-        {
-            foreach (Entity entity in entities) {
-                Process(entity);
-            }
-        }
-
-        protected override void Process(Entity entity)
-        {
-            Physics physicsCom = null;
-            Position positionCom = null;
-
-            foreach (IComponent com in EntityManager.GetComponents(entity)) {
-                if (com is Physics)
-                    physicsCom = com as Physics;
-                if (com is Position)
-                    positionCom = com as Position;
-            }
-
-            if (physicsCom == null || positionCom == null)
-                return;
-
             float time = (float)SystemManager.World.GameTime.ElapsedGameTime.TotalSeconds * 60f;
 
             FPInt diffPosX = StepXPhysics(time, physicsCom);
@@ -102,39 +77,13 @@ namespace Amphibian.Systems
         }
     }
 
-    public class PlatformPhysicsSystem : ProcessingSystem
+    public class PlatformPhysicsSystem : ProcessingSystem<PlatformPhysics, Collidable, Position>
     {
-        private BackgroundCollisionSystem _backCollisionSystem;
+        [RequiredSystem]
+        protected BackgroundCollisionSystem BGCollisionSystem { get; set; }
 
-        public PlatformPhysicsSystem ()
-            : base(typeof(PlatformPhysics))
+        protected override void Process (Entity entity, PlatformPhysics physicsCom, Collidable collisionCom, Position positionCom)
         {
-        }
-
-        protected internal override void Initialize ()
-        {
-            _backCollisionSystem = SystemManager.GetSystem(typeof(BackgroundCollisionSystem)) as BackgroundCollisionSystem;
-
-            SystemManager.SystemAdded += SystemManager_SystemAdded;
-        }
-
-        protected override void ProcessEntities (EntityManager.EntityEnumerator entities)
-        {
-            foreach (Entity entity in entities) {
-                Process(entity);
-            }
-        }
-
-        protected override void Process(Entity entity)
-        {
-            PlatformPhysics physicsCom;
-            Collidable collisionCom;
-            Position positionCom;
-
-            if (!EntityManager.GetComponent<PlatformPhysics, Collidable, Position>(entity, 
-                out physicsCom, out collisionCom, out positionCom))
-                return;
-
             float time = (float)SystemManager.World.GameTime.ElapsedGameTime.TotalSeconds * 60f;
 
             FPInt preX = positionCom.X;
@@ -257,7 +206,7 @@ namespace Amphibian.Systems
 
         private bool TestCollisionEdge (Collidable collidable, AXLine line)
         {
-            return _backCollisionSystem.TestEdge(line) || TestSolidObject(collidable, line);
+            return BGCollisionSystem.TestEdge(line) || TestSolidObject(collidable, line);
         }
 
         private bool TestSolidObject (Collidable collidable, AYLine line)
@@ -283,12 +232,12 @@ namespace Amphibian.Systems
 
         private bool TestCollisionEdge (Collidable collidable, AYLine line)
         {
-            return _backCollisionSystem.TestEdge(line) || TestSolidObject(collidable, line);
+            return BGCollisionSystem.TestEdge(line) || TestSolidObject(collidable, line);
         }
 
         private bool TestCollision (Collidable collidable, AYLine line)
         {
-            return _backCollisionSystem.Test(line) || TestSolidObject(collidable, line);
+            return BGCollisionSystem.Test(line) || TestSolidObject(collidable, line);
         }
 
         private void MoveVertical (Entity entity, FPInt distX, FPInt distY, Position position, Collidable collidable, PlatformPhysics physics)
@@ -397,8 +346,8 @@ namespace Amphibian.Systems
                         }
                     }
 
-                    bool test1 = _backCollisionSystem.TestEdge(right.X - bounds.Width, bounds.Bottom + offY);
-                    bool test2 = _backCollisionSystem.TestEdge(right.X - bounds.Width, bounds.Bottom + offY + 1);
+                    bool test1 = BGCollisionSystem.TestEdge(right.X - bounds.Width, bounds.Bottom + offY);
+                    bool test2 = BGCollisionSystem.TestEdge(right.X - bounds.Width, bounds.Bottom + offY + 1);
 
                     if (!test1 && test2) {
                         posY += 1;
@@ -432,8 +381,8 @@ namespace Amphibian.Systems
                         }
                     }
 
-                    bool test1 = _backCollisionSystem.TestEdge(left.X + bounds.Width, bounds.Bottom + offY);
-                    bool test2 = _backCollisionSystem.TestEdge(left.X + bounds.Width, bounds.Bottom + offY + 1);
+                    bool test1 = BGCollisionSystem.TestEdge(left.X + bounds.Width, bounds.Bottom + offY);
+                    bool test2 = BGCollisionSystem.TestEdge(left.X + bounds.Width, bounds.Bottom + offY + 1);
 
                     if (!test1 && test2) {
                         posY += 1;
@@ -555,13 +504,6 @@ namespace Amphibian.Systems
                 target.VelocityX = (FPInt)target.Pushable.PushSpeed;
             else
                 target.VelocityX = -(FPInt)target.Pushable.PushSpeed;
-        }
-
-        private void SystemManager_SystemAdded (BaseSystem system)
-        {
-            if (system is BackgroundCollisionSystem) {
-                _backCollisionSystem = system as BackgroundCollisionSystem;
-            }
         }
     }
 }

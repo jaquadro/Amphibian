@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Amphibian.EntitySystem;
-using Amphibian.Input;
+﻿using System.Collections.Generic;
 using Amphibian.Components;
+using Amphibian.EntitySystem;
 using Amphibian.Geometry;
-using Amphibian.Utility;
+using Amphibian.Input;
 
 namespace Amphibian.Systems
 {
@@ -46,31 +42,16 @@ namespace Amphibian.Systems
         }
     }
 
-    public class PlatformControlSystem : ProcessingSystem
+    public class PlatformControlSystem : ProcessingSystem<PlatformPhysics, InputComponent>
     {
-        public PlatformControlSystem ()
-            : base(typeof(InputComponent))
-        { }
-
-        protected override void ProcessEntities (EntityManager.EntityEnumerator entities)
+        protected override void Process (Entity entity, PlatformPhysics physicsCom, InputComponent inputCom)
         {
-            foreach (Entity e in entities)
-                Process(e);
-        }
-
-        protected override void Process(Entity entity)
-        {
-            PlatformPhysics physicsCom;
-            DirectionComponent directionCom;
-            ActivityComponent activityCom;
-            InputComponent inputCom;
-
-            if (!EntityManager.GetComponent<PlatformPhysics, InputComponent>(entity, out physicsCom, out inputCom))
-                return;
-
-            var controller = SystemManager.World.Frame.Engine.GetController<ButtonController<PlatformAction>>(inputCom.Controller);
+            var controller = Engine.GetController<ButtonController<PlatformAction>>(inputCom.Controller);
             if (controller == null)
                 return;
+
+            DirectionComponent directionCom;
+            ActivityComponent activityCom;
 
             EntityManager.GetComponent<DirectionComponent, ActivityComponent>(entity, out directionCom, out activityCom);
 

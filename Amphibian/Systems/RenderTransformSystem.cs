@@ -3,21 +3,10 @@ using Amphibian.EntitySystem;
 
 namespace Amphibian.Systems
 {
-    public class RenderTransformSystem : ProcessingSystem
+    public class RenderTransformSystem : ProcessingSystem<Renderable>
     {
-        private CameraSystem _cameraSystem;
-
-        public RenderTransformSystem ()
-            : base(typeof(Renderable))
-        {
-        }
-
-        protected internal override void Initialize ()
-        {
-            _cameraSystem = SystemManager.GetSystem(typeof(CameraSystem)) as CameraSystem;
-
-            SystemManager.SystemAdded += SystemManager_SystemAdded;
-        }
+        [OptionalSystem]
+        protected CameraSystem CameraSystem { get; set; }
 
         protected override void ProcessEntities (EntityManager.EntityEnumerator entities)
         {
@@ -26,29 +15,20 @@ namespace Amphibian.Systems
             }
         }
 
-        protected override void Process (Entity entity)
+        protected override void Process (Entity entity, Renderable renderCom)
         {
-            Renderable renderCom = EntityManager.GetComponent(entity, typeof(Renderable)) as Renderable;
-            if (renderCom == null)
-                return;
-
             Position positionCom = EntityManager.GetComponent(entity, typeof(Position)) as Position;
             if (positionCom != null) {
                 renderCom.RenderX = positionCom.X;
                 renderCom.RenderY = positionCom.Y;
             }
 
-            ParallaxCom parallaxCom = EntityManager.GetComponent(entity, typeof(ParallaxCom)) as ParallaxCom;
-            if (parallaxCom != null) {
-                renderCom.RenderX += _cameraSystem.Left * parallaxCom.ScrollCoefX;
-                renderCom.RenderY += _cameraSystem.Top * parallaxCom.ScrollCoefY;
-            }
-        }
-
-        private void SystemManager_SystemAdded (BaseSystem system)
-        {
-            if (system is CameraSystem) {
-                _cameraSystem = system as CameraSystem;
+            if (CameraSystem != null) {
+                ParallaxCom parallaxCom = EntityManager.GetComponent(entity, typeof(ParallaxCom)) as ParallaxCom;
+                if (parallaxCom != null) {
+                    renderCom.RenderX += CameraSystem.Left * parallaxCom.ScrollCoefX;
+                    renderCom.RenderY += CameraSystem.Top * parallaxCom.ScrollCoefY;
+                }
             }
         }
     }

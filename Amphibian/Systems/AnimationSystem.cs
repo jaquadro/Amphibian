@@ -1,38 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using Amphibian.Components;
 using Amphibian.EntitySystem;
-using Amphibian.Components;
 using Amphibian.Systems.Rendering;
 
 namespace Amphibian.Systems
 {
-    public class AnimationSystem : ProcessingSystem
+    public class AnimationSystem : ProcessingSystem<Renderable>
     {
-        public AnimationSystem ()
-            : base(typeof(Renderable))
+        [RequiredSystem]
+        protected RenderSystem RenderSystem { get; set; }
+
+        protected override void Process (Entity entity, Renderable renderCom)
         {
-        }
-
-        protected override void ProcessEntities (EntityManager.EntityEnumerator entities)
-        {
-            foreach (Entity e in entities) {
-                Process(e);
-            }
-        }
-
-        protected override void Process (Entity entity) {
-            Renderable renderCom = EntityManager.GetComponent(entity, typeof(Renderable)) as Renderable;
-            if (renderCom == null)
-                return;
-
-            RenderSystem renderSys = SystemManager.GetSystem(typeof(RenderSystem)) as RenderSystem;
-            Spatial spat = renderSys.SpatialManager.GetSpatial(renderCom.SpatialRef);
-
-            if (spat != null) {
+            Spatial spat = RenderSystem.SpatialManager.GetSpatial(renderCom.SpatialRef);
+            if (spat != null)
                 spat.Update();
-            }
         }
     }
 }

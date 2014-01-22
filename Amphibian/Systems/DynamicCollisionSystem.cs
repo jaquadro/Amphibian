@@ -9,7 +9,7 @@ using Amphibian.Utility;
 
 namespace Amphibian.Systems
 {
-    public class DynamicCollisionSystem : ProcessingSystem
+    public class DynamicCollisionSystem : ProcessingSystem<Collidable, Position>
     {
         private static Func<Entity, bool> _noCondition = (e) => { return true; };
 
@@ -24,7 +24,6 @@ namespace Amphibian.Systems
         private Dictionary<Type, Func<Entity, bool>> _componentCollisionStartedCache;
 
         public DynamicCollisionSystem ()
-            : base(typeof(Collidable))
         {
             _manager = new EntityCollisionManager();
             _manager.FineCollision += FineCollisionHandler;
@@ -172,32 +171,10 @@ namespace Amphibian.Systems
             EntityManager.RemovedComponent += ComponentDetachHandler;
         }
 
-        protected override void ProcessEntities (EntityManager.EntityEnumerator entities)
+        protected override void Process (Entity entity, Collidable collideCom, Position positionCom)
         {
-            foreach (Entity entity in entities) {
-                Process(entity);
-            }
-        }
-
-        protected override void Process(Entity entity)
-        {
-            Position comPosition = null;
-            Collidable comCollidable = null;
-
-            foreach (IComponent com in EntityManager.GetComponents(entity)) {
-                if (com is Position) {
-                    comPosition = com as Position;
-                }
-                else if (com is Collidable) {
-                    comCollidable = com as Collidable;
-                }
-            }
-
-            if (comPosition == null || comCollidable == null)
-                return;
-
-            comCollidable.CollisionMask.Position.X = comPosition.X;
-            comCollidable.CollisionMask.Position.Y = comPosition.Y;
+            collideCom.CollisionMask.Position.X = positionCom.X;
+            collideCom.CollisionMask.Position.Y = positionCom.Y;
         }
 
         protected override void End ()
