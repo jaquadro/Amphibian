@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Amphibian.Systems
 {
-    public class RenderSystem : ProcessingSystem
+    public class RenderSystem : ProcessingSystem<Renderable>
     {
         private struct EntityRenderRecord
         {
@@ -23,7 +23,6 @@ namespace Amphibian.Systems
         }
 
         private SpatialManager _manager;
-        private CameraSystem _cameraSystem;
 
         private List<int> _layerIndexes;
         private Dictionary<int, RenderLayer> _layers;
@@ -31,7 +30,6 @@ namespace Amphibian.Systems
         private Dictionary<int, UnorderedList<EntityRenderRecord>> _separator;
 
         public RenderSystem ()
-            : base(typeof(Renderable))
         {
             _manager = new SpatialManager();
             _separator = new Dictionary<int, UnorderedList<EntityRenderRecord>>();
@@ -51,6 +49,9 @@ namespace Amphibian.Systems
         {
             SetLayer(0, new SpriteRenderLayer(world, spriteBatch));
         }
+
+        [RequiredSystem]
+        protected CameraSystem CameraSystem { get; set; }
 
         public void SetLayer (int index, RenderLayer layer)
         {
@@ -72,10 +73,6 @@ namespace Amphibian.Systems
             EntityManager.RegisterComponentRemovedHandler<Renderable>((entity, renderCom) => {
                 _manager.Remove(renderCom.SpatialRef);
             });
-
-            SystemManager.RegisterSystemAddedHandler<CameraSystem>(cameraSys => {
-                _cameraSystem = cameraSys;
-            });
         }
 
         public SpatialManager SpatialManager
@@ -85,8 +82,8 @@ namespace Amphibian.Systems
 
         protected override void Begin ()
         {
-            Matrix matrix = _cameraSystem != null 
-                ? _cameraSystem.GetTranslationMatrix()
+            Matrix matrix = CameraSystem != null 
+                ? CameraSystem.GetTranslationMatrix()
                 : Matrix.Identity;
 
             foreach (UnorderedList<EntityRenderRecord> record in _separator.Values)
@@ -95,28 +92,26 @@ namespace Amphibian.Systems
 
         protected override void End ()
         {
-            if (_cameraSystem != null) {
-                Matrix matrix = _cameraSystem.GetTranslationMatrix();
+            Matrix matrix = CameraSystem.GetTranslationMatrix();
 
-                foreach (int layerIndex in _layerIndexes) {
-                    RenderLayer renderLayer = _layers[layerIndex];
-                    renderLayer.Begin(matrix);
-                    BeginRenderLayer(layerIndex);
+            foreach (int layerIndex in _layerIndexes) {
+                RenderLayer renderLayer = _layers[layerIndex];
+                renderLayer.Begin(matrix);
+                BeginRenderLayer(layerIndex);
 
-                    if (_separator.ContainsKey(layerIndex)) {
-                        foreach (EntityRenderRecord record in _separator[layerIndex]) {
-                            Spatial sp = _manager.GetSpatial(record.RenderCom.SpatialRef);
-                            if (sp == null)
-                                return;
+                if (_separator.ContainsKey(layerIndex)) {
+                    foreach (EntityRenderRecord record in _separator[layerIndex]) {
+                        Spatial sp = _manager.GetSpatial(record.RenderCom.SpatialRef);
+                        if (sp == null)
+                            return;
 
-                            if (sp.InBounds(_cameraSystem.Bounds))
-                                sp.Render(renderLayer.RenderManager, record.Entity, record.RenderCom);
-                        }
+                        if (sp.InBounds(CameraSystem.Bounds))
+                            sp.Render(renderLayer.RenderManager, record.Entity, record.RenderCom);
                     }
-
-                    EndRenderLayer(layerIndex);
-                    renderLayer.End();
                 }
+
+                EndRenderLayer(layerIndex);
+                renderLayer.End();
             }
         }
 
@@ -126,20 +121,8 @@ namespace Amphibian.Systems
         protected virtual void EndRenderLayer (int layerIndex)
         { }
 
-
-        protected override void Process (Entity entity)
+        protected override void Process (Entity entity, Renderable renderCom)
         {
-            Renderable renderCom = null;
-            foreach (IComponent com in EntityManager.GetComponents(entity)) {
-                if (com is Renderable) {
-                    renderCom = com as Renderable;
-                    break;
-                }
-            }
-
-            if (renderCom == null)
-                return;
-
             if (!_manager.IsValid(renderCom.SpatialRef))
                 return;
 
