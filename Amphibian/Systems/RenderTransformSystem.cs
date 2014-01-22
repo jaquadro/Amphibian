@@ -8,13 +8,6 @@ namespace Amphibian.Systems
         [OptionalSystem]
         protected CameraSystem CameraSystem { get; set; }
 
-        protected override void ProcessEntities (EntityManager.EntityEnumerator entities)
-        {
-            foreach (Entity e in entities) {
-                Process(e);
-            }
-        }
-
         protected override void Process (Entity entity, Renderable renderCom)
         {
             Position positionCom = EntityManager.GetComponent(entity, typeof(Position)) as Position;
