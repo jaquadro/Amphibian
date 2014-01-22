@@ -26,7 +26,8 @@ namespace Amphibian.Systems.Rendering.Spatials
         private SpatialTypeRecord _record;
         private DirectionalAnimatedSprite _sprite;
 
-        public DirectionalAniamtedSpriteSpatial (String contentPath, ContentManager contentManager)
+        public DirectionalAniamtedSpriteSpatial (String contentPath, EntityWorld world, ContentManager contentManager)
+            : base(world)
         {
             if (!_registered.TryGetValue(contentPath, out _record))
                 _record = Load(contentPath, contentManager);
@@ -58,11 +59,11 @@ namespace Amphibian.Systems.Rendering.Spatials
             return record;
         }
 
-        public override void Render (SpriteBatch spriteBatch, EntityWorld world, Entity e, Renderable position)
+        public override void Render (SpriteBatch spriteBatch, Entity e, Renderable position)
         {
             DirectionComponent directionCom = null;
 
-            foreach (IComponent com in world.EntityManager.GetComponents(e)) {
+            foreach (IComponent com in World.EntityManager.GetComponents(e)) {
                 if (com is DirectionComponent) {
                     directionCom = com as DirectionComponent;
                     break;
@@ -74,7 +75,7 @@ namespace Amphibian.Systems.Rendering.Spatials
                 _sprite.CurrentSequence.Restart();
             }
 
-            _sprite.Update(world.GameTime);
+            _sprite.Update(World.GameTime);
 
             _sprite.Draw(spriteBatch, new PointFP(position.RenderX, position.RenderY));
         }

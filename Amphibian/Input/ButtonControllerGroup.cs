@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace Amphibian.Input
 {
@@ -7,7 +10,7 @@ namespace Amphibian.Input
     {
         private List<ButtonController<TActionSet>> _controllers;
 
-        public ButtonControllerGroup (params ButtonController<TActionSet>[] controllers)
+        public ButtonControllerGroup (params ButtonController<TActionSet>[] controllers )
         {
             _controllers = new List<ButtonController<TActionSet>>(controllers);
         }

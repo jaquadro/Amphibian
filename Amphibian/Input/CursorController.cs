@@ -17,8 +17,6 @@ namespace Amphibian.Input
 
         public abstract int Y { get; }
 
-        public abstract bool LocationValid { get; }
-
         public virtual int DeltaX
         {
             get { return X - _prevX; }

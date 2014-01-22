@@ -414,11 +414,6 @@ namespace Amphibian.EntitySystem
             return EntityEnumerator.Empty;
         }
 
-        public EntityEnumerator GetEntities<T> ()
-        {
-            return GetEntities(typeof(T));
-        }
-
         public int CountEntities (Type componentType)
         {
             if (componentType != null) {

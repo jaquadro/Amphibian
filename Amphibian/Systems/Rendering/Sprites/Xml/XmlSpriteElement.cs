@@ -15,8 +15,8 @@ namespace Amphibian.Systems.Rendering.Sprites.Xml
         public int Y { get; set; }
         public int Height { get; set; }
         public int Width { get; set; }
-        public float OriginX { get; set; }
-        public float OriginY { get; set; }
+        public int OriginX { get; set; }
+        public int OriginY { get; set; }
 
         #endregion
 
@@ -50,8 +50,8 @@ namespace Amphibian.Systems.Rendering.Sprites.Xml
             Y = Convert.ToInt32(reader["Y"], CultureInfo.InvariantCulture);
             Height = Convert.ToInt32(reader["Height"], CultureInfo.InvariantCulture);
             Width = Convert.ToInt32(reader["Width"], CultureInfo.InvariantCulture);
-            OriginX = Convert.ToSingle(reader["OriginX"], CultureInfo.InvariantCulture);
-            OriginY = Convert.ToSingle(reader["OriginY"], CultureInfo.InvariantCulture);
+            OriginX = Convert.ToInt32(reader["OriginX"], CultureInfo.InvariantCulture);
+            OriginY = Convert.ToInt32(reader["OriginY"], CultureInfo.InvariantCulture);
 
             reader.Skip();
         }

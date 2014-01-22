@@ -1,5 +1,6 @@
-﻿using Amphibian.Geometry;
+﻿using System;
 using Microsoft.Xna.Framework.Graphics;
+using Amphibian.Geometry;
 
 namespace Amphibian.Systems.Rendering.Sprites
 {

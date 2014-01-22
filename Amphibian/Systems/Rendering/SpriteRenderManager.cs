@@ -1,5 +1,4 @@
 ﻿using System;
-using Amphibian.EntitySystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -16,22 +15,21 @@ namespace Amphibian.Systems.Rendering
 
     public class SpriteRenderManager : IRenderManager
     {
-        public SpriteRenderManager (EntityWorld world)
-            : this(world, new SpriteBatch(world.Frame.Engine.GraphicsDevice))
-        { }
+        private SpriteBatch _spriteBatch;
 
-        public SpriteRenderManager (EntityWorld world, SpriteBatch spriteBatch)
+        public SpriteRenderManager (SpriteBatch spriteBatch)
         {
-            World = world;
-            SpriteBatch = spriteBatch;
+            _spriteBatch = spriteBatch;
         }
 
-        public EntityWorld World { get; private set; }
-        public SpriteBatch SpriteBatch { get; private set; }
+        public SpriteBatch SpriteBatch
+        {
+            get { return _spriteBatch; }
+        }
 
         public void Begin ()
         {
-            SpriteBatch.Begin(SpriteSortMode.Deferred, null);
+            _spriteBatch.Begin(SpriteSortMode.Deferred, null);
         }
 
         public void Begin (IRenderManagerOptions renderOptions)
@@ -45,7 +43,7 @@ namespace Amphibian.Systems.Rendering
             if (options == null)
                 throw new ArgumentException("renderOptions must be of type SpriteRenderManagerOptions");
 
-            SpriteBatch.Begin(SpriteSortMode.Deferred,
+            _spriteBatch.Begin(SpriteSortMode.Deferred,
                 options.BlendState,
                 options.SamplerState,
                 options.DepthStencilState,
@@ -56,7 +54,7 @@ namespace Amphibian.Systems.Rendering
 
         public void End ()
         {
-            SpriteBatch.End();
+            _spriteBatch.End();
         }
     }
 }

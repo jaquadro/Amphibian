@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
+using System.Linq;
+using System.Text;
 using Microsoft.Xna.Framework.Input;
+using System.Reflection;
 
 namespace Amphibian.Input
 {
@@ -152,11 +154,6 @@ namespace Amphibian.Input
         public override int Y
         {
             get { return _state.Y; }
-        }
-
-        public override bool LocationValid
-        {
-            get { return Mouse.WindowHandle != null; }
         }
 
         public override bool VirtualInterface

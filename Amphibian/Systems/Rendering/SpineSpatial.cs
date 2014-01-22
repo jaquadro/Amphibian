@@ -10,15 +10,19 @@ namespace Amphibian.Systems.Rendering
 {
     public abstract class SpineSpatial : Spatial
     {
+        public SpineSpatial (EntityWorld world)
+            : base(world)
+        { }
+
         public override void Render (IRenderManager renderManager, Entity entity, Renderable position)
         {
             SpineRenderManager spineRenderManager = renderManager as SpineRenderManager;
             if (spineRenderManager == null)
                 throw new ArgumentException("renderManager must be of type SpineRenderManager");
 
-            Render(spineRenderManager.SkeletonRenderer, spineRenderManager.World, entity, position);
+            Render(spineRenderManager.SkeletonRenderer, entity, position);
         }
 
-        public abstract void Render (SkeletonRenderer skeletonRenderer, EntityWorld world, Entity entity, Renderable position);
+        public abstract void Render (SkeletonRenderer skeletonRenderer, Entity entity, Renderable position);
     }
 }

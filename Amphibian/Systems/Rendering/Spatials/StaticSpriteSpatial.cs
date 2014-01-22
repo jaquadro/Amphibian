@@ -26,7 +26,8 @@ namespace Amphibian.Systems.Rendering.Spatials
         private SpatialTypeRecord _record;
         private StaticSprite _sprite;
 
-        public StaticSpriteSpatial (String contentPath, ContentManager contentManager)
+        public StaticSpriteSpatial (String contentPath, EntityWorld world, ContentManager contentManager)
+            : base(world)
         {
             if (!_registered.TryGetValue(contentPath, out _record))
                 _record = Load(contentPath, contentManager);
@@ -58,7 +59,7 @@ namespace Amphibian.Systems.Rendering.Spatials
             return record;
         }
 
-        public override void Render (SpriteBatch spriteBatch, EntityWorld world, Entity e, Renderable position)
+        public override void Render (SpriteBatch spriteBatch, Entity e, Renderable position)
         {
             _sprite.Draw(spriteBatch, new PointFP(position.RenderX, position.RenderY));
         }

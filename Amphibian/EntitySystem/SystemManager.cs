@@ -108,7 +108,7 @@ namespace Amphibian.EntitySystem
                     break;
             }
 
-            system.InitializeSystem();
+            system.Initialize();
 
             OnSystemAdded(system);
 
@@ -176,29 +176,12 @@ namespace Amphibian.EntitySystem
 
             SystemElement<T> typedElement = element as SystemElement<T>;
             if (typedElement == null)
-                throw new InvalidOperationException("Unexpected SystemElement type for system type " + typeof(T));
+                throw new InvalidOperationException("Unexpected EventElement type for system type T");
 
             typedElement += handler;
         }
 
-        public void RegisterSystemAddedHandler (Type systemType, Action<object> handler)
-        {
-            var systemElementType = typeof(SystemElement<>);
-            var systemElementInst = systemElementType.MakeGenericType(new Type[] { systemType });
-
-            SystemElement element;
-            if (!_sysAddedEvents.TryGetValue(systemType, out element)) {
-                element = Activator.CreateInstance(systemElementInst) as SystemElement;
-                _sysAddedEvents.Add(systemType, element);
-            }
-
-            if (element.GetType() != systemElementInst)
-                throw new InvalidOperationException("Unexpected SystemElement type for system type " + systemType);
-
-            element.AddHandler(handler);
-        }
-
-        public void UnregisterSystemAddedHandler<T> (Action<T> handler)
+        public void UnregisterComponentAddedHandler<T> (Action<T> handler)
             where T : BaseSystem
         {
             Type sysType = typeof(T);
@@ -209,24 +192,9 @@ namespace Amphibian.EntitySystem
 
             SystemElement<T> typedElement = element as SystemElement<T>;
             if (typedElement == null)
-                throw new InvalidOperationException("Unexpected EventElement type for system type " + typeof(T));
+                throw new InvalidOperationException("Unexpected EventElement type for system type T");
 
             typedElement -= handler;
-        }
-
-        public void UnregisterSystemAddedHandler (Type systemType, Action<object> handler)
-        {
-            var systemElementType = typeof(SystemElement<>);
-            var systemElementInst = systemElementType.MakeGenericType(new Type[] { systemType });
-
-            SystemElement element;
-            if (!_sysAddedEvents.TryGetValue(systemType, out element))
-                return;
-
-            if (element.GetType() != systemElementInst)
-                throw new InvalidOperationException("Unexpected SystemElement type for system type " + systemType);
-
-            element.RemoveHandler(handler);
         }
 
         public T GetSystemOrRegisterHandler<T> (Action<T> handler)

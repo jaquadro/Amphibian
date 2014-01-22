@@ -85,16 +85,12 @@ namespace Amphibian.Systems
 
     public class ClockResetSystem : BaseSystem
     {
-        [RequiredSystem]
-        protected ClockSystem ClockSystem { get; set; }
-
         protected override void ProcessInner ()
         {
-            ClockSystem.Reset();
-            /*ClockSystem clockSys = SystemManager.GetSystem(typeof(ClockSystem)) as ClockSystem;
+            ClockSystem clockSys = SystemManager.GetSystem(typeof(ClockSystem)) as ClockSystem;
             if (clockSys != null) {
                 clockSys.Reset();
-            }*/
+            }
         }
     }
 }

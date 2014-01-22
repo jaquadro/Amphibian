@@ -12,7 +12,7 @@ namespace Amphibian.EntitySystem
         private TagManager _tagManager;
 
         private AmphibianGameTime _gameTime;
-        private EntityFrame _frame;
+        private Frame _frame;
 
         public EntityWorld ()
         {
@@ -43,7 +43,7 @@ namespace Amphibian.EntitySystem
             set { _gameTime = value; }
         }
 
-        public EntityFrame Frame
+        public Frame Frame
         {
             get { return _frame; }
             set { _frame = value; }

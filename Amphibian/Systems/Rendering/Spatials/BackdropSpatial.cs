@@ -173,6 +173,7 @@ namespace Amphibian.Systems.Rendering.Spatials
         private Texture2D _spriteTexture;
 
         public BackdropSpatial (EntityWorld world, ContentManager contentManager, string asset)
+            : base(world)
         {
             _spriteTexture = contentManager.Load<Texture2D>(asset);
             _dimX.OriginalLength = _spriteTexture.Width;
@@ -291,24 +292,27 @@ namespace Amphibian.Systems.Rendering.Spatials
 
         #endregion
 
-        public override void Render (SpriteBatch spriteBatch, EntityWorld world, Entity entity, Renderable position)
+        public override void Update ()
         {
             if (_dimX.AutoScroll) {
-                _dimX.AutoPosition += _dimX.AutoSpeed * (float)world.GameTime.ElapsedGameTime.TotalSeconds;
+                _dimX.AutoPosition += _dimX.AutoSpeed * (float)World.GameTime.ElapsedGameTime.TotalSeconds;
             }
             if (_dimY.AutoScroll) {
-                _dimY.AutoPosition += _dimY.AutoSpeed * (float)world.GameTime.ElapsedGameTime.TotalSeconds;
+                _dimY.AutoPosition += _dimY.AutoSpeed * (float)World.GameTime.ElapsedGameTime.TotalSeconds;
             }
+        }
 
+        public override void Render (SpriteBatch spriteBatch, Entity entity, Renderable position)
+        {
             if (_spriteTexture == null)
                 return;
 
-            CameraSystem camera = world.SystemManager.GetSystem(typeof(CameraSystem)) as CameraSystem;
+            CameraSystem camera = World.SystemManager.GetSystem(typeof(CameraSystem)) as CameraSystem;
             Rectangle window = (camera != null)
-                ? camera.Bounds : world.Frame.Engine.GraphicsDevice.Viewport.Bounds;
+                ? camera.Bounds : World.Frame.Engine.GraphicsDevice.Viewport.Bounds;
 
-            int originX = _dimX.Origin(window.X, window.Width, world.Frame.Width);
-            int originY = _dimY.Origin(window.Y, window.Height, world.Frame.Height);
+            int originX = _dimX.Origin(window.X, window.Width, World.Frame.Width);
+            int originY = _dimY.Origin(window.Y, window.Height, World.Frame.Height);
 
             int tileX = 1;
             int tileY = 1;

@@ -4,8 +4,6 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
-using Amphibian.EntitySystem;
-using Spine;
 
 namespace Amphibian.Systems.Rendering
 {
@@ -14,15 +12,10 @@ namespace Amphibian.Systems.Rendering
         private SpineRenderManager _manager;
         private SpineRenderManagerOptions _options;
 
-        public SpineRenderLayer (EntityWorld world)
+        public SpineRenderLayer (GraphicsDevice device)
         {
-            _manager = new SpineRenderManager(world);
-            _options = new SpineRenderManagerOptions();
-        }
+            _manager = new SpineRenderManager(device);
 
-        public SpineRenderLayer (EntityWorld world, SkeletonRenderer skeletonRenderer)
-        {
-            _manager = new SpineRenderManager(world, skeletonRenderer);
             _options = new SpineRenderManagerOptions();
         }
 

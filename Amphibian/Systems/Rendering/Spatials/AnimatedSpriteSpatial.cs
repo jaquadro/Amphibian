@@ -26,7 +26,8 @@ namespace Amphibian.Systems.Rendering.Spatials
         private SpatialTypeRecord _record;
         private AnimatedSprite _sprite;
 
-        public AnimatedSpriteSpatial (String contentPath, ContentManager contentManager)
+        public AnimatedSpriteSpatial (String contentPath, EntityWorld world, ContentManager contentManager)
+            : base(world)
         {
             if (!_registered.TryGetValue(contentPath, out _record))
                 _record = Load(contentPath, contentManager);
@@ -57,9 +58,10 @@ namespace Amphibian.Systems.Rendering.Spatials
             return record;
         }
 
-        public override void Render (SpriteBatch spriteBatch, EntityWorld world, Entity e, Renderable position)
+        public override void Render (SpriteBatch spriteBatch, Entity e, Renderable position)
         {
-            _sprite.Update(world.GameTime);
+            _sprite.Update(World.GameTime);
+
             _sprite.Draw(spriteBatch, new PointFP(position.RenderX, position.RenderY));
         }
 
