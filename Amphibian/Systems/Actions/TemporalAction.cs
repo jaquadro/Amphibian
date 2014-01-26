@@ -61,6 +61,13 @@ namespace Amphibian.Systems.Actions
             Time = Duration;
         }
 
+        public void Reverse ()
+        {
+            float elapsed = Duration - Time;
+            Time = Duration - elapsed;
+            IsReverse = !IsReverse;
+        }
+
         public override void Restart ()
         {
             Time = 0;

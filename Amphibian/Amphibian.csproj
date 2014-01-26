@@ -163,6 +163,7 @@
     <Compile Include="Systems\Actions\ColorAction.cs" />
     <Compile Include="Systems\Actions\EntityAction.cs" />
     <Compile Include="Systems\Actions\RenderEffectsAction.cs" />
+    <Compile Include="Systems\Actions\ScaleToAction.cs" />
     <Compile Include="Systems\BehaviorSystem.cs" />
     <Compile Include="Systems\Actions\TemporalAction.cs" />
     <Compile Include="Systems\DynamicCollisionSystem.cs" />

@@ -10,6 +10,8 @@ namespace Amphibian.Systems.Actions
 
         public Pool Pool { get; set; }
 
+        public Guid Tag { get; set; }
+
         public abstract bool Update (EntityWorld world, Entity entity);
 
         public virtual void Restart ()
@@ -21,6 +23,7 @@ namespace Amphibian.Systems.Actions
 
             Pool = null;
             OnCompleted = null;
+            Tag = Guid.Empty;
         }
     }
 }

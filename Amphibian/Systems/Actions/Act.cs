@@ -83,5 +83,24 @@ namespace Amphibian.Systems.Actions
             action.Interpolation = interpolation;
             return action;
         }
+
+        public static ScaleToAction ScaleTo (float scale)
+        {
+            return ScaleTo(scale, 0, null);
+        }
+
+        public static ScaleToAction ScaleTo (float scale, float duration)
+        {
+            return ScaleTo(scale, duration, null);
+        }
+
+        public static ScaleToAction ScaleTo (float scale, float duration, Interpolation interpolation)
+        {
+            ScaleToAction action = Action<ScaleToAction>();
+            action.Scale = scale;
+            action.Duration = duration;
+            action.Interpolation = interpolation;
+            return action;
+        }
     }
 }
