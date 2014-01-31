@@ -69,6 +69,18 @@ namespace Amphibian.Systems.Rendering.Spatials
             set { _counter.Value = value; }
         }
 
+        public CounterDefinition.HAlignment HAlign
+        {
+            get { return _record.Definition.HAlign; }
+            set { _record.Definition.HAlign = value; }
+        }
+
+        public CounterDefinition.VAlignment VAlign
+        {
+            get { return _record.Definition.VAlign; }
+            set { _record.Definition.VAlign = value; }
+        }
+
         #region IRenderEffects
 
         public float Scale

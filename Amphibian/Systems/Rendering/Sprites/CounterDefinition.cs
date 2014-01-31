@@ -7,6 +7,20 @@ namespace Amphibian.Systems.Rendering.Sprites
 {
     public class CounterDefinition
     {
+        public enum HAlignment
+        {
+            Left,
+            Center,
+            Right,
+        }
+
+        public enum VAlignment
+        {
+            Top,
+            Center,
+            Bottom,
+        }
+
         public static readonly Dictionary<string, int> DigitIndex = new Dictionary<string, int>() {
             { "0", 0 }, { "1", 1 }, { "2", 2 }, { "3", 3 }, { "4", 4 },
             { "5", 5 }, { "6", 6 }, { "7", 7 }, { "8", 8 }, { "9", 9 },
@@ -34,14 +48,22 @@ namespace Amphibian.Systems.Rendering.Sprites
 
         public bool LeadingPlus { get; set; }
 
+        public HAlignment HAlign { get; set; }
+        public VAlignment VAlign { get; set; }
+
         public void Draw (SpriteBatch spriteBatch, PointFP position, SpriteInfo spriteData, List<int> digitIndexList)
         {
-            //ParseValue(value, _digitIndexList);
-            //Vector2 bounds = CalculateSize(_digitIndexList);
-
-            FPInt x = position.X;
+            FPInt width = -DigitSpacing;
+            FPInt height = 0;
             foreach (int digitIndex in digitIndexList) {
-                _digitFrames[digitIndex].Draw(spriteBatch, new PointFP(x, position.Y), spriteData);
+                width += (FPInt)(_digitFrames[digitIndex].Width * spriteData.Scale) + DigitSpacing;
+                height = FPMath.Max(height, (FPInt)(_digitFrames[digitIndex].Height * spriteData.Scale));
+            }
+
+            FPInt x = position.X - width / 2;
+            FPInt y = position.Y - height / 2;
+            foreach (int digitIndex in digitIndexList) {
+                _digitFrames[digitIndex].Draw(spriteBatch, new PointFP(x, y), spriteData);
                 x += (FPInt)(_digitFrames[digitIndex].Width * spriteData.Scale) + DigitSpacing;
             }
         }
