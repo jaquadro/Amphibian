@@ -114,6 +114,11 @@ namespace Amphibian
         protected virtual void Unload () 
         { }
 
+        protected internal virtual bool Back ()
+        {
+            return false;
+        }
+
         public abstract void Update ();
 
         public virtual void Interpolate (double alpha) 
