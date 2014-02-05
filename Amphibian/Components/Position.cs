@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Amphibian.EntitySystem;
 using Amphibian.Geometry;
+using Microsoft.Xna.Framework;
 
 namespace Amphibian.Components
 {
@@ -59,6 +60,11 @@ namespace Amphibian.Components
                 _prevY = _y;
                 _y = value;
             }
+        }
+
+        public Microsoft.Xna.Framework.Vector2 ToVector2()
+        {
+            return new Vector2((float)this.X, (float)this.Y);
         }
     }
 }
