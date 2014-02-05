@@ -7,6 +7,11 @@ namespace Amphibian.Systems.Rendering
 {
     public abstract class DrawSpatial : Spatial
     {
+        public override Type RenderManagerType
+        {
+            get { return typeof(DrawRenderManager); }
+        }
+
         public override void Render (IRenderManager renderManager, Entity entity, Renderable position)
         {
             DrawRenderManager drawRenderManager = renderManager as DrawRenderManager;

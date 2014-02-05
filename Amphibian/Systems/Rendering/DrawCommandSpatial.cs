@@ -17,6 +17,11 @@ namespace Amphibian.Systems.Rendering
 
         public Action<DrawBatch, Renderable> Command { get; set; }
 
+        public override Type RenderManagerType
+        {
+            get { return typeof(DrawRenderManager); }
+        }
+
         public override void Render (DrawBatch drawBatch, EntityWorld world, Entity entity, Renderable position)
         {
             if (Command != null)

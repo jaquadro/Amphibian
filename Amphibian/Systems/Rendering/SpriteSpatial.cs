@@ -7,6 +7,11 @@ namespace Amphibian.Systems.Rendering
 {
     public abstract class SpriteSpatial : Spatial
     {
+        public override Type RenderManagerType
+        {
+            get { return typeof(SpriteRenderManager); }
+        }
+
         public override void Render (IRenderManager renderManager, Entity entity, Renderable position)
         {
             SpriteRenderManager spriteRenderManager = renderManager as SpriteRenderManager;

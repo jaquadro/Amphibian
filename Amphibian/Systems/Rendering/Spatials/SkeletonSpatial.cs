@@ -66,6 +66,11 @@ namespace Amphibian.Systems.Rendering.Spatials
             return record;
         }
 
+        public override Type RenderManagerType
+        {
+            get { return typeof(SpineRenderManager); }
+        }
+
         public override void Render (SkeletonRenderer skeletonRenderer, EntityWorld world, Entity entity, Renderable position)
         {
             ActivityComponent activityCom = null;
