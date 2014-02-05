@@ -183,6 +183,17 @@ namespace Amphibian.EntitySystem
             }
         }
 
+        public void DestroyAll<T> ()
+        {
+            DestroyAll(typeof(T));
+        }
+
+        public void DestroyAll (Type componentType)
+        {
+            foreach (Entity entity in GetEntities(componentType))
+                Destroy(entity);
+        }
+
         public bool IsValid (Entity entity)
         {
             return entity.Id == _active[entity.Index].Id && entity.Id != 0;

@@ -62,6 +62,12 @@ namespace Amphibian
             return frame;
         }
 
+        public void PopTo (Frame frame)
+        {
+            while (TopFrame != frame && Count > 0)
+                Pop();
+        }
+
         public void ReplaceFrame (Frame existingFrame, Frame newFrame)
         {
             if (existingFrame == newFrame)

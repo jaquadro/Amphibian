@@ -197,6 +197,17 @@ namespace Amphibian
                 controller.Reset();
         }
 
+        public bool Back ()
+        {
+            for (int depth = _frameStack.Count - 1; depth >= 0; depth--) {
+                if (_frameStack[depth].Back())
+                    return true;
+                depth = Math.Min(depth, _frameStack.Count - 1);
+            }
+
+            return false;
+        }
+
         protected void InterpolateStep (double alpha)
         {
             // Determine update depth of frame stack
