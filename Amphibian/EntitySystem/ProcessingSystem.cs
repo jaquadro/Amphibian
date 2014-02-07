@@ -12,11 +12,14 @@ namespace Amphibian.EntitySystem
         protected ProcessingSystem (Type primaryKey)
         {
             _primaryKey = primaryKey;
+            EntityState = EntityEnablement.Enabled;
         }
+
+        public EntityEnablement EntityState { get; set; }
 
         protected override void ProcessInner ()
         {
-            ProcessEntities(EntityManager.GetEntities(_primaryKey));
+            ProcessEntities(EntityManager.GetEntities(_primaryKey, EntityState));
         }
 
         protected virtual void ProcessEntities(EntityManager.EntityEnumerator entities)
@@ -55,13 +58,13 @@ namespace Amphibian.EntitySystem
 
         protected override void ProcessInner ()
         {
-            int count1 = EntityManager.CountEntities<TComponent1>();
-            int count2 = EntityManager.CountEntities<TComponent2>();
+            int count1 = EntityManager.CountEntities<TComponent1>(EntityState);
+            int count2 = EntityManager.CountEntities<TComponent2>(EntityState);
 
             if (count1 < count2)
-                ProcessEntities(EntityManager.GetEntities<TComponent1>());
+                ProcessEntities(EntityManager.GetEntities<TComponent1>(EntityState));
             else
-                ProcessEntities(EntityManager.GetEntities<TComponent2>());
+                ProcessEntities(EntityManager.GetEntities<TComponent2>(EntityState));
         }
 
         protected override void Process (Entity entity)
@@ -87,17 +90,17 @@ namespace Amphibian.EntitySystem
 
         protected override void ProcessInner ()
         {
-            int count1 = EntityManager.CountEntities<TComponent1>();
-            int count2 = EntityManager.CountEntities<TComponent2>();
-            int count3 = EntityManager.CountEntities<TComponent3>();
+            int count1 = EntityManager.CountEntities<TComponent1>(EntityState);
+            int count2 = EntityManager.CountEntities<TComponent2>(EntityState);
+            int count3 = EntityManager.CountEntities<TComponent3>(EntityState);
 
             int minCount = Math.Min(count1, Math.Min(count2, count3));
             if (count1 == minCount)
-                ProcessEntities(EntityManager.GetEntities<TComponent1>());
+                ProcessEntities(EntityManager.GetEntities<TComponent1>(EntityState));
             else if (count2 == minCount)
-                ProcessEntities(EntityManager.GetEntities<TComponent2>());
+                ProcessEntities(EntityManager.GetEntities<TComponent2>(EntityState));
             else
-                ProcessEntities(EntityManager.GetEntities<TComponent3>());
+                ProcessEntities(EntityManager.GetEntities<TComponent3>(EntityState));
         }
 
         protected override void Process (Entity entity)

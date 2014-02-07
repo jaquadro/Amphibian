@@ -35,6 +35,7 @@ namespace Amphibian.EntitySystem
 
         // Master entity list.  Serves as a lookup table between entity index and entity id.
         internal UnorderedList<Entity> _active;
+        internal UnorderedList<bool> _enabled;
 
         // List of component lists.  For every entity in _active, a corresponding component list is stored
         // at the same index here.  The stored list contains references to all of the components currently
@@ -45,6 +46,8 @@ namespace Amphibian.EntitySystem
         // entry lists all entities that currently have an instance of the corresponding component attached.
         // This is mainly used by systems to quickly enumerate all entities that have a specific component.
         private UnorderedList<UnorderedList<Entity>> _entitiesByComponent;
+
+        private UnorderedList<int> _enabledCountByComponent;
 
         #endregion
          
@@ -60,8 +63,10 @@ namespace Amphibian.EntitySystem
             _freeEntListIndexes = new UnorderedList<Stack<int>>();
 
             _active = new UnorderedList<Entity>();
+            _enabled = new UnorderedList<bool>();
             _entitiesByComponent = new UnorderedList<UnorderedList<Entity>>();
             _componentsByEntity = new UnorderedList<UnorderedList<IComponent>>();
+            _enabledCountByComponent = new UnorderedList<int>();
 
             _comAddedEvents = new Dictionary<ComponentType, EventElement>();
             _comRemovedEvents = new Dictionary<ComponentType, EventElement>();
@@ -136,6 +141,7 @@ namespace Amphibian.EntitySystem
             // Create the new entity and assign it an empty component list
             Entity e = new Entity(NextId(), index);
             _active.Set(index, e);
+            _enabled.Set(index, true);
 
             _componentsByEntity.Set(index, _componentListPool.TakeResource());
 
@@ -147,10 +153,6 @@ namespace Amphibian.EntitySystem
         public void Destroy (Entity entity)
         {
             if (IsValid(entity)) {
-                // Delete the entity from the entity table and add its index to the freelist
-                _active.Set(entity.Index, Entity.None);
-                _freeIndexes.Push(entity.Index);
-
                 UnorderedList<IComponent> comList = _componentsByEntity[entity.Index];
 
                 // NB: Consider leaving old Entity entries, and checking validness in other methods
@@ -170,6 +172,9 @@ namespace Amphibian.EntitySystem
                         }
                     }
 
+                    if (_enabled[entity.Index])
+                        _enabledCountByComponent.Set(ctype.Index, _enabledCountByComponent[ctype.Index] - 1);
+
                     OnRemovedComponent(entity, comList[i]);
                 }
 
@@ -178,6 +183,11 @@ namespace Amphibian.EntitySystem
 
                 _componentListPool.ReturnResource(comList);
                 _componentsByEntity.Set(entity.Index, null);
+
+                // Delete the entity from the entity table and add its index to the freelist
+                _active.Set(entity.Index, Entity.None);
+                _enabled.Set(entity.Index, false);
+                _freeIndexes.Push(entity.Index);
 
                 OnRemovedEntity(entity);
             }
@@ -194,14 +204,44 @@ namespace Amphibian.EntitySystem
                 Destroy(entity);
         }
 
+        public void Enable (Entity entity, bool enable)
+        {
+            if (IsValid(entity)) {
+                if (_enabled[entity.Index] == enable)
+                    return;
+
+                _enabled.Set(entity.Index, enable);
+
+                UnorderedList<IComponent> comList = _componentsByEntity[entity.Index];
+                if (enable) {
+                    for (int i = 0; i < comList.Count; i++) {
+                        ComponentType ctype = ComponentTypeManager.GetTypeFor(comList[i].GetType());
+                        _enabledCountByComponent.Set(ctype.Index, _enabledCountByComponent[ctype.Index] + 1);
+                    }
+                }
+                else {
+                    for (int i = 0; i < comList.Count; i++) {
+                        ComponentType ctype = ComponentTypeManager.GetTypeFor(comList[i].GetType());
+                        _enabledCountByComponent.Set(ctype.Index, _enabledCountByComponent[ctype.Index] - 1);
+                    }
+                }
+            }
+        }
+
         public bool IsValid (Entity entity)
         {
             return entity.Id == _active[entity.Index].Id && entity.Id != 0;
         }
 
+        public bool IsEnabled (Entity entity)
+        {
+            return IsValid(entity) && _enabled[entity.Index];
+        }
+
         private void InitializeComponent(ComponentType type)
         {
             _entitiesByComponent.Set(type.Index, new UnorderedList<Entity>());
+            _enabledCountByComponent.Set(type.Index, 0);
             _freeEntListIndexes.Set(type.Index, new Stack<int>());
         }
 
@@ -227,6 +267,8 @@ namespace Amphibian.EntitySystem
 
                 // Add the entity to the component's entity list
                 entList.Set(index, entity);
+
+                _enabledCountByComponent.Set(ctype.Index, _enabledCountByComponent[ctype.Index] + 1);
 
                 OnAddedComponent(entity, component);
 
@@ -260,6 +302,7 @@ namespace Amphibian.EntitySystem
                     if (entity.Id == entList[i].Id) {
                         entList.Set(i, new Entity());
                         _freeEntListIndexes[ctype.Index].Push(i);
+                        _enabledCountByComponent.Set(ctype.Index, _enabledCountByComponent[ctype.Index] - 1);
                     }
                 }
 
@@ -418,30 +461,57 @@ namespace Amphibian.EntitySystem
 
         public EntityEnumerator GetEntities (Type componentType)
         {
+            return GetEntities(componentType, EntityEnablement.Both);
+        }
+
+        public EntityEnumerator GetEntities (Type componentType, EntityEnablement state)
+        {
             if (componentType != null) {
                 ComponentType ctype = ComponentTypeManager.GetTypeFor(componentType);
-                return new EntityEnumerator(_entitiesByComponent[ctype.Index]);
+                return new EntityEnumerator(this, _entitiesByComponent[ctype.Index], state);
             }
             return EntityEnumerator.Empty;
         }
 
         public EntityEnumerator GetEntities<T> ()
         {
-            return GetEntities(typeof(T));
+            return GetEntities(typeof(T), EntityEnablement.Both);
+        }
+
+        public EntityEnumerator GetEntities<T> (EntityEnablement state)
+        {
+            return GetEntities(typeof(T), state);
         }
 
         public int CountEntities (Type componentType)
         {
+            return CountEntities(componentType, EntityEnablement.Both);
+        }
+
+        public int CountEntities (Type componentType, EntityEnablement state)
+        {
             if (componentType != null) {
                 ComponentType ctype = ComponentTypeManager.GetTypeFor(componentType);
-                return _entitiesByComponent[ctype.Index].Count - _freeEntListIndexes[ctype.Index].Count;
+                switch (state) {
+                    case EntityEnablement.Both:
+                        return _entitiesByComponent[ctype.Index].Count - _freeEntListIndexes[ctype.Index].Count;
+                    case EntityEnablement.Enabled:
+                        return _enabledCountByComponent[ctype.Index];
+                    case EntityEnablement.Disabled:
+                        return _entitiesByComponent[ctype.Index].Count - _freeEntListIndexes[ctype.Index].Count - _enabledCountByComponent[ctype.Index];
+                }
             }
             return 0;
         }
 
         public int CountEntities<T> ()
         {
-            return CountEntities(typeof(T));
+            return CountEntities(typeof(T), EntityEnablement.Both);
+        }
+
+        public int CountEntities<T> (EntityEnablement state)
+        {
+            return CountEntities(typeof(T), state);
         }
 
         private int NextId ()
@@ -531,18 +601,22 @@ namespace Amphibian.EntitySystem
         {
             private static UnorderedList<Entity> _emptyEntityList = new UnorderedList<Entity>();
 
+            private EntityManager _manager;
             private UnorderedList<Entity> _entList;
             private int _index;
+            private EntityEnablement _enable;
 
             internal static EntityEnumerator Empty 
             {
-                get { return new EntityEnumerator(_emptyEntityList); }
+                get { return new EntityEnumerator(null, _emptyEntityList, EntityEnablement.Both); }
             }
 
-            internal EntityEnumerator (UnorderedList<Entity> entityList)
+            internal EntityEnumerator (EntityManager manager, UnorderedList<Entity> entityList, EntityEnablement enablement)
             {
+                _manager = manager;
                 _index = -1;
                 _entList = entityList;
+                _enable = enablement;
             }
 
             public Entity Current
@@ -556,10 +630,28 @@ namespace Amphibian.EntitySystem
 
             public bool MoveNext()
             {
-                for (; _index < _entList.Count-1;)
-                {
-                    if (_entList[++_index] != Entity.None)
-                        return true;
+                switch (_enable) {
+                    case EntityEnablement.Both:
+                        for (; _index < _entList.Count - 1; ) {
+                            Entity ent = _entList[++_index];
+                            if (ent != Entity.None)
+                                return true;
+                        }
+                        break;
+                    case EntityEnablement.Enabled:
+                        for (; _index < _entList.Count - 1; ) {
+                            Entity ent = _entList[++_index];
+                            if (ent != Entity.None && _manager._enabled[ent.Index] == true)
+                                return true;
+                        }
+                        break;
+                    case EntityEnablement.Disabled:
+                        for (; _index < _entList.Count - 1; ) {
+                            Entity ent = _entList[++_index];
+                            if (ent != Entity.None && _manager._enabled[ent.Index] == false)
+                                return true;
+                        }
+                        break;
                 }
 
                 return false;
@@ -620,5 +712,13 @@ namespace Amphibian.EntitySystem
         }
 
         #endregion
+    }
+
+    [Flags]
+    public enum EntityEnablement
+    {
+        Enabled = 1 << 0,
+        Disabled = 1 << 1,
+        Both = Enabled | Disabled,
     }
 }
